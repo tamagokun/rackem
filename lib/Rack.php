@@ -10,7 +10,7 @@ class Rack
 		$script_name = dirname($_SERVER['SCRIPT_NAME']);
 		$full_path = str_replace($script_name,'',$_SERVER['REQUEST_URI']);
 		$env = array(
-			"REQUEST_METHOD" => $_SERVER['REQUEST_METHOD'];
+			"REQUEST_METHOD" => $_SERVER['REQUEST_METHOD'],
 			"SCRIPT_NAME" => $script_name,
 			"PATH_INFO" => substr($full_path, 0, strpos($full_path,"?")),
 			"QUERY_STRING" => substr($full_path, strpos($full_path,"?")+1),
@@ -23,8 +23,8 @@ class Rack
 			"rack.multithread" => false,
 			"rack.multiprocess" => false,
 			"rack.run_once" => false,
-			"rack.session" =>,
-			"rack.logger" =>
+			"rack.session" => "",
+			"rack.logger" => ""
 		);
 		return array_merge(static::default_env(),$env);
 	}
@@ -49,8 +49,8 @@ class Rack
 	private static function middleware($app, $env)
 	{
 		$middleware = array_reverse(self::$middleware);
-		//$middleware::use('Rackem\Exceptions');
-		if(empty($middleware)) return $app($env);
+		//$self::use_middleware('Rackem\Exceptions');
+		if(empty($middleware)) return $app->call($env);
 		
 		foreach($middleware as $ware) $app = $ware($app);
 		return $app($env);
@@ -64,8 +64,8 @@ class Rack
 		$output = ob_get_clean();
 		static::execute($result, $env);
 	}
-	
-	public static function use($middleware,$options = array())
+		
+	public static function use_middleware($middleware,$options = array())
 	{
 		self::$middleware[] = function($app) use ($middleware, $options) {
 			return new $middleware($app, $options);
