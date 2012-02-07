@@ -9,7 +9,7 @@ class Rack
 	{
 		$request_uri = isset($_SERVER['REQUEST_URI'])? $_SERVER['REQUEST_URI'] : $_SERVER['PHP_SELF'];
 		$request_uri = substr($request_uri,0,strpos($request_uri,"?"));
-		$env = array(
+		$env = array_merge(static::default_env(),array(
 			"REQUEST_METHOD" => $_SERVER['REQUEST_METHOD'],
 			"SCRIPT_NAME" => basename($request_uri),
 			"PATH_INFO" => $request_uri,
@@ -24,8 +24,8 @@ class Rack
 			"rack.run_once" => false,
 			"rack.session" => "",
 			"rack.logger" => ""
-		);
-		return array_merge(static::default_env(),$env);
+		));
+		return new Environment($env);	
 	}
 	
 	protected static function build_app($app)
@@ -52,7 +52,7 @@ class Rack
 		exit;
 	}
 	
-	protected static function middleware($app, &$env)
+	protected static function middleware($app, $env)
 	{
 		self::$middleware = array_reverse(self::$middleware);
 		self::use_middleware('Rackem\Exceptions');

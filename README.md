@@ -11,7 +11,7 @@ Here is an example of a basic Rack application:
     
     class App
     {
-	    public function call(&$env)
+	    public function call($env)
 	    {
 		    return array(200,array('Content-Type'=>'text/html'),array('Hello World!'));
 	    }
@@ -27,7 +27,7 @@ Here is an example of a basic Rack application:
  
 Here would be an example of using a Closure:
 
-    $app = function(&$env) {
+    $app = function($env) {
     	return array(200,array('Content-Type'=>'text/html'),array('Hello World!'));
     };
     \Rackem\Rack::run($app);
@@ -47,7 +47,7 @@ Here is an example of a Middleware class that just passes the response on:
     		$this->app = $app;
     	}
     	
-    	public function call(&$env)
+    	public function call($env)
     	{
     		return $this->app->call($env);
     	}

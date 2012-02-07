@@ -1,5 +1,4 @@
 <?php
-error_reporting(-1);
 require __DIR__."/../autoload.php";
 
 class ToJson
@@ -9,7 +8,7 @@ class ToJson
 		$this->app = $app;
 	}
 	
-	public function call(&$env)
+	public function call($env)
 	{
 		list($status, $headers, $body) = $this->app->call($env);
 		$body[] =  "{response:\"".array_pop($body)."\"}";
@@ -24,7 +23,7 @@ class Goodbye
 		$this->app = $app;
 	}
 	
-	public function call(&$env)
+	public function call($env)
 	{
 		list($status, $headers, $body) = $this->app->call($env);
 		foreach($body as &$value) $value = str_replace("Hello","Goodbye",$value);
@@ -34,7 +33,7 @@ class Goodbye
 
 class App
 {
-	public function call(&$env)
+	public function call($env)
 	{
 		return array(200, array("Content-Type" => "text/plain"), array("Hello World!"));
 	}

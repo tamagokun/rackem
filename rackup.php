@@ -4,7 +4,7 @@ require "autoload.php";
 
 class App
 {
-	public function call(&$env)
+	public function call($env)
 	{
 		return array(200, array("Content-Type" => "text/plain"), array(print_r($env,true)));
 	}
