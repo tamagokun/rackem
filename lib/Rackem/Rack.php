@@ -50,9 +50,9 @@ class Rack
 	{
 		$middleware = array_reverse(self::$middleware);
 		//$self::use_middleware('Rackem\Exceptions');
-		if(empty($middleware)) return $app->call($env);
 		
-		foreach($middleware as $ware) $app = $ware($app);
+		if(!empty($middleware))
+			foreach($middleware as $ware) $app = $ware($app);
 		return $app->call($env);
 	}
 	
