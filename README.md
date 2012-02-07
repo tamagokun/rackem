@@ -52,4 +52,7 @@ Here is an example of a Middleware class that just passes the response on:
     		return $this->app->call($env);
     	}
     }
+    
+    \Rackem\Rack::use_middleware("MyMiddleware");
+    \Rackem\Rack::run( new App() );
 
