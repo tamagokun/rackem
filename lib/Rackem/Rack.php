@@ -5,7 +5,7 @@ class Rack
 {
 	private static $middleware = array();
 	
-	protected static function get_env()
+	protected static function build_env()
 	{
 		$script_name = dirname($_SERVER['SCRIPT_NAME']);
 		$full_path = str_replace($script_name,'',$_SERVER['REQUEST_URI']);
@@ -58,7 +58,7 @@ class Rack
 	
 	public static function run($app)
 	{
-		$env = static::get_env();
+		$env = static::build_env();
 		if(is_callable($app)) $app = new Shim($app);
 		if(is_string($app)) $app = new $app();
 		ob_start();

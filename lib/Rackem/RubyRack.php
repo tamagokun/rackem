@@ -3,7 +3,7 @@ namespace Rackem;
 
 class RubyRack extends Rack
 {
-	protected static function get_env()
+	protected static function build_env()
 	{
 		return json_decode(file_get_contents('php://stdin'), true);
 	}
@@ -16,7 +16,7 @@ class RubyRack extends Rack
 	
 	public static function run($app = null)
 	{
-		$env = static::get_env();
+		$env = static::build_env();
 		
 		if(is_null($app) && !is_null($env['rack.ruby_bridge_response']))
 			$app = function($env) use ($env) { return $env['rack.ruby_bridge_response']; };
