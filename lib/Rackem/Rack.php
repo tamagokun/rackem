@@ -55,11 +55,11 @@ class Rack
 	
 	protected static function middleware($app, $env)
 	{
-		$middleware = array_reverse(self::$middleware);
-		//$self::use_middleware('Rackem\Exceptions');
+		self::$middleware = array_reverse(self::$middleware);
+		self::use_middleware('Rackem\Exceptions');
 		
-		if(!empty($middleware))
-			foreach($middleware as $ware) $app = $ware($app);
+		if(!empty(self::$middleware))
+			foreach(self::$middleware as $ware) $app = $ware($app);
 		return $app->call($env);
 	}
 	
