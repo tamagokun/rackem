@@ -49,7 +49,6 @@ class Rack
 		$headers['Status'] = $status;
 		foreach($headers as $key=>$value) header("$key: $value");
 		foreach($body as $section) echo $section;
-		print_r($env);
 		exit;
 	}
 	
