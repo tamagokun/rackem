@@ -1,7 +1,6 @@
 #!/usr/bin/env php
 <?php
-require "lib/Rack.php";
-require "lib/RubyRack.php";
+require "autoload.php";
 
 class App
 {
