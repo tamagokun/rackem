@@ -6,20 +6,18 @@ Any object that has a callable method `call()` can be considered a Rack applicat
 
 Here is an example of a basic Rack application:
 
-```
-<?php
-require "autoload.php";
-
-class App
-{
-	public function call($env)
-	{
-		return array(200,array('Content-Type'=>'text/html'),array('Hello World!'));
-	}
-}
-
-\Rackem\Rack::run("App");
-```
+    <?php
+    require "autoload.php";
+    
+    class App
+    {
+	    public function call($env)
+	    {
+		    return array(200,array('Content-Type'=>'text/html'),array('Hello World!'));
+	    }
+    }
+    
+    \Rackem\Rack::run("App");
 
 `Rack::run()` accepts 1 of 3 things:
 
@@ -29,12 +27,10 @@ class App
  
 Here would be an example of using a Closure:
 
-```
-$app = function($env) {
-	return array(200,array('Content-Type'=>'text/html'),array('Hello World!'));
-};
-\Rackem\Rack::run($app);
-```
+    $app = function($env) {
+    	return array(200,array('Content-Type'=>'text/html'),array('Hello World!'));
+    };
+    \Rackem\Rack::run($app);
 
 ## Middleware
 
@@ -42,20 +38,18 @@ Just like Rack, Rackem supports the use of Middleware. Middleware is basically a
 
 Here is an example of a Middleware class that just passes the response on:
 
-```
-<?php
-
-class MyMiddleware
-{
-	public function __construct($app)
-	{
-		$this->app = $app;
-	}
-	
-	public function call($env)
-	{
-		return $this->app->call($env);
-	}
-}
-```
+    <?php
+    
+    class MyMiddleware
+    {
+    	public function __construct($app)
+    	{
+    		$this->app = $app;
+    	}
+    	
+    	public function call($env)
+    	{
+    		return $this->app->call($env);
+    	}
+    }
 
