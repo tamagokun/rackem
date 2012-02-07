@@ -28,4 +28,4 @@ class App
 }
 
 \Rackem\Rack::use_middleware("ToJson");
-\Rackem\Rack::run( new App());
+\Rackem\Rack::run("App");

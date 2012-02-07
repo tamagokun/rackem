@@ -59,6 +59,8 @@ class Rack
 	public static function run($app)
 	{
 		$env = static::get_env();
+		if(is_callable($app)) $app = new Shim($app);
+		if(is_string($app)) $app = new $app();
 		ob_start();
 		$result = self::middleware($app, $env);
 		$output = ob_get_clean();
