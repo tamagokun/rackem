@@ -3,10 +3,7 @@ require __DIR__."/../autoload.php";
 
 class ToJson
 {
-	public function __construct($app)
-	{
-		$this->app = $app;
-	}
+	public function __construct($app)	{ $this->app = $app; }
 	
 	public function call($env)
 	{
@@ -18,10 +15,7 @@ class ToJson
 
 class Goodbye
 {
-	public function __construct($app)
-	{
-		$this->app = $app;
-	}
+	public function __construct($app) { $this->app = $app; }
 	
 	public function call($env)
 	{

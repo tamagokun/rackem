@@ -56,3 +56,6 @@ Here is an example of a Middleware class that just passes the response on:
     \Rackem\Rack::use_middleware("MyMiddleware");
     \Rackem\Rack::run( new App() );
 
+## TODO
+
+Rack provides some nice utilities for GET, POST, and Multipart data using objects like Request and Response. These need to be created. See: [request.rb](https://github.com/rack/rack/blob/master/lib/rack/request.rb)

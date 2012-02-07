@@ -25,7 +25,7 @@ class Rack
 			"rack.session" => "",
 			"rack.logger" => ""
 		));
-		return new Environment($env);	
+		return new Environment($env);
 	}
 	
 	protected static function build_app($app)
