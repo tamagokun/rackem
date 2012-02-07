@@ -2,7 +2,7 @@
 
 error_reporting(-1);
 
-require __DIR__."/../lib/Rack.php";
+require __DIR__."/../autoload.php";
 
 class ToJson
 {
