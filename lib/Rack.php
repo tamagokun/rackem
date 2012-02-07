@@ -5,7 +5,7 @@ class Rack
 {
 	private static $middleware = array();
 	
-	private static function build_env()
+	protected static function get_env()
 	{
 		$script_name = dirname($_SERVER['SCRIPT_NAME']);
 		$full_path = str_replace($script_name,'',$_SERVER['REQUEST_URI']);
@@ -29,12 +29,12 @@ class Rack
 		return array_merge(static::default_env(),$env);
 	}
 	
-	private static function default_env()
+	protected static function default_env()
 	{
 		return $_SERVER;	//use array_map to manipulate?
 	}
 	
-	private static function execute($result, $env)
+	protected static function execute($result, $env)
 	{
 		list($status, $headers, $body) = $result;
 		fclose($env['rack.input']);
@@ -46,7 +46,7 @@ class Rack
 		exit;
 	}
 	
-	private static function middleware($app, $env)
+	protected static function middleware($app, $env)
 	{
 		$middleware = array_reverse(self::$middleware);
 		//$self::use_middleware('Rackem\Exceptions');
@@ -58,7 +58,7 @@ class Rack
 	
 	public static function run($app)
 	{
-		$env = static::build_env();
+		$env = static::get_env();
 		ob_start();
 		$result = self::middleware($app, $env);
 		$output = ob_get_clean();
