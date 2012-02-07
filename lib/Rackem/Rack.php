@@ -53,7 +53,7 @@ class Rack
 		exit;
 	}
 	
-	protected static function middleware($app, $env)
+	protected static function middleware($app, &$env)
 	{
 		self::$middleware = array_reverse(self::$middleware);
 		self::use_middleware('Rackem\Exceptions');
