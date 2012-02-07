@@ -29,6 +29,13 @@ class Rack
 		return array_merge(static::default_env(),$env);
 	}
 	
+	protected static function build_app($app)
+	{
+		if(is_callable($app)) $app = new Shim($app);
+		if(is_string($app)) $app = new $app();
+		return $app;
+	}
+	
 	protected static function default_env()
 	{
 		return $_SERVER;	//use array_map to manipulate?
@@ -59,8 +66,7 @@ class Rack
 	public static function run($app)
 	{
 		$env = static::build_env();
-		if(is_callable($app)) $app = new Shim($app);
-		if(is_string($app)) $app = new $app();
+		$app = static::build_app($app);
 		ob_start();
 		$result = self::middleware($app, $env);
 		$output = ob_get_clean();

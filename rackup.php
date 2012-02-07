@@ -10,4 +10,4 @@ class App
 	}
 }
 
-\Rackem\RubyRack::run( new App());
+\Rackem\RubyRack::run("App");
