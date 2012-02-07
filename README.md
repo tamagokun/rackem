@@ -6,7 +6,7 @@ Any object that has a callable method `call()` can be considered a Rack applicat
 
 Here is an example of a basic Rack application:
 
-```php
+```
 <?php
 require "autoload.php";
 
@@ -29,7 +29,7 @@ class App
  
 Here would be an example of using a Closure:
 
-```php
+```
 $app = function($env) {
 	return array(200,array('Content-Type'=>'text/html'),array('Hello World!'));
 };
@@ -42,7 +42,7 @@ Just like Rack, Rackem supports the use of Middleware. Middleware is basically a
 
 Here is an example of a Middleware class that just passes the response on:
 
-```php
+```
 <?php
 
 class MyMiddleware
