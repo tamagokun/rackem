@@ -49,7 +49,7 @@ class Rack
 		$headers['X-Powered-By'] = "Rack'em ".implode(".",$env['rack.version']);
 		$headers['Status'] = $status;
 		foreach($headers as $key=>$value) header("$key: $value");
-		foreach($body as $section) print $section;
+		foreach($body as $section) echo $section;
 		exit;
 	}
 	
