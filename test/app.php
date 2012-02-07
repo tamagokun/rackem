@@ -2,24 +2,8 @@
 
 require __DIR__."/../lib/Rack.php";
 
-class App
-{
-	public $app;
-	
-	public function __construct($app) 
-	{
-		$this->app = $app;
-	}
-	
-	public function __invoke($env)
-	{
-		return array(200, array("Content-Type" => "text/plain"), array("Hello World!"));
-	}
-	
-	public function call($env)
-	{
-		return array(200, array("Content-Type" => "text/plain"), array("Hello World!"));
-	}
-}
+$app = function($env) {
+	return array(200, array('Content-Type' => 'text/html'), array('Hello World!'));
+};
 
-\Rackem\Rack::run( new App());
+\Rackem\Rack::run($app);

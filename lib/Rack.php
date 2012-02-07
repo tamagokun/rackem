@@ -53,12 +53,12 @@ class Rack
 		if(empty($middleware)) return $app->call($env);
 		
 		foreach($middleware as $ware) $app = $ware($app);
-		return $app($env);
+		return $app->call($env);
 	}
 	
 	public static function run($app)
 	{
-		$env =& static::build_env();
+		$env = static::build_env();
 		ob_start();
 		$result = self::middleware($app, $env);
 		$output = ob_get_clean();
