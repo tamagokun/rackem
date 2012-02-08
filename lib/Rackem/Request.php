@@ -3,6 +3,15 @@ namespace Rackem;
 
 class Request
 {
+	const FORM_DATA_MEDIA_TYPES = array(
+		'application/x-www-form-urlencoded',
+		'multipart/form-data'
+	);
+	const PARSEABLE_DATA_MEDIA_TYPES = array(
+		'multipart/related',
+		'multipart/mixed'
+	);
+	
 	public $env;
 	
 	public function __construct($env = array())
@@ -49,13 +58,18 @@ class Request
 	
 	public function media_type()
 	{
-		return $this->content_type() && strtolower(array_shift(split("/\s*[;,]\s*/",2,$this->content_type())));
+		return $this->content_type() && strtolower(array_shift(split("/\s*[;,]\s*/",$this->content_type(),2)));
 	}
 	
 	public function media_type_params()
 	{
 		if( is_null($this->content_type()) ) return array();
-		//TODO	
+		$params = array();
+		return array_map(function($p) use (&$params) {
+			list($k,$v) = split("=",$p,2);
+			$params[strtolower($k)] = $v;
+		}, array_slice(split("/\s*[;,]\s*/",$this->content_type()),1);
+		return $params;
 	}
 	
 	public function content_charset()
@@ -66,12 +80,12 @@ class Request
 	
 	public function params()
 	{
-		
+		return array_merge($this->get(),$this->post());
 	}
 	
 	public function parseable_data()
 	{
-		
+		return in_array($this->media_type(), Request::PARSEABLE_DATA_MEDIA_TYPES);
 	}
 	
 	public function path()
@@ -86,9 +100,23 @@ class Request
 	
 	public function post()
 	{
+		if(is_null($this->env["rack.input"])) return array();
 		if($this->env["rack.request.form_input"] == $this->env["rack.input"])
 			return $this->env["rack.request.form_hash"];
-		return null;
+		if($this->form_data() || $this->parseable_form_data())
+		{
+			$this->env["rack.request.form_input"] = $this->env["rack.input"];
+			if(! $this->env["rack.request.form_hash"] = $this->parse_multipart($this->env))
+			{
+				$form_vars = fread($this->env["rack.input"]);
+				str_replace("/\0\z/",$form_vars);
+				
+				$this->env["rack.request.form_vars"] = $form_vars;
+				$this->env["rack.request.form_hash"] = $this->parse_query($form_vars);
+				rewind($this->env["rack.input"]);
+			}
+		}
+		return $this->env["rack.request.form_hash"];
 	}
 	
 	public function query_string()
