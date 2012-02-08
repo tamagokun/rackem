@@ -48,7 +48,7 @@ class Rack
 		$headers['X-Powered-By'] = "Rack'em ".implode(".",$env['rack.version']);
 		$headers['Status'] = $status;
 		foreach($headers as $key=>$value) header("$key: $value");
-		foreach($body as $section) echo $section;
+		echo implode("",$body);
 		exit;
 	}
 	
@@ -69,6 +69,8 @@ class Rack
 		ob_start();
 		$result = self::middleware($app, $env);
 		$output = ob_get_clean();
+		if($output)
+			$result[1]['X-Output'] = json_encode($output);
 		static::execute($result, $env);
 	}
 		
