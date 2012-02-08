@@ -1,10 +1,8 @@
 <?php
 require __DIR__."/../autoload.php";
 
-class ToJson
-{
-	public function __construct($app)	{ $this->app = $app; }
-	
+class ToJson extends \Rackem\Middleware
+{	
 	public function call($env)
 	{
 		list($status, $headers, $body) = $this->app->call($env);
