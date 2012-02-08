@@ -10,6 +10,14 @@ class Request
 		$this->env = $env;
 	}
 	
+	public function base_url()
+	{
+		$url = "{$this->scheme()}://{$this->host()}";
+		if($this->scheme() == "https" && $this->port() != 443 || $this->scheme() == "http" && $this->port() !=80)
+			$url .= ":{$this->port()}";
+		return $url;
+	}
+	
 	public function body()
 	{
 		return $this->env["rack.input"];
@@ -23,6 +31,11 @@ class Request
 	public function form_data()
 	{
 		return ($this->env["REQUEST_METHOD"] == "POST");
+	}
+	
+	public function fullpath()
+	{
+		return (empty($this->query_string()))? $this->path() : "{$this->path()}?{$this->query_string()}";
 	}
 	
 	public function get()
@@ -61,6 +74,16 @@ class Request
 		
 	}
 	
+	public function path()
+	{
+		return $this->env["SCRIPT_NAME"] . $this->env["PATH_INFO"];
+	}
+	
+	public function port()
+	{
+		return $this->env["SERVER_PORT"];
+	}
+	
 	public function post()
 	{
 		if($this->env["rack.request.form_input"] == $this->env["rack.input"])
@@ -81,6 +104,11 @@ class Request
 	public function ssl()
 	{
 		return $this->scheme() == "https";
+	}
+	
+	public function url()
+	{
+		return "{$this->base_url()}{$this->fullpath()}";
 	}
 	
 	public function user_agent()
