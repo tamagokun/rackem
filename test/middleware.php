@@ -19,6 +19,7 @@ class Goodbye
 	{
 		list($status, $headers, $body) = $this->app->call($env);
 		$req = new \Rackem\Request($env);
+		$req->get();
 		$body[] = $req->media_type();
 		$body[] = print_r($env,true);
 		$res = new \Rackem\Response($body,$status,$headers);
