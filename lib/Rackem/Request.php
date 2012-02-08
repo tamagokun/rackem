@@ -150,4 +150,10 @@ class Request
 		return Utils::parse_nested_query($qs);
 	}
 	
+	private function parse_multipart($env)
+	{
+		return null;
+		//TODO: \Rackem\Multipart
+	}
+	
 }
