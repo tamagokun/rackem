@@ -58,4 +58,8 @@ Here is an example of a Middleware class that just passes the response on:
 
 ## TODO
 
-Rack provides some nice utilities for GET, POST, and Multipart data using objects like Request and Response. These need to be created. See: [request.rb](https://github.com/rack/rack/blob/master/lib/rack/request.rb)
+The Request and Response utils are pretty much done, there may be a few things aren't working though.
+
+I think the only major part that still needs some doing is implementing [BasicAuth](https://github.com/rack/rack/blob/master/lib/rack/auth/basic.rb).
+
+
