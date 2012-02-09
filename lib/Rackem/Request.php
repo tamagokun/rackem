@@ -32,6 +32,11 @@ class Request
 		return $this->env["rack.input"];
 	}
 	
+	public function content_length()
+	{
+		return $this->env["CONTENT_LENGTH"];
+	}
+	
 	public function content_type()
 	{
 		return (isset($this->env["CONTENT_TYPE"]))? $this->env["CONTENT_TYPE"] : null;
@@ -66,6 +71,20 @@ class Request
 		if(isset($this->env["HTTP_X_FORWARDED_HOST"]))
 			return array_pop(split(",\s?",$this->env["HTTP_X_FORWARDED_HOST"]));
 		return (isset($this->env["HTTP_HOST"]))? $this->env["HTTP_HOST"] : "{$this->env["SERVER_ADDR"]}:{$this->env["SERVER_PORT"]}";
+	}
+	
+	public function is_delete() { return $this->request_method() == "DELETE"; }
+	public function is_get() { return $this->request_method() == "GET"; }
+	public function is_head() { return $this->request_method() == "HEAD"; }
+	public function is_options() { return $this->request_method() == "OPTIONS"; }
+	public function is_patch() { return $this->request_method() == "PATCH"; }
+	public function is_post() { return $this->request_method() == "POST"; }
+	public function is_put() { return $this->request_method() == "PUT"; }
+	public function is_trace() { return $this->request_method() == "TRACE"; }
+	
+	public function is_xhr() 
+	{ 
+		return isset($this->env["HTTP_X_REQUESTED_WITH"]) && $this->env["HTTP_X_REQUESTED_WITH"] == "XMLHttpRequest";
 	}
 	
 	public function media_type()
@@ -135,6 +154,16 @@ class Request
 	public function query_string()
 	{
 		return $this->env["QUERY_STRING"];
+	}
+	
+	public function request_method()
+	{
+		return $this->env["REQUEST_METHOD"];
+	}
+	
+	public function session()
+	{
+		return $this->env["rack.session"];
 	}
 	
 	public function scheme()

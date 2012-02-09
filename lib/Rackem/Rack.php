@@ -22,7 +22,7 @@ class Rack
 			"rack.multithread" => false,
 			"rack.multiprocess" => false,
 			"rack.run_once" => false,
-			"rack.session" => "",
+			"rack.session" => $_SESSION,
 			"rack.logger" => ""
 		));
 		return new Environment($env);
