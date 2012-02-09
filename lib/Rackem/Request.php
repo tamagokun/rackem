@@ -146,7 +146,7 @@ class Request
 				
 				$this->env["rack.request.form_vars"] = $form_vars;
 				//$this->env["rack.request.form_hash"] = $this->parse_query($form_vars);
-				$this->env["rack.request.form_hash"] = $_POST;
+				$this->env["rack.request.form_hash"] = &$_POST;
 			}
 		}
 		return $this->env["rack.request.form_hash"];
