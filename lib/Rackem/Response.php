@@ -32,6 +32,12 @@ class Response
 		return array($this->status, $this->header, $this->body);
 	}
 	
+	public function redirect($target, $status=302)
+	{
+		$this->status = $status;
+		$this->header["Location"] = $target;
+	}
+	
 	public function write($value)
 	{
 		$this->body[] = $value;
