@@ -56,9 +56,21 @@ class Request
 		return $this->env["rack.request.query_hash"];
 	}
 	
+	public function host()
+	{
+		return str_replace(":\d+\z","",$this->host_with_port());
+	}
+	
+	public function host_with_port()
+	{
+		if(isset($this->env["HTTP_X_FORWARDED_HOST"]))
+			return array_pop(split(",\s?",$this->env["HTTP_X_FORWARDED_HOST"]));
+		return (isset($this->env["HTTP_HOST"]))? $this->env["HTTP_HOST"] : "{$this->env["SERVER_ADDR"]}:{$this->env["SERVER_PORT"]}";
+	}
+	
 	public function media_type()
 	{
-		return $this->content_type() && strtolower(array_shift(split("/\s*[;,]\s*/",$this->content_type(),2)));
+		return (is_null($this->content_type()))? null:strtolower(array_shift(split("\s*[;,]\s*",$this->content_type(),2)));
 	}
 	
 	public function media_type_params()
@@ -68,7 +80,7 @@ class Request
 		return array_map(function($p) use (&$params) {
 			list($k,$v) = split("=",$p,2);
 			$params[strtolower($k)] = $v;
-		}, array_slice(split("/\s*[;,]\s*/",$this->content_type()),1));
+		}, array_slice(split("\s*[;,]\s*",$this->content_type()),1));
 		return $params;
 	}
 	
@@ -90,7 +102,9 @@ class Request
 	
 	public function path()
 	{
-		return $this->env["SCRIPT_NAME"] . $this->env["PATH_INFO"];
+		//TODO: What the hell is SCRIPT_NAME ?
+		//return $this->env["SCRIPT_NAME"] . $this->env["PATH_INFO"];
+		return $this->env["PATH_INFO"];
 	}
 	
 	public function port()
@@ -108,9 +122,9 @@ class Request
 			$this->env["rack.request.form_input"] = $this->env["rack.input"];
 			if(! $this->env["rack.request.form_hash"] = $this->parse_multipart($this->env))
 			{
-				$form_vars = str_replace("/\0\z/","",stream_get_contents($this->env["rack.input"]));
+				$form_vars = str_replace("\0\z","",stream_get_contents($this->env["rack.input"]));
 				
-				//$this->env["rack.request.form_vars"] = $form_vars;
+				$this->env["rack.request.form_vars"] = $form_vars;
 				//$this->env["rack.request.form_hash"] = $this->parse_query($form_vars);
 				$this->env["rack.request.form_hash"] = $_POST;
 			}
@@ -151,8 +165,7 @@ class Request
 	
 	private function parse_multipart($env)
 	{
-		return null;
-		//TODO: \Rackem\Multipart
+		return $_FILES;
 	}
 	
 }

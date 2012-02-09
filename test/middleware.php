@@ -22,8 +22,12 @@ class Goodbye
 		$request->post();
 		
 		$response = new \Rackem\Response($this->app->call($env));
-		$response->body[] = print_r($request->params(),true);
 		$response->body[] = print_r($env,true);
+		$response->body[] = print_r($request->base_url(),true);
+		$response->body[] = "\n";
+		$response->body[] = print_r($request->url(),true);
+		$response->body[] = "\n";
+		$response->body[] = print_r($request->media_type(),true);
 		foreach($response->body as &$part) $part = str_replace("Hello","Goodbye",$part);
 		return $response->finish();
 	}
