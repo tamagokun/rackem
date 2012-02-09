@@ -19,11 +19,11 @@ class Rack
 			"rack.version" => static::version(),
 			"rack.url_scheme" => (@$_SERVER['HTTPS'] ? 'https' : 'http'),
 			"rack.input" => fopen('php://input', 'r'),
-			"rack.errors" => STDERR,
+			"rack.errors" => fopen('php://stderr', 'w'),
 			"rack.multithread" => false,
 			"rack.multiprocess" => false,
 			"rack.run_once" => false,
-			"rack.session" => $_SESSION,
+			"rack.session" => &$_SESSION,
 			"rack.logger" => ""
 		));
 		return new Environment($env);
@@ -45,6 +45,7 @@ class Rack
 	{
 		list($status, $headers, $body) = $result;
 		fclose($env['rack.input']);
+		fclose($env['rack.errors']);
 		$headers['X-Powered-By'] = "Rack'em ".implode(".",$env['rack.version']);
 		$headers['Status'] = $status;
 		foreach($headers as $key=>$value) header("$key: $value");
