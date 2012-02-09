@@ -136,7 +136,7 @@ class Request
 		if(is_null($this->env["rack.input"])) return array();
 		if($this->env["rack.request.form_input"] == $this->env["rack.input"])
 			return $this->env["rack.request.form_hash"];
-		if($this->form_data() || $this->parseable_form_data())
+		if($this->form_data() || $this->parseable_data())
 		{
 			$this->env["rack.request.form_input"] = $this->env["rack.input"];
 			if(! $this->env["rack.request.form_hash"] = $this->parse_multipart($this->env))
