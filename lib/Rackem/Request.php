@@ -3,16 +3,16 @@ namespace Rackem;
 
 class Request
 {
-	const FORM_DATA_MEDIA_TYPES = array(
+	public $env;
+	
+	protected $form_data_media_types = array(
 		'application/x-www-form-urlencoded',
 		'multipart/form-data'
 	);
-	const PARSEABLE_DATA_MEDIA_TYPES = array(
+	protected $parseable_data_media_types = array(
 		'multipart/related',
 		'multipart/mixed'
 	);
-	
-	public $env;
 	
 	public function __construct($env = array())
 	{
@@ -85,7 +85,7 @@ class Request
 	
 	public function parseable_data()
 	{
-		return in_array($this->media_type(), Request::PARSEABLE_DATA_MEDIA_TYPES);
+		return in_array($this->media_type(), $this->parseable_data_media_types);
 	}
 	
 	public function path()
