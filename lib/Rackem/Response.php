@@ -25,7 +25,7 @@ class Response
 			unset($this->header["Content-Length"]);
 		}else
 		{
-			foreach($this->body as $part) $this->header["Content-Length"] += strlen($part);
+			$this->header["Content-Length"] = strlen(implode("",$this->body));
 		}
 		return array($this->status, $this->header, $this->body);
 	}

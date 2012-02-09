@@ -44,7 +44,7 @@ class Request
 	
 	public function fullpath()
 	{
-		return (empty($this->query_string()))? $this->path() : "{$this->path()}?{$this->query_string()}";
+		return ($this->query_string())? $this->path() : "{$this->path()}?{$this->query_string()}";
 	}
 	
 	public function get()
@@ -68,7 +68,7 @@ class Request
 		return array_map(function($p) use (&$params) {
 			list($k,$v) = split("=",$p,2);
 			$params[strtolower($k)] = $v;
-		}, array_slice(split("/\s*[;,]\s*/",$this->content_type()),1);
+		}, array_slice(split("/\s*[;,]\s*/",$this->content_type()),1));
 		return $params;
 	}
 	
