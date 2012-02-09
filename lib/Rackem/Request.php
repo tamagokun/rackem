@@ -49,7 +49,8 @@ class Request
 	
 	public function fullpath()
 	{
-		return ($this->query_string())? $this->path() : "{$this->path()}?{$this->query_string()}";
+		$query_string = $this->query_string();
+		return empty($query_string)? $this->path() : "{$this->path()}?{$this->query_string()}";
 	}
 	
 	public function get()

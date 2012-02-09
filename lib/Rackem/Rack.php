@@ -8,7 +8,8 @@ class Rack
 	protected static function build_env()
 	{
 		$request_uri = isset($_SERVER['REQUEST_URI'])? $_SERVER['REQUEST_URI'] : $_SERVER['PHP_SELF'];
-		$request_uri = substr($request_uri,0,strpos($request_uri,"?"));
+		if($qs = strpos($request_uri,"?") > -1)
+			$request_uri = substr($request_uri,0,$qs);
 		$env = array_merge(static::default_env(),array(
 			"REQUEST_METHOD" => $_SERVER['REQUEST_METHOD'],
 			"SCRIPT_NAME" => basename($request_uri),
