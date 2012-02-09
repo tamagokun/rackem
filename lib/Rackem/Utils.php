@@ -3,7 +3,7 @@ namespace Rackem;
 
 class Utils
 {
-	const DEFAULT_SEP = "/[&;] */n";
+	const DEFAULT_SEP = "[&;] *";
 	
 	public static function parse_nested_query($qs, $d=null)
 	{
@@ -11,7 +11,7 @@ class Utils
 		array_map(function($p) use (&$params) {
 			list($k,$v) = split("=",$p,2);
 			$params[$k] = $v;
-		},split((!is_null($d))? "/[$d] */n" : self::DEFAULT_SEP,$qs));
+		},split((!is_null($d))? "[$d] *" : self::DEFAULT_SEP,$qs));
 		return $params;
 	}
 	
@@ -26,7 +26,7 @@ class Utils
 				$params[$k][] = $v;
 			}else
 				$params[$k] = $v;
-		}, split(($d)? "/[$d] */n" : self::DEFAULT_SEP,$qs));
+		}, split(($d)? "[$d] *" : self::DEFAULT_SEP,$qs));
 		return $params;
 	}
 }

@@ -17,14 +17,15 @@ class Goodbye
 	
 	public function call($env)
 	{
-		list($status, $headers, $body) = $this->app->call($env);
-		$req = new \Rackem\Request($env);
-		$req->get();
-		$body[] = $req->media_type();
-		$body[] = print_r($env,true);
-		$res = new \Rackem\Response($body,$status,$headers);
-		foreach($res->body as &$part) $part = str_replace("Hello","Goodbye",$part);
-		return $res->finish();
+		$request = new \Rackem\Request($env);
+		$request->get();
+		$request->post();
+		
+		$response = new \Rackem\Response($this->app->call($env));
+		$response->body[] = print_r($request->params(),true);
+		$response->body[] = print_r($env,true);
+		foreach($response->body as &$part) $part = str_replace("Hello","Goodbye",$part);
+		return $response->finish();
 	}
 }
 

@@ -7,6 +7,8 @@ class Response
 	
 	public function __construct($body=array(), $status=200, $header=array())
 	{
+		if(func_num_args() == 1 && is_array(func_get_arg(0)))
+			list($status, $header, $body) = func_get_arg(0);
 		$this->status = $status;
 		$this->header = array_merge(array("Content-Type"=>"text/html"),$header);
 		
