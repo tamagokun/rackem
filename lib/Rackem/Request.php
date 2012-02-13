@@ -122,8 +122,11 @@ class Request
 	
 	public function path()
 	{
-		//TODO: What the hell is SCRIPT_NAME ?
-		//return $this->env["SCRIPT_NAME"] . $this->env["PATH_INFO"];
+		return $this->env["SCRIPT_NAME"] . $this->path_info();
+	}
+	
+	public function path_info()
+	{
 		return $this->env["PATH_INFO"];
 	}
 	

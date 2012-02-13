@@ -7,13 +7,14 @@ class Rack
 	
 	protected static function build_env()
 	{
+		$script_name = str_replace($_SERVER["DOCUMENT_ROOT"],"",$_SERVER["SCRIPT_FILENAME"]);
 		$request_uri = isset($_SERVER['REQUEST_URI'])? $_SERVER['REQUEST_URI'] : $_SERVER['PHP_SELF'];
 		if($qs = strpos($request_uri,"?") > -1)
 			$request_uri = substr($request_uri,0,$qs);
 		$env = array_merge(static::default_env(),array(
 			"REQUEST_METHOD" => $_SERVER['REQUEST_METHOD'],
-			"SCRIPT_NAME" => basename($request_uri),
-			"PATH_INFO" => $request_uri,
+			"SCRIPT_NAME" => $script_name,
+			"PATH_INFO" => "/".ltrim(str_replace($script_name,"",$request_uri),"/"),
 			"SERVER_NAME" => $_SERVER['SERVER_NAME'],
 			"SERVER_PORT" => $_SERVER['SERVER_PORT'],
 			"rack.version" => static::version(),
