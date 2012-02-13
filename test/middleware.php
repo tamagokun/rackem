@@ -23,7 +23,7 @@ class Goodbye
 		
 		$response = new \Rackem\Response($this->app->call($env));
 		$response->body[] = print_r($env,true);
-		$response->body[] = print_r($request->base_url(),true);
+		$response->body[] = print_r($request->params(),true);
 		$response->body[] = "\n";
 		$response->body[] = print_r($request->url(),true);
 		$response->body[] = "\n";

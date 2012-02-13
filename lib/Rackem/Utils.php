@@ -8,6 +8,7 @@ class Utils
 	public static function parse_nested_query($qs, $d=null)
 	{
 		$params = array();
+		if(empty($qs)) return $params;
 		array_map(function($p) use (&$params) {
 			list($k,$v) = split("=",$p,2);
 			$params[$k] = $v;

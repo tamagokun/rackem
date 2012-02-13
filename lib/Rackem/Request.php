@@ -55,7 +55,7 @@ class Request
 	
 	public function get()
 	{
-		if($this->env["rack.request.query_string"] == $this->query_string())
+		if(isset($this->env["rack.request.query_string"]) && $this->env["rack.request.query_string"] == $this->query_string())
 			return $this->env["rack.request.query_hash"];
 		$this->env["rack.request.query_string"] = $this->query_string();
 		$this->env["rack.request.query_hash"] = $this->parse_query($this->query_string());
