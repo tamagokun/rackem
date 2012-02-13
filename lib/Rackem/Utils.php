@@ -10,9 +10,9 @@ class Utils
 		$params = array();
 		if(empty($qs)) return $params;
 		array_map(function($p) use (&$params) {
-			list($k,$v) = split("=",$p,2);
+			list($k,$v) = explode("=",$p,2);
 			$params[$k] = $v;
-		},split((!is_null($d))? "[$d] *" : self::DEFAULT_SEP,$qs));
+		},explode((!is_null($d))? "[$d] *" : self::DEFAULT_SEP,$qs));
 		return $params;
 	}
 	
@@ -20,14 +20,14 @@ class Utils
 	{
 		$params = array();
 		array_map(function($p) use(&$params) {
-			list($k,$v) = split("=",$p,2);
+			list($k,$v) = explode("=",$p,2);
 			if(isset($params[$k]))
 			{
 				if(!is_array($params[$k])) $params[$k] = array($params[$k]);
 				$params[$k][] = $v;
 			}else
 				$params[$k] = $v;
-		}, split(($d)? "[$d] *" : self::DEFAULT_SEP,$qs));
+		}, explode(($d)? "[$d] *" : self::DEFAULT_SEP,$qs));
 		return $params;
 	}
 }
