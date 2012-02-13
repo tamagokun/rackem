@@ -14,7 +14,7 @@ class Rack
 		$env = array_merge(static::default_env(),array(
 			"REQUEST_METHOD" => $_SERVER['REQUEST_METHOD'],
 			"SCRIPT_NAME" => $script_name,
-			"PATH_INFO" => "/".ltrim(str_replace($script_name,"",$request_uri),"/"),
+			"PATH_INFO" => str_replace($script_name,"",$request_uri),
 			"SERVER_NAME" => $_SERVER['SERVER_NAME'],
 			"SERVER_PORT" => $_SERVER['SERVER_PORT'],
 			"rack.version" => static::version(),
