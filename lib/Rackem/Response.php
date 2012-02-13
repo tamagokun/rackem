@@ -13,7 +13,7 @@ class Response
 		$this->header = array_merge(array("Content-Type"=>"text/html"),$header);
 		
 		$this->body = array();
-		if(is_string($body)) 
+		if(is_string($body))
 			$this->write($body);
 		else
 			foreach($body as $part) $this->write($part);
