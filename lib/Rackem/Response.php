@@ -25,6 +25,7 @@ class Response
 		{
 			unset($this->header["Content-Type"]);
 			unset($this->header["Content-Length"]);
+			return array($this->statis, $this->header, array());
 		}else
 		{
 			$this->header["Content-Length"] = strlen(implode("",$this->body));
