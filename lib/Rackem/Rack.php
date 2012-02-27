@@ -7,7 +7,8 @@ class Rack
 	
 	protected static function build_env()
 	{
-		$script_name = str_replace($_SERVER["DOCUMENT_ROOT"],"",$_SERVER["SCRIPT_FILENAME"]);
+		$script_name = isset($_SERVER['DOCUMENT_ROOT']) ? str_replace($_SERVER["DOCUMENT_ROOT"],"",$_SERVER["SCRIPT_FILENAME"])
+			: $_SERVER['SCRIPT_FILENAME'];
 		$request_uri = isset($_SERVER['REQUEST_URI'])? $_SERVER['REQUEST_URI'] : $_SERVER['PHP_SELF'];
 		if($qs = strpos($request_uri,"?") > -1)
 			$request_uri = substr($request_uri,0,$qs);
