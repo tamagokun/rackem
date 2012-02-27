@@ -3,7 +3,7 @@
 	->name('rackem')
 	->authors('Mike Kruk <tamagokun@gmail.com>', 'Blake Tereau <fewkeep@gmail.com>')
 	->homepage('http://git.ripeworks.com/rackem')
-	->version('0.0.2')
+	->version('0.0.3')
 	->phpVersion('>=5.3.1')
 	->summary('Rack implementation for PHP')
 	->description('Rack is tiny web interface framework for making awesome web applications.')
