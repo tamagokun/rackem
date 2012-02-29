@@ -39,8 +39,23 @@ class Response
 		$this->header["Location"] = $target;
 	}
 	
+	public function send($args)
+	{
+		foreach(func_get_args() as $arg)
+		{
+			if(is_int($arg)) $this->status = $arg;
+			elseif(is_array($arg) && array_keys($arg) !== array_keys(array_keys($arg)))
+				$this->header = array_merge($this->header,$arg);
+			elseif(is_array($arg) || is_string($arg)) $this->write($arg);
+		}
+	}
+	
 	public function write($value)
 	{
+		if(is_array($value)){
+			foreach($value as $piece) $this->write($piece);
+			return;
+		}
 		$this->body[] = $value;
 	}
 }
