@@ -9,10 +9,7 @@ class App
 	}
 }
 
-$app = new App();
-$auth = new \Rackem\Auth\Basic($app,function($username, $password) {
+\Rackem\Rack::use_middleware("\Rackem\Auth\Basic",function($username,$password) {
 	return $password == "poop";
 });
-
-\Rackem\Rack::use_middleware($auth);
-\Rackem\Rack::run($app);
+\Rackem\Rack::run("App");

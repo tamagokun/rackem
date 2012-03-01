@@ -33,7 +33,7 @@ class Basic
 
 	private function realm()
 	{
-		return isset($this->realm)? " realm={$this->realm}" : "":
+		return isset($this->realm)? " realm={$this->realm}" : "";
 	}
 
 	private function bad_request()
