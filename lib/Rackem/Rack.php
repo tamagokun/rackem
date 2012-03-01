@@ -79,7 +79,7 @@ class Rack
 	public static function use_middleware($middleware,$options = array())
 	{
 		self::$middleware[] = function($app) use ($middleware, $options) {
-			return new $middleware($app, $options);
+			return is_object($middleware)? $middleware : new $middleware($app, $options);
 		};
 	}
 	
