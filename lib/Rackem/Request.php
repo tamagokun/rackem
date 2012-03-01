@@ -160,6 +160,11 @@ class Request
 	{
 		return $this->env["QUERY_STRING"];
 	}
+
+	public function referer()
+	{
+		return $this->env["HTTP_REFERER"];
+	}
 	
 	public function request_method()
 	{
