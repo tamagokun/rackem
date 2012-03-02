@@ -26,7 +26,7 @@ class Rack
 			"rack.session" => &$_SESSION,
 			"rack.logger" => ""
 		));
-		return new Environment($env);
+		return new \ArrayObject($env);
 	}
 	
 	protected static function build_app($app)
