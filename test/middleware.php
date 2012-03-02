@@ -21,6 +21,8 @@ class Goodbye
 		$request->get();
 		$request->post();
 		
+		$env['rack.logger']->info("DUDE!!!!!!!!!!!");
+		
 		$response = new \Rackem\Response($this->app->call($env));
 		$response->body[] = print_r($env,true);
 		$response->body[] = print_r($request->params(),true);
@@ -41,6 +43,7 @@ class App
 	}
 }
 
+\Rackem\Rack::use_middleware("\Rackem\RackLogger");
 \Rackem\Rack::use_middleware("ToJson");
 \Rackem\Rack::use_middleware("Goodbye");
 \Rackem\Rack::run("App");

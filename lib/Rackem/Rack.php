@@ -46,6 +46,7 @@ class Rack
 		list($status, $headers, $body) = $result;
 		fclose($env['rack.input']);
 		fclose($env['rack.errors']);
+		if($env['rack.logger']) $env['rack.logger']->close();
 		$headers['X-Powered-By'] = "Rack'em ".implode(".",$env['rack.version']);
 		$headers['Status'] = $status;
 		header($env['SERVER_PROTOCOL']." ".$status);
@@ -57,8 +58,6 @@ class Rack
 	protected static function middleware($app, $env)
 	{
 		self::$middleware = array_reverse(self::$middleware);
-		self::use_middleware('Rackem\Exceptions');
-		
 		if(!empty(self::$middleware))
 			foreach(self::$middleware as $ware) $app = $ware($app);
 		return $app->call($env);
