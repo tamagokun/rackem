@@ -41,7 +41,8 @@ class Response
 	
 	public function send($args)
 	{
-		foreach(func_get_args() as $arg)
+		$args = (is_array($args))? $args : func_get_args();
+		foreach($args as $arg)
 		{
 			if(is_int($arg)) $this->status = $arg;
 			elseif(is_array($arg) && array_keys($arg) !== array_keys(array_keys($arg)))

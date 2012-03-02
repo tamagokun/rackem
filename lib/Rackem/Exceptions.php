@@ -20,7 +20,7 @@ class Exceptions
 		}
 	}
 	
-	private function handle_exception($env,$exception)
+	protected function handle_exception($env,$exception)
 	{
 		fwrite($env['rack.errors'], $exception->__toString());
 		return array($exception->__toString());
