@@ -138,7 +138,7 @@ class Request
 	public function post()
 	{
 		if(is_null($this->env["rack.input"])) return array();
-		if($this->env["rack.request.form_input"] == $this->env["rack.input"])
+		if(isset($this->env["rack.request.form_input"]) && $this->env["rack.request.form_input"] == $this->env["rack.input"])
 			return $this->env["rack.request.form_hash"];
 		if($this->form_data() || $this->parseable_data())
 		{
