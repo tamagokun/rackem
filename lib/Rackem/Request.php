@@ -84,8 +84,13 @@ class Request
 	public function is_trace() { return $this->request_method() == "TRACE"; }
 	
 	public function is_xhr() 
-	{ 
+	{
 		return isset($this->env["HTTP_X_REQUESTED_WITH"]) && $this->env["HTTP_X_REQUESTED_WITH"] == "XMLHttpRequest";
+	}
+
+	public function logger()
+	{
+		return $this->env['rack.logger'];
 	}
 	
 	public function media_type()
