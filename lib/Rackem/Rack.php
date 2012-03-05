@@ -8,7 +8,7 @@ class Rack
 	protected static function build_env()
 	{
 		$request_uri = $_SERVER['PHP_SELF'];
-		$script_name = isset($_SERVER['PATH_INFO'])? str_replace($_SERVER['PATH_INFO'],"",$request_uri) 
+		$script_name = isset($_SERVER['PATH_INFO'])? substr($request_uri,0,strrpos($request_uri,$_SERVER['PATH_INFO'])) 
 			: $request_uri;
 		$env = array_merge(static::default_env(),array(
 			"REQUEST_METHOD" => $_SERVER['REQUEST_METHOD'],
