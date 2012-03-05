@@ -39,11 +39,14 @@ class App
 {
 	public function call($env)
 	{
-		return array(200, array("Content-Type" => "text/plain"), array("Hello World!"));
+		$file = new \Rackem\File("/Users/mkruk/Sites/php/router/example/uploads");
+		//$file->path = "bootstrap-popover.js";
+		return $file->call($env);
+		//return array(200, array("Content-Type" => "text/plain"), array("Hello World!"));
 	}
 }
 
-\Rackem\Rack::use_middleware("\Rackem\RackLogger");
-\Rackem\Rack::use_middleware("ToJson");
-\Rackem\Rack::use_middleware("Goodbye");
+//\Rackem\Rack::use_middleware("\Rackem\RackLogger");
+//\Rackem\Rack::use_middleware("ToJson");
+//\Rackem\Rack::use_middleware("Goodbye");
 \Rackem\Rack::run("App");
