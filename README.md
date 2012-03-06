@@ -4,10 +4,10 @@
 
 Any object that has a callable method `call()` can be considered a Rack application. Rack expects call to return an HTTP response array containing: status code, headers, and body.
 
-Here is an example of a basic Rack application:
+Here is an example of a basic Rackem application:
 
     <?php
-    require "autoload.php";
+    require "rackem.php";
     
     class App
     {
@@ -56,10 +56,21 @@ Here is an example of a Middleware class that just passes the response on:
     \Rackem\Rack::use_middleware("MyMiddleware");
     \Rackem\Rack::run( new App() );
 
-## TODO
+## What it has
+
+ - run apps using `\Rackem\Rack::run("MyApp")`
+ - stack some middleware on it `\Rackem\Rack::use_middleware("MyMiddleware");`
+ - Request and Response objects for all sorts of awesome.
+ - Rack compatible logger for logging to streams (STDERR, files, etc)
+ - RubyRack class + config.ru for serving Rackem apps via Ruby web servers!! [Thanks to creationix](https://github.com/creationix/rack-php)
+ - Mime class for file type detection
+ - Exceptions middleware for handling exceptions
+ - File middleware for serving files
+ - Basic authentication middleware
+
+## What it needs
 
 The Request and Response utils are pretty much done, there may be a few things aren't working though.
 
-I think the only major part that still needs some doing is implementing [BasicAuth](https://github.com/rack/rack/blob/master/lib/rack/auth/basic.rb).
-
-
+ - Session handling
+ - Any extra core middlewares
