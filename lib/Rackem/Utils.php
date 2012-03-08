@@ -31,6 +31,30 @@ class Utils
 		return $params;
 	}
 
+	public static function set_cookie_header($header,$key,$value)
+	{
+		if(isset($value["domain"])) $domain = "; domain={$value["domain"]}";
+		if(isset($value["path"])) $path = "; path={$value["path"]}";
+		if(isset($value["expires"]))
+			$expires = "; expires=";
+		if(isset($value["secure"])) $secure = "; secure";
+		if(isset($value["httponly"])) $httponly = "; HttpOnly";
+		$value = $value["value"];
+		$value = is_array($value)? $value : array($value);
+		$cookie = "$key={implode("&",$value)}{$domain}{$path}{$expires}{$secure}{$httponly}";
+		if(isset($header["Set-Cookie"]))
+		{
+			$header["Set-Cookie"] = is_array($header["Set-Cookie"])? implode("\n",$header["Set-Cookie"] + array($cookie))
+				: implode("\n",array($header["Set-Cookie"],$cookie));
+		}else $header["Set-Cookie"] = $cookie;
+		return $header;
+	}
+
+	public static function delete_cookie_header($header,$key,$value = array())
+	{
+		
+	}
+
 	public static function byte_ranges($env, $size)
 	{
 		if(isset($env['HTTP_RANGE'])) $http_range = $env['HTTP_RANGE'];
@@ -63,5 +87,24 @@ class Utils
 			}
 		}
 		return $ranges;
+	}
+
+	public static function random_hex($n)
+	{
+		return array_shift(unpack("H*",self::random_bytes($n)));
+	}
+
+	public static function random_bytes($n=16)
+	{
+		if(function_exists("openssl_random_pseudo_bytes")) return openssl_random_pseudo_bytes($n);
+		if(file_exists("/dev/urandom"))
+		{
+			$handle = fopen("/dev/urandom","r");
+			$rand = fread($handle,$n);
+			fclose($handle);
+			if($rand !== false) return $rand;
+		}
+		//TODO: implement Windows method
+		throw new \Exception("No random device");
 	}
 }

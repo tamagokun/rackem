@@ -21,12 +21,14 @@ abstract class Id
 	);
 
 	public $app,$default_options,$key;
+	protected $sid_length;
 
 	public function __construct($app, $options = array())
 	{
 		$this->app = $app;
 		$this->default_options = array_merge(Id::$default_options,$options);
 		$this->key = isset($options["key"])? $options["key"] : "rack.session";
+		$this->sid_length = $this->default_options("sidbits") / 4;
 	}
 
 	public function call($env)
@@ -42,12 +44,9 @@ abstract class Id
 		return $this->commit_session($env,$status,$headers,$body);
 	}
 
-	public function generate_sid($secure)
+	public function generate_sid()
 	{
-		if(!$secure) $secure = $this->default_options['secure_random'];
-		if($secure)
-			return "";
-		else return "";
+		return Utils::random_hex($this->sid_length);
 	}
 
 	public function prepare_session($env)
