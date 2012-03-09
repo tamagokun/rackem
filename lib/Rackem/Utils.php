@@ -33,15 +33,15 @@ class Utils
 
 	public static function set_cookie_header($header,$key,$value)
 	{
-		if(isset($value["domain"])) $domain = "; domain={$value["domain"]}";
-		if(isset($value["path"])) $path = "; path={$value["path"]}";
-		if(isset($value["expires"]))
-			$expires = "; expires=";
-		if(isset($value["secure"])) $secure = "; secure";
-		if(isset($value["httponly"])) $httponly = "; HttpOnly";
+		$parts = array();
+		if(isset($value["domain"])) $parts[] = "; domain={$value["domain"]}";
+		if(isset($value["path"])) $parts[] = "; path={$value["path"]}";
+		if(isset($value["expires"])) $parts[] = "; expires=";
+		if(isset($value["secure"])) $parts[] = "; secure";
+		if(isset($value["httponly"])) $parts[] = "; HttpOnly";
 		$value = $value["value"];
 		$value = is_array($value)? $value : array($value);
-		$cookie = "$key={implode("&",$value)}{$domain}{$path}{$expires}{$secure}{$httponly}";
+		$cookie = "$key={implode("&",$value)}{implode('',$parts)}";
 		if(isset($header["Set-Cookie"]))
 		{
 			$header["Set-Cookie"] = is_array($header["Set-Cookie"])? implode("\n",$header["Set-Cookie"] + array($cookie))
@@ -52,7 +52,20 @@ class Utils
 
 	public static function delete_cookie_header($header,$key,$value = array())
 	{
-		
+		$cookies = array();
+		if(isset($header["Set-Cookie"]))
+			$cookies = is_array($header["Set-Cookie"])? $header["Set-Cookie"] : explode("\n",$header["Set-Cookie"]);
+		foreach($cookies as $key=>$cookie)
+		{
+			if(isset($value["domain"]))
+				if(preg_match_all('/\A{$key}=.*domain={$value["domain"]}/',$cookie) > 0) unset($cookies[$key]);
+			else
+				if(preg_match_all('/\A{$key}=/',$cookie) > 0) unset($cookies[$key]);
+		}
+		$header["Set-Cookie"] = implode("\n",$cookies);
+		self::set_cookie_header($header,$key,array_merge($value,array(
+			"value"=>"","path"=>null,"domain"=>null,"expires"=>time(0))));
+		return null;
 	}
 
 	public static function byte_ranges($env, $size)

@@ -1,18 +1,21 @@
 <?php
-namespace Rackem;
+namespace Rackem\Session;
+
+use \Rackem\Utils;
 
 abstract class Id
 {
 	const ENV_SESSION_KEY = "rack.session";
 	const ENV_SESSION_OPTIONS_KEY = "rack.session.options";
 
-	public static $default_options = array(
+	public static $options = array(
 		"key" 			=> "rack.session",
 		"path"			=> "/",
 		"domain"		=> null,
 		"expire_after"	=> null,
 		"secure"		=> false,
 		"httponly"		=> true,
+		"drop"			=> false,
 		"defer"			=> false,
 		"renew"			=> false,
 		"sidbits"		=> 128,
@@ -26,9 +29,9 @@ abstract class Id
 	public function __construct($app, $options = array())
 	{
 		$this->app = $app;
-		$this->default_options = array_merge(Id::$default_options,$options);
+		$this->default_options = array_merge(Id::$options,$options);
 		$this->key = isset($options["key"])? $options["key"] : "rack.session";
-		$this->sid_length = $this->default_options("sidbits") / 4;
+		$this->sid_length = $this->default_options["sidbits"] / 4;
 	}
 
 	public function call($env)
@@ -38,7 +41,7 @@ abstract class Id
 
 	public function context($env,$app=null)
 	{
-		if(is_null($app)) $app = $this;
+		if(is_null($app)) $app = $this->app;
 		$this->prepare_session($env);
 		list($status,$headers,$body) = $app->call($env);
 		return $this->commit_session($env,$status,$headers,$body);
@@ -68,7 +71,7 @@ abstract class Id
 	public function extract_session_id($env)
 	{
 		$request = new Request($env);
-		$sid = $request->cookies[$this->key];
+		$sid = $request->cookies($this->key);
 		if(!$this->cookie_only && isset($request->params->{$this->key}))
 			$sid = $request->params->{$this->key};
 		return $sid;
@@ -102,9 +105,9 @@ abstract class Id
 			fwrite($env['rack.errors'],"Defering cookie for $id");
 		else
 		{
-			$expiration = $options["expires_after"]? time() + $options["expires_after"] : null;
-			$cookie = array("value" => $data,"expires" => $expiration;);
-			$this->set_cookie($env,$headers,array_merge($options,$cookie));
+			$expiration = isset($options["expires_after"])? time() + $options["expires_after"] : null;
+			$cookie = array("value" => $data,"expires" => $expiration);
+			$headers = $this->set_cookie($env,$headers,array_merge($options,$cookie));
 		}
 		return array($status,$headers,$body);
 	}
@@ -112,7 +115,8 @@ abstract class Id
 	public function set_cookie($env,$headers,$cookie)
 	{
 		$request = new Request($env);
-		if($request->cookies[$this->key] !== $cookie["value"] || $cookie["expires"])
-			Utils::set_cookie_header($headers,$this->key,$cookie);
+		if($request->cookies($this->key) !== $cookie["value"] || $cookie["expires"])
+			return Utils::set_cookie_header($headers,$this->key,$cookie);
+		return $headers;
 	}
 }

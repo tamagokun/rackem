@@ -1,5 +1,7 @@
 <?php
-namespace Rackem;
+namespace Rackem\Session;
+
+use \Rackem\Utils;
 
 class Cookie extends Id
 {
@@ -28,14 +30,14 @@ class Cookie extends Id
 	public function unpacked_cookie_data($env)
 	{
 		$request = new Request($env);
-		$session_data = $request->cookies[$this->key];
+		$session_data = $request->cookies($this->key);
 
 		if($this->secret && $session_data)
 		{
 			list($session_data,$digest) = explode("--",$session_data,2);
 			if($digest !== generate_hmac($session_data)) $session_data = null;
 		}
-		$env["rack.session.unpacked_cookie_data"] = $this->coder->decode($session_data);
+		$env["rack.session.unpacked_cookie_data"] = base64_decode($session_data);
 		return $env["rack.session.unpacked_cookie_data"];
 	}
 
@@ -45,17 +47,17 @@ class Cookie extends Id
 		return $data;
 	}
 
-	public function set_cookie($env, $headers, $cookie)
+	public function set_cookie($env, $header, $cookie)
 	{
-		Utils::set_cookie_header($header, $this->key, $cookie);
+		return Utils::set_cookie_header($header, $this->key, $cookie);
 	}
 
 	public function set_session($env, $session_id, $session, $options)
 	{
 		$session = array_merge($session,array("session_id"=>$session_id));
-		$session_data = $this->coder->encode($session);
+		$session_data = base64_encode(implode("",$session));
 
-		if($secret)
+		if($this->secret)
 			$session_data = "$session_data--{$this->generate_hmac($session_data)}";
 		if(strlen($session_data) > (4096 - strlen($this->key)))
 		{
