@@ -11,7 +11,6 @@ session_start();
 
 $app = function($env) {
 	$env['rack.session']["name"] = "Mike";
-
 	return array(200,array(),array("<pre>",print_r($env,true)));
 };
 

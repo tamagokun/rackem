@@ -1,7 +1,7 @@
 <?php
 namespace Rackem\Session;
 
-use \Rackem\Utils;
+use \Rackem\Utils,\Rackem\Request;
 
 abstract class Id
 {
@@ -99,12 +99,18 @@ abstract class Id
 			$session_id = $this->destroy_session($env,$id,$options);
 			if(!$session_id) return array($status,$headers,$body);
 		}
+
+		$env[self::ENV_SESSION_OPTIONS_KEY]["id"] = $id;
+		list($session_id,$session_data) = $this->load_session($env);
+		$session = array_merge($session,$session_data);
+
 		if(!$data = $this->set_session($env,$id,$session,$options))
 			fwrite($env['rack.errors'],"Warning! Failed to save session. Content dropped.");
 		elseif($options["defer"] && !$options["renew"])
 			fwrite($env['rack.errors'],"Defering cookie for $id");
 		else
 		{
+			error_log($id);
 			$expiration = isset($options["expires_after"])? time() + $options["expires_after"] : null;
 			$cookie = array("value" => $data,"expires" => $expiration);
 			$headers = $this->set_cookie($env,$headers,array_merge($options,$cookie));

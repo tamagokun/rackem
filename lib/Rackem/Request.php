@@ -45,7 +45,7 @@ class Request
 	public function cookies($key=null)
 	{
 		if(!isset($this->env["HTTP_COOKIE"])) return array();
-		if($this->env["rack.request.cookie_string"] == $this->env["HTTP_COOKIE"])
+		if(isset($this->env["rack.request.cookie_string"]) && $this->env["rack.request.cookie_string"] == $this->env["HTTP_COOKIE"])
 			return is_null($key)? $this->env["rack.request.cookie_hash"] : $this->env["rack.request.cookie_hash"][$key];
 		else
 		{
@@ -56,7 +56,7 @@ class Request
 				$new = is_array($v)? array_shift($v) : $v;
 				$v = array($k,$new);
 			}
-			$this->env["rack.request.cookie_hash"] = new \RecursiveIteratorIterator(new \RecursiveArrayIterator($hash));
+			$this->env["rack.request.cookie_hash"] = (array)new \RecursiveIteratorIterator(new \RecursiveArrayIterator($hash));
 		}
 		return is_null($key)? $this->env["rack.request.cookie_hash"] : $this->env["rack.request.cookie_hash"][$key];
 	}

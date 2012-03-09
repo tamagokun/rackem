@@ -1,7 +1,7 @@
 <?php
 namespace Rackem\Session;
 
-use \Rackem\Utils;
+use \Rackem\Utils,\Rackem\Request;
 
 class Cookie extends Id
 {
