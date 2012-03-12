@@ -56,7 +56,6 @@ class Cookie extends Id
 	{
 		$session = array_merge($session,array("session_id"=>$session_id));
 		$session_data = base64_encode(implode("",$session));
-
 		if($this->secret)
 			$session_data = "$session_data--{$this->generate_hmac($session_data)}";
 		if(strlen($session_data) > (4096 - strlen($this->key)))

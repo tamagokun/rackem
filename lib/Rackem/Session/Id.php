@@ -54,7 +54,7 @@ abstract class Id
 
 	public function prepare_session($env)
 	{
-		$session_was = isset($env[self::ENV_SESSION_KEY])? $env[self::ENV_SESSION_KEY] : null;
+		$session_was = isset($env[self::ENV_SESSION_KEY])? $env[self::ENV_SESSION_KEY] : array();
 		$env[self::ENV_SESSION_KEY] = array();
 		$env[self::ENV_SESSION_OPTIONS_KEY] = $this->default_options;
 		if($session_was)
@@ -101,8 +101,9 @@ abstract class Id
 		}
 
 		$env[self::ENV_SESSION_OPTIONS_KEY]["id"] = $id;
-		list($session_id,$session_data) = $this->load_session($env);
-		$session = array_merge($session,$session_data);
+		//list($session_id,$session_data) = $this->load_session($env);
+		//$session = array_merge($session,$session_data);
+		$env[self::ENV_SESSION_KEY]["session_id"] = $id;
 
 		if(!$data = $this->set_session($env,$id,$session,$options))
 			fwrite($env['rack.errors'],"Warning! Failed to save session. Content dropped.");
@@ -110,7 +111,6 @@ abstract class Id
 			fwrite($env['rack.errors'],"Defering cookie for $id");
 		else
 		{
-			error_log($id);
 			$expiration = isset($options["expires_after"])? time() + $options["expires_after"] : null;
 			$cookie = array("value" => $data,"expires" => $expiration);
 			$headers = $this->set_cookie($env,$headers,array_merge($options,$cookie));

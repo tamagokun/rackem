@@ -41,7 +41,7 @@ class Utils
 		if(isset($value["httponly"])) $parts[] = "; HttpOnly";
 		$value = $value["value"];
 		$value = is_array($value)? $value : array($value);
-		$cookie = "$key={implode("&",$value)}{implode('',$parts)}";
+		$cookie = $key."=".implode("&",$value).implode('',$parts);
 		if(isset($header["Set-Cookie"]))
 		{
 			$header["Set-Cookie"] = is_array($header["Set-Cookie"])? implode("\n",$header["Set-Cookie"] + array($cookie))
