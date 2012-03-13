@@ -20,7 +20,6 @@ class Utils
 	{
 		$params = array();
 		array_map(function($p) use(&$params) {
-			error_log("I has stuff ".$p);
 			list($k,$v) = explode("=",$p,2);
 			if(isset($params[$k]))
 			{
