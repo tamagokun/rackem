@@ -1,8 +1,6 @@
 <?php
 require __DIR__."/../autoload.php";
 
-session_start();
-
 \Rackem\Rack::use_middleware("\Rackem\Session\Cookie",array(
 	"path"=>"/",
 	"domain"=>"foo.com",
