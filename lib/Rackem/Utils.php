@@ -36,7 +36,11 @@ class Utils
 		$parts = array();
 		if(isset($value["domain"])) $parts[] = "; domain={$value["domain"]}";
 		if(isset($value["path"])) $parts[] = "; path={$value["path"]}";
-		if(isset($value["expires"])) $parts[] = "; expires=";
+		if(isset($value["expires"]))
+		{
+			$time = gmdate("D, d-M-Y H:i:s",$value["expires"])." GMT";
+			$parts[] = "; expires={$time}";
+		}
 		if(isset($value["secure"])) $parts[] = "; secure";
 		if(isset($value["httponly"])) $parts[] = "; HttpOnly";
 		$value = $value["value"];
