@@ -17,7 +17,6 @@ class Cookie extends Id
 	public function load_session($env)
 	{
 		$data = $this->unpacked_cookie_data($env);
-		$data = $this->persistent_session_id($data);
 		return array($data["session_id"], $data);
 	}
 
@@ -27,24 +26,21 @@ class Cookie extends Id
 		return $data["session_id"];
 	}
 
-	public function unpacked_cookie_data($env)
+	public function unpacked_cookie_data($env,$sid = null)
 	{
+		if(isset($env["rack.session.unpacked_cookie_data"]))
+			return $env["rack.session.unpacked_cookie_data"];
 		$request = new Request($env);
 		$session_data = $request->cookies($this->key);
-
+		$session_data = isset($session_data[$this->key])? $session_data[$this->key] : null;
 		if($this->secret && $session_data)
 		{
 			list($session_data,$digest) = explode("--",$session_data,2);
-			if($digest !== generate_hmac($session_data)) $session_data = null;
+			if($digest !== $this->generate_hmac($session_data)) $session_data = null;
 		}
 		$env["rack.session.unpacked_cookie_data"] = base64_decode($session_data);
+		$env["rack.session.unpacked_cookie_data"]["session_id"] = ($sid)? $sid : $this->generate_sid();
 		return $env["rack.session.unpacked_cookie_data"];
-	}
-
-	public function persistent_session_id($data, $sid=null)
-	{
-		$data["session_id"] = ($sid)? $sid : $this->generate_sid();
-		return $data;
 	}
 
 	public function set_cookie($env, $header, $cookie)

@@ -44,6 +44,8 @@ abstract class Id
 		if(is_null($app)) $app = $this->app;
 		$this->prepare_session($env);
 		list($status,$headers,$body) = $app->call($env);
+		//$result = $this->commit_session($env,$status,$headers,$body);
+		//$result[2] = array("<pre>",print_r($env,true));
 		return $this->commit_session($env,$status,$headers,$body);
 	}
 
@@ -93,25 +95,25 @@ abstract class Id
 		$session = $env['rack.session'];
 		$options = $env['rack.session.options'];
 
-		$id = isset($options["id"])? $options["id"] : $this->generate_sid();
 		if($options["drop"] || $options["renew"])
 		{
+			$id = isset($options["id"])? $options["id"] : $this->generate_sid();
 			$session_id = $this->destroy_session($env,$id,$options);
 			if(!$session_id) return array($status,$headers,$body);
 		}
 
-		$env[self::ENV_SESSION_OPTIONS_KEY]["id"] = $id;
-		//list($session_id,$session_data) = $this->load_session($env);
-		//$session = array_merge($session,$session_data);
-		$env[self::ENV_SESSION_KEY]["session_id"] = $id;
+		list($session_id,$session_data) = $this->load_session($env);
+		$env["rack.session.options"]["id"] = $session_id;
+		$session = array_merge($session,$session_data);
+		$env[self::ENV_SESSION_KEY]["session_id"] = $session_id;
 
-		if(!$data = $this->set_session($env,$id,$session,$options))
+		if(!$data = $this->set_session($env,$session_id,$session,$options))
 			fwrite($env['rack.errors'],"Warning! Failed to save session. Content dropped.");
 		elseif($options["defer"] && !$options["renew"])
 			fwrite($env['rack.errors'],"Defering cookie for $id");
 		else
 		{
-			$expiration = isset($options["expires_after"])? time() + $options["expires_after"] : null;
+			$expiration = isset($options["expire_after"])? time() + $options["expire_after"] : null;
 			$cookie = array("value" => $data,"expires" => $expiration);
 			$headers = $this->set_cookie($env,$headers,array_merge($options,$cookie));
 		}
