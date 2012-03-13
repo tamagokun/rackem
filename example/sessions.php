@@ -5,6 +5,7 @@ session_start();
 
 \Rackem\Rack::use_middleware("\Rackem\Session\Cookie",array(
 	"path"=>"/",
+	"domain"=>"foo.com",
 	"expire_after"=>2592000,
 	"secret"=>"some_secret_crap"
 ));
