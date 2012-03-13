@@ -67,10 +67,10 @@ Here is an example of a Middleware class that just passes the response on:
  - Exceptions middleware for handling exceptions
  - File middleware for serving files
  - Basic authentication middleware
+ - Session handling
 
 ## What it needs
 
 The Request and Response utils are pretty much done, there may be a few things aren't working though.
 
- - Session handling
  - Any extra core middlewares
