@@ -3,7 +3,7 @@ namespace Rackem;
 
 class Utils
 {
-	const DEFAULT_SEP = "[&;] *";
+	const DEFAULT_SEP = "/[&;] */";
 	
 	public static function parse_nested_query($qs, $d=null)
 	{
@@ -12,7 +12,7 @@ class Utils
 		array_map(function($p) use (&$params) {
 			list($k,$v) = explode("=",$p,2);
 			$params[$k] = $v;
-		},explode((!is_null($d))? "[$d] *" : self::DEFAULT_SEP,$qs));
+		},preg_split((!is_null($d))? "/[$d] */" : self::DEFAULT_SEP,$qs));
 		return $params;
 	}
 	
@@ -20,6 +20,7 @@ class Utils
 	{
 		$params = array();
 		array_map(function($p) use(&$params) {
+			error_log("I has stuff ".$p);
 			list($k,$v) = explode("=",$p,2);
 			if(isset($params[$k]))
 			{
@@ -27,8 +28,49 @@ class Utils
 				$params[$k][] = $v;
 			}else
 				$params[$k] = $v;
-		}, explode(($d)? "[$d] *" : self::DEFAULT_SEP,$qs));
+		},preg_split(!is_null($d)? "/[$d] */" : self::DEFAULT_SEP,$qs));
 		return $params;
+	}
+
+	public static function set_cookie_header($header,$key,$value)
+	{
+		$parts = array();
+		if(isset($value["domain"])) $parts[] = "; domain={$value["domain"]}";
+		if(isset($value["path"])) $parts[] = "; path={$value["path"]}";
+		if(isset($value["expires"]))
+		{
+			$time = gmdate("D, d-M-Y H:i:s",$value["expires"])." GMT";
+			$parts[] = "; expires={$time}";
+		}
+		if(isset($value["secure"])) $parts[] = "; secure";
+		if(isset($value["httponly"])) $parts[] = "; HttpOnly";
+		$value = $value["value"];
+		$value = is_array($value)? $value : array($value);
+		$cookie = $key."=".implode("&",$value).implode('',$parts);
+		if(isset($header["Set-Cookie"]))
+		{
+			$header["Set-Cookie"] = is_array($header["Set-Cookie"])? implode("\n",$header["Set-Cookie"] + array($cookie))
+				: implode("\n",array($header["Set-Cookie"],$cookie));
+		}else $header["Set-Cookie"] = $cookie;
+		return $header;
+	}
+
+	public static function delete_cookie_header($header,$key,$value = array())
+	{
+		$cookies = array();
+		if(isset($header["Set-Cookie"]))
+			$cookies = is_array($header["Set-Cookie"])? $header["Set-Cookie"] : explode("\n",$header["Set-Cookie"]);
+		foreach($cookies as $key=>$cookie)
+		{
+			if(isset($value["domain"]))
+				if(preg_match_all('/\A{$key}=.*domain={$value["domain"]}/',$cookie) > 0) unset($cookies[$key]);
+			else
+				if(preg_match_all('/\A{$key}=/',$cookie) > 0) unset($cookies[$key]);
+		}
+		$header["Set-Cookie"] = implode("\n",$cookies);
+		self::set_cookie_header($header,$key,array_merge($value,array(
+			"value"=>"","path"=>null,"domain"=>null,"expires"=>time(0))));
+		return null;
 	}
 
 	public static function byte_ranges($env, $size)
@@ -63,5 +105,24 @@ class Utils
 			}
 		}
 		return $ranges;
+	}
+
+	public static function random_hex($n)
+	{
+		return array_shift(unpack("H*",self::random_bytes($n)));
+	}
+
+	public static function random_bytes($n=16)
+	{
+		if(function_exists("openssl_random_pseudo_bytes")) return openssl_random_pseudo_bytes($n);
+		if(file_exists("/dev/urandom"))
+		{
+			$handle = fopen("/dev/urandom","r");
+			$rand = fread($handle,$n);
+			fclose($handle);
+			if($rand !== false) return $rand;
+		}
+		//TODO: implement Windows method
+		throw new \Exception("No random device");
 	}
 }

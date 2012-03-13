@@ -41,6 +41,21 @@ class Request
 	{
 		return (isset($this->env["CONTENT_TYPE"]))? $this->env["CONTENT_TYPE"] : null;
 	}
+
+	public function cookies($key=null)
+	{
+		$hash = isset($this->env["rack.request.cookie_hash"])? $this->env["rack.request.cookie_hash"] : array();
+		$string = isset($this->env["HTTP_COOKIE"])? $this->env["HTTP_COOKIE"] : "";
+		if(!$string) $hash = array();
+		if(isset($this->env["rack.request.cookie_string"]) && $string == $this->env["rack.request.cookie_string"])
+			return $hash;
+		
+		foreach(Utils::parse_query($string,";,") as $k=>$v)
+			$hash[$k] = is_array($v)? array_shift($v) : $v;
+		$this->env["rack.request.cookie_string"] = $string;
+		$this->env["rack.request.cookie_hash"] = $hash;
+		return $hash;
+	}
 	
 	public function form_data()
 	{
