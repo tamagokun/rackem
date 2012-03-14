@@ -1,0 +1,23 @@
+{
+	"name": "rackem/rackem",
+	"type": "library",
+	"description": "Rack for PHP",
+	"keywords": ["rack","http","middleware","webserver","interface"],
+	"homepage": "http://github.com/tamagokun/rackem",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Mike Kruk",
+			"email": "tamagokun@gmail.com",
+			"homepage": "http://ripeworks.com"
+		}
+	],
+	"require": {
+		"php": ">=5.3.0"
+	},
+	"autoload": {
+		"psr-0": {
+			"Rackem": "lib"
+		}
+	}
+}
