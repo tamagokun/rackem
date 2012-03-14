@@ -58,9 +58,15 @@ class Rack
 	protected static function middleware($app, $env)
 	{
 		self::$middleware = array_reverse(self::$middleware);
-		if(!empty(self::$middleware))
-			foreach(self::$middleware as $ware) $app = $ware($app);
-		return $app->call($env);
+		try
+		{
+			if(!empty(self::$middleware))
+				foreach(self::$middleware as $ware) $app = $ware($app);
+			return $app->call($env);
+		}catch(RackemException $e)
+		{
+			return $e->finish();
+		}
 	}
 	
 	public static function run($app)
@@ -86,5 +92,4 @@ class Rack
 	{
 		return array(0,1);
 	}
-	
 }

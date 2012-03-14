@@ -10,7 +10,9 @@ require __DIR__."/../autoload.php";
 
 $app = function($env) {
 	$env['rack.session']["name"] = "Mike";
+	throw new Exception('blam!');
 	return array(200,array(),array("<pre>",print_r($env,true)));
 };
 
+\Rackem\Rack::use_middleware("\Rackem\ShowExceptions");
 \Rackem\Rack::run($app);
