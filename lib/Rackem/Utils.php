@@ -77,7 +77,7 @@ class Utils
 		if(isset($env['HTTP_RANGE'])) $http_range = $env['HTTP_RANGE'];
 		else return null;
 		$ranges = array();
-		foreach(explode('/,\s*/',$http_range) as $range_spec)
+		foreach(preg_split('/,\s*/',$http_range) as $range_spec)
 		{
 			$matches = array();
 			preg_match_all('/bytes=(\d*)-(\d*)/',$range_spec,$matches);
