@@ -8,7 +8,7 @@ class Exceptions
 		$this->app = $app;
 	}
 	
-	public function call(&$env)
+	public function call($env)
 	{
 		try
 		{
