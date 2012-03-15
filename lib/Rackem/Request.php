@@ -191,9 +191,9 @@ class Request
 		return $this->env["REQUEST_METHOD"];
 	}
 	
-	public function session()
+	public function session($key=null)
 	{
-		return $this->env["rack.session"];
+		return is_null($key)? $this->env["rack.session"] : $this->env["rack.session"][$key];
 	}
 	
 	public function scheme()
