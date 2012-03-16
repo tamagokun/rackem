@@ -60,6 +60,13 @@ class Response
 		$this->body[] = $value;
 	}
 	
-	public function set_cookie($key,$value=array()) { Utils::set_cookie_header($this->header,$key,$value); }
-	public function delete_cookie($key,$value=array()) { Utils::delete_cookie_header($this->header,$key,$value); }
+	public function set_cookie($key,$value=array()) 
+	{
+		$this->header = Utils::set_cookie_header($this->header,$key,$value); 
+	}
+	
+	public function delete_cookie($key,$value=array())
+	{
+		$this->header = Utils::delete_cookie_header($this->header,$key,$value); 
+	}
 }
