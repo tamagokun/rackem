@@ -108,7 +108,7 @@ class Utils
 
 	public static function random_hex($n)
 	{
-		return array_shift(unpack("H*",self::random_bytes($n)));
+		return reset(unpack("H*",self::random_bytes($n)));
 	}
 
 	public static function random_bytes($n=16)
