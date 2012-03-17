@@ -19,7 +19,8 @@ class ShowExceptions
 	public function error_handler($no,$str,$file,$line)
 	{
 		$e = new \ErrorException($str,$no,0,$file,$line);
-		$this->exception_handler($e);	
+		$this->exception_handler($e);
+		return true;
 	}
 	
 	public function exception_handler($e)

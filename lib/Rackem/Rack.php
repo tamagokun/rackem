@@ -63,7 +63,7 @@ class Rack
 			if(!empty(self::$middleware))
 				foreach(self::$middleware as $ware) $app = $ware($app);
 			return $app->call($env);
-		}catch(RackemException $e)
+		}catch(Exception $e)
 		{
 			return $e->finish();
 		}
