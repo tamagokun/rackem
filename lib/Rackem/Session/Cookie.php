@@ -38,7 +38,7 @@ class Cookie extends Id
 			list($session_data,$digest) = explode("--",$session_data,2);
 			if($digest !== $this->generate_hmac($session_data)) $session_data = null;
 		}
-		$env["rack.session.unpacked_cookie_data"] = base64_decode($session_data);
+		$env["rack.session.unpacked_cookie_data"] = unserialize(base64_decode($session_data));
 		$env["rack.session.unpacked_cookie_data"]["session_id"] = ($sid)? $sid : $this->generate_sid();
 		return $env["rack.session.unpacked_cookie_data"];
 	}
@@ -51,7 +51,7 @@ class Cookie extends Id
 	public function set_session($env, $session_id, $session, $options)
 	{
 		$session = array_merge($session,array("session_id"=>$session_id));
-		$session_data = base64_encode(implode("",$session));
+		$session_data = base64_encode(serialize($session));
 		if($this->secret)
 			$session_data = "$session_data--{$this->generate_hmac($session_data)}";
 		if(strlen($session_data) > (4096 - strlen($this->key)))
