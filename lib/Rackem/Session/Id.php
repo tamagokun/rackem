@@ -44,9 +44,6 @@ abstract class Id
 		if(is_null($app)) $app = $this->app;
 		$this->prepare_session($env);
 		list($status,$headers,$body) = $app->call($env);
-		$result = $this->commit_session($env,$status,$headers,$body);
-		$result[2] = array("<pre>",print_r($env,true));
-		return $result;
 		return $this->commit_session($env,$status,$headers,$body);
 	}
 
