@@ -23,7 +23,7 @@ class Rack
 			"rack.multithread" => false,
 			"rack.multiprocess" => false,
 			"rack.run_once" => false,
-			"rack.session" => &$_SESSION,
+			"rack.session" => array(),
 			"rack.logger" => ""
 		));
 		return new \ArrayObject($env);
