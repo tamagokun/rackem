@@ -5,12 +5,11 @@ use \Rackem\Utils,\Rackem\Request;
 
 class Cookie extends Id
 {
-	public $secret,$coder;
+	public $secret;
 
 	public function __construct($app, $options=array())
 	{
 		$this->secret = isset($options["secret"])? $options["secret"] : "";
-		$this->coder = isset($options["coder"])? $options["coder"] : "base64";
 		parent::__construct($app,$options);
 	}
 

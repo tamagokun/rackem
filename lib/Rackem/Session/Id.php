@@ -19,11 +19,10 @@ abstract class Id
 		"defer"			=> false,
 		"renew"			=> false,
 		"sidbits"		=> 128,
-		"cookie_only"	=> true,
-		"secure_random"	=> ""
+		"cookie_only"	=> true
 	);
 
-	public $app,$default_options,$key;
+	public $app,$default_options,$key,$cookie_only;
 	protected $sid_length;
 
 	public function __construct($app, $options = array())
@@ -31,6 +30,9 @@ abstract class Id
 		$this->app = $app;
 		$this->default_options = array_merge(Id::$options,$options);
 		$this->key = $this->default_options["key"];
+		$this->cookie_only = $this->default_options["cookie_only"];
+		unset($this->default_options["key"]);
+		unset($this->default_options["cookie_only"]);
 		$this->sid_length = $this->default_options["sidbits"] / 4;
 	}
 
@@ -54,11 +56,11 @@ abstract class Id
 
 	public function prepare_session($env)
 	{
-		$session_was = isset($env[self::ENV_SESSION_KEY])? $env[self::ENV_SESSION_KEY] : array();
-		$env[self::ENV_SESSION_KEY] = array();
+		$session_was = $env[self::ENV_SESSION_KEY]? $env[self::ENV_SESSION_KEY] : array();
+		list($id,$session) = $this->load_session($env);
+		$env[self::ENV_SESSION_KEY] = array_merge($session_was,$session);
 		$env[self::ENV_SESSION_OPTIONS_KEY] = $this->default_options;
-		if($session_was)
-			$env[self::ENV_SESSION_KEY] = array_merge($session_was,$env[self::ENV_SESSION_KEY]);
+		$env[self::ENV_SESSION_OPTIONS_KEY]["id"] = $id;
 	}
 
 	public function load_session($env)
@@ -90,8 +92,8 @@ abstract class Id
 
 	public function commit_session($env,$status,$headers,$body)
 	{
-		$session = $env['rack.session'];
-		$options = $env['rack.session.options'];
+		$session = $env['rack.session']? $env['rack.session'] : array();
+		$options = $env['rack.session.options']? $env['rack.session.options'] : array();
 
 		if($options["drop"] || $options["renew"])
 		{
