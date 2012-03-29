@@ -42,8 +42,8 @@ class Utils
 			$time = gmdate("D, d-M-Y H:i:s",$value["expires"])." GMT";
 			$parts[] = "; expires={$time}";
 		}
-		if(isset($value["secure"])) $parts[] = "; secure";
-		if(isset($value["httponly"])) $parts[] = "; HttpOnly";
+		if(isset($value["secure"]) && $value["secure"]) $parts[] = "; secure";
+		if(isset($value["httponly"]) && $value["httponly"]) $parts[] = "; HttpOnly";
 		$value = $value["value"];
 		$value = is_array($value)? $value : array($value);
 		$cookie = $key."=".implode("&",$value).implode('',$parts);

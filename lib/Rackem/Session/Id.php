@@ -30,7 +30,7 @@ abstract class Id
 	{
 		$this->app = $app;
 		$this->default_options = array_merge(Id::$options,$options);
-		$this->key = isset($options["key"])? $options["key"] : "rack.session";
+		$this->key = $this->default_options["key"];
 		$this->sid_length = $this->default_options["sidbits"] / 4;
 	}
 
@@ -44,8 +44,9 @@ abstract class Id
 		if(is_null($app)) $app = $this->app;
 		$this->prepare_session($env);
 		list($status,$headers,$body) = $app->call($env);
-		//$result = $this->commit_session($env,$status,$headers,$body);
-		//$result[2] = array("<pre>",print_r($env,true));
+		$result = $this->commit_session($env,$status,$headers,$body);
+		$result[2] = array("<pre>",print_r($env,true));
+		return $result;
 		return $this->commit_session($env,$status,$headers,$body);
 	}
 
