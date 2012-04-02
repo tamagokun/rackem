@@ -17,7 +17,7 @@ class Rack
 			"SERVER_NAME" => $_SERVER['SERVER_NAME'],
 			"SERVER_PORT" => $_SERVER['SERVER_PORT'],
 			"rack.version" => static::version(),
-			"rack.url_scheme" => (@$_SERVER['HTTPS'] ? 'https' : 'http'),
+			"rack.url_scheme" => (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'])? 'https' : 'http',
 			"rack.input" => fopen('php://input', 'r'),
 			"rack.errors" => fopen('php://stderr', 'w'),
 			"rack.multithread" => false,
