@@ -101,11 +101,10 @@ abstract class Id
 			$session_id = $this->destroy_session($env,$id,$options);
 			if(!$session_id) return array($status,$headers,$body);
 		}
-
-		list($session_id,$session_data) = $this->load_session($env);
-		$env["rack.session.options"]["id"] = $session_id;
-		$session = array_merge($session,$session_data);
-		$env[self::ENV_SESSION_KEY]["session_id"] = $session_id;
+		
+		if(isset($options["skip"]) && $options["skip"])
+			return array($status,$headers,$body);
+		$session_id = isset($options["id"])? $options["id"] : $this->generate_sid();
 
 		if(!$data = $this->set_session($env,$session_id,$session,$options))
 			fwrite($env['rack.errors'],"Warning! Failed to save session. Content dropped.");
