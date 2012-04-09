@@ -224,7 +224,7 @@ class Request
 	
 	private function parse_multipart($env)
 	{
-		return $_FILES;
+		return array_merge($_POST,$_FILES);
 	}
 	
 }
