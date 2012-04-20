@@ -7,9 +7,7 @@ class Rack
 	
 	protected static function build_env()
 	{
-		$request_uri = $_SERVER['PHP_SELF'];
-		$script_name = isset($_SERVER['PATH_INFO'])? substr($request_uri,0,strrpos($request_uri,$_SERVER['PATH_INFO'])) 
-			: $request_uri;
+		list($request_uri,$script_name) = static::url_parts();
 		$env = array_merge(static::default_env(),array(
 			"REQUEST_METHOD" => $_SERVER['REQUEST_METHOD'],
 			"SCRIPT_NAME" => $script_name,
@@ -39,6 +37,14 @@ class Rack
 	protected static function default_env()
 	{
 		return $_SERVER;	//use array_map to manipulate?
+	}
+	
+	protected static function url_parts()
+	{
+		$request_uri = ($q = strpos($_SERVER['REQUEST_URI'],'?')) !== false? substr($_SERVER['REQUEST_URI'],0,$q) : $_SERVER['REQUEST_URI'];
+		$script_name = $_SERVER['SCRIPT_NAME'];
+		if(strpos($request_uri, $script_name) !== 0) $script_name = dirname($script_name);
+		return array($request_uri,rtrim($script_name,'/'));
 	}
 	
 	protected static function execute($result, $env)
