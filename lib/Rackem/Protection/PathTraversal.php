@@ -7,8 +7,12 @@ class PathTraversal extends \Rackem\Protection
 	{
 		$path_was = $env["PATH_INFO"];
 		if($path_was) $env["PATH_INFO"] = $this->cleanup($path_was);
-		if($env["PATH_INFO"] == $path_was)
-			return $this->app->call($env);
+		if($env["PATH_INFO"] !== $path_was)
+		{
+			$result = $this->react($env);
+			$this->warn($env,"attack prevented by __CLASS__");
+		}
+		return isset($result)? $result : $this->app->call($env);
 	}
 	
 	public function cleanup($path)
@@ -21,7 +25,7 @@ class PathTraversal extends \Rackem\Protection
 			$part == '..'? array_pop($parts) : $parts[] = $part;
 		}
 		$cleaned = '/'.implode('/',$parts);
-		if(!empty($parts) && preg_match('/\/\.{0,2}$/',$unescaped) !== false) $cleaned.='/';
+		if(!empty($parts) && preg_match('/\/\.{0,2}$/',$unescaped) > 0) $cleaned.='/';
 		return $cleaned;
 	}
 }
