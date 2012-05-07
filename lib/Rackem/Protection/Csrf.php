@@ -16,6 +16,11 @@ class Csrf extends \Rackem\Protection\AuthenticityToken
 	{
 		return '<input type="hidden" name="'.self::$field.'" value="'.self::token($env).'" />';
 	}
+	
+	public static function metatag($env,$name='_csrf')
+	{
+		return '<meta name="'.$name.'" content="'.self::token($env).'" />';
+	}
 
 	public function call($env)
 	{
