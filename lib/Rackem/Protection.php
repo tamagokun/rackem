@@ -58,7 +58,7 @@ class Protection extends \Rackem\Middleware
 	
 	public function deny($env)
 	{
-		return array($this->options['status'], array('Content-Type'=>'text/plain'),$this->options['message']);
+		return array($this->options['status'], array('Content-Type'=>'text/plain'),array($this->options['message']));
 	}
 	
 	public function has_session($env)
