@@ -10,8 +10,11 @@ class AuthenticityToken extends \Rackem\Protection
 		$token = isset($session['csrf.token'])? $session['csrf.token'] : false;
 		if(!$token && isset($session['csrf'])) $token = $session['csrf'];
 		if(!$token && isset($session['_csrf_token'])) $token = $session['_csrf_token'];
-		if($env['HTTP_X_CSRF_TOKEN'] == $token) return true;
+		if(isset($env['HTTP_X_CSRF_TOKEN']) && $env['HTTP_X_CSRF_TOKEN'] == $token) return true;
 		$request = new \Rackem\Request($env);
-		return $request->params['authenticity_token'] == $token;
+		$params = $req->params();
+		if(isset($params['authenticity_token']) && $params['authenticity_token'] == $token) return true;
+		if(isset($params['_csrf']) && $params['_csrf'] == $token) return true;
+		return false;
 	}
 }

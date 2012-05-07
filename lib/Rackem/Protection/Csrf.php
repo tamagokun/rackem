@@ -1,26 +1,25 @@
 <?php
 namespace Rackem\Protection;
 
-class Csrf
+class Csrf extends \Rackem\Protection\AuthenticityToken
 {
 	public static $field = '_csrf';
 	public static $key = 'csrf.token';
-	
+
 	public static function token($env)
 	{
 		if(isset($env['rack.session']) && isset($env['rack.session'][self::$key])) return $env['rack.session'][self::$key];
-		$env['rack.session'][self::$key] = self::secure_random(32);
+		$env['rack.session'][self::$key] = \Rackem\Utils::random_hex(32);
 	}
-	
+
 	public static function tag($env)
 	{
 		return '<input type="hidden" name="'.self::$field.'" value="'.self::token($env).'" />';
 	}
-	
-	protected static function secure_random($n)
+
+	public function call($env)
 	{
-		$result = pack("m*",\Rackem\Utils::random_bytes($n));
-		foreach($result as $index=>$part) if($part == '\n') unset($result[$index]);
-		return $result;
+		self::token($env);
+		return parent::call($env);
 	}
 }
