@@ -37,7 +37,7 @@ class Protection extends \Rackem\Middleware
 	{
 		if(!$this->accepts($env))
 		{
-			$this->warn($env, "attack prevented by __CLASS__");
+			$this->warn($env, "attack prevented by ".get_class($this));
 			$result = $this->react($env);
 			if($result) return $result;
 		}

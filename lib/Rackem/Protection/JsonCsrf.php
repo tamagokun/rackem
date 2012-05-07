@@ -13,7 +13,7 @@ class JsonCsrf extends \Rackem\Protection
 			if($this->referrer($env) != $req->host())
 			{
 				$result = $this->react($env);
-				$this->warn($env,"attack prevented by __CLASS__");
+				$this->warn($env,"attack prevented by ".get_class($this));
 			}
 		}
 		return isset($result)? $result : array($status,$headers,$body);

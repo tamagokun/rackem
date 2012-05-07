@@ -10,7 +10,7 @@ class PathTraversal extends \Rackem\Protection
 		if($env["PATH_INFO"] !== $path_was)
 		{
 			$result = $this->react($env);
-			$this->warn($env,"attack prevented by __CLASS__");
+			$this->warn($env,"attack prevented by ".get_class($this));
 		}
 		return isset($result)? $result : $this->app->call($env);
 	}
