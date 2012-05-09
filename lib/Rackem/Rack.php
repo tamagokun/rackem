@@ -96,6 +96,6 @@ class Rack
 	
 	public static function version()
 	{
-		return array(0,1);
+		return array(0,2);
 	}
 }
