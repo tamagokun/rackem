@@ -11,8 +11,12 @@ require __DIR__."/../autoload.php";
 $app = function($env) {
 	//$env['rack.session']["name"] = "Mike";
 	//throw new Exception('blam!');
-	return array(200,array(),array("<pre>",print_r($env,true)));
+	//return array(200,array(),array("<pre>",print_r($env,true)));
+	$res = new \Rackem\Response();
+	$res->status = 200;
+	return $res->finish();
 };
 
 \Rackem\Rack::use_middleware("\Rackem\ShowExceptions");
+\Rackem\Protection::protect();
 \Rackem\Rack::run($app);
