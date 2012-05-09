@@ -6,31 +6,35 @@ Any object that has a callable method `call()` can be considered a Rack applicat
 
 Here is an example of a basic Rackem application:
 
-    <?php
-    require "rackem.php";
-    
-    class App
-    {
-	    public function call($env)
-	    {
-		    return array(200,array('Content-Type'=>'text/html'),array('Hello World!'));
-	    }
-    }
-    
-    \Rackem\Rack::run("App");
+```php
+<?php
+require "rackem.php";
+
+  class App
+  {
+	public function call($env)
+	{
+	  return array(200,array('Content-Type'=>'text/html'),array('Hello World!'));
+	}
+  }
+
+  \Rackem\Rack::run("App");
+```
 
 `Rack::run()` accepts 1 of 3 things:
 
  - String referencing a Class
  - Class instance
  - Closure
- 
+
 Here would be an example of using a Closure:
 
-    $app = function($env) {
-    	return array(200,array('Content-Type'=>'text/html'),array('Hello World!'));
-    };
-    \Rackem\Rack::run($app);
+```php
+$app = function($env) {
+  return array(200,array('Content-Type'=>'text/html'),array('Hello World!'));
+};
+\Rackem\Rack::run($app);
+```
 
 ## Middleware
 
@@ -38,23 +42,39 @@ Just like Rack, Rackem supports the use of Middleware. Middleware is basically a
 
 Here is an example of a Middleware class that just passes the response on:
 
-    <?php
-    
-    class MyMiddleware
-    {
-    	public function __construct($app)
-    	{
-    		$this->app = $app;
-    	}
-    	
-    	public function call($env)
-    	{
-    		return $this->app->call($env);
-    	}
-    }
-    
-    \Rackem\Rack::use_middleware("MyMiddleware");
-    \Rackem\Rack::run( new App() );
+```php
+<?php
+
+class MyMiddleware
+{
+  public function __construct($app)
+  {
+	$this->app = $app;
+  }
+
+  public function call($env)
+  {
+	return $this->app->call($env);
+  }
+}
+
+\Rackem\Rack::use_middleware("MyMiddleware");
+\Rackem\Rack::run( new App() );
+```
+
+There is also a Middleware helper class to make things a bit easier:
+
+```php
+<?php
+
+class MyMiddleware extends \Rackem\Middleware
+{
+  public function call($env)
+  {
+	return $this->app->call($env);
+  }
+}
+```
 
 ## What it has
 
@@ -68,9 +88,8 @@ Here is an example of a Middleware class that just passes the response on:
  - File middleware for serving files
  - Basic authentication middleware
  - Session handling
+ - Protection middlewares to prevent attacks (csrf,xss,clickjacking,ip spoofing,dir traversal,session hijacking)
 
 ## What it needs
 
-The Request and Response utils are pretty much done, there may be a few things aren't working though.
-
- - Any extra core middlewares
+ - specs!
