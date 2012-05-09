@@ -16,7 +16,7 @@ class SessionHijacking extends \Rackem\Protection
 		}else
 		{
 			$session[$this->key] = array();
-			foreach($this->track as $key) $session[$this->key][$key] = $this->encrypt($env[$key]);
+			foreach($this->track as $key) $session[$this->key][$key] = $this->encrypt(isset($env[$key])? $env[$key] :'');
 			return true;
 		}
 	}
