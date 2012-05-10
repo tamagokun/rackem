@@ -10,6 +10,7 @@ class Csrf extends \Rackem\Protection\AuthenticityToken
 	{
 		if(isset($env['rack.session']) && isset($env['rack.session'][self::$key])) return $env['rack.session'][self::$key];
 		$env['rack.session'][self::$key] = \Rackem\Utils::random_hex(32);
+		return $env['rack.session'][self::$key];
 	}
 
 	public static function tag($env)
