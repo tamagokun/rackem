@@ -79,7 +79,7 @@ class Request
 	
 	public function host()
 	{
-		return str_replace(":\d+\z","",$this->host_with_port());
+		return preg_replace('/:\d+\z/',"",$this->host_with_port());
 	}
 	
 	public function host_with_port()
