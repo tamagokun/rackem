@@ -63,7 +63,7 @@ class Cookie extends Id
 
 	public function destroy_session($env, $session_id, $options)
 	{
-		if(!$options["drop"]) $this->generate_sid();
+		if(isset($options["drop"]) && !$options["drop"]) $this->generate_sid();
 	}
 
 	protected function generate_hmac($data)
