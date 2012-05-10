@@ -56,7 +56,7 @@ abstract class Id
 
 	public function prepare_session($env)
 	{
-		$session_was = $env[self::ENV_SESSION_KEY]? $env[self::ENV_SESSION_KEY] : array();
+		$session_was = isset($env[self::ENV_SESSION_KEY])? $env[self::ENV_SESSION_KEY] : array();
 		list($id,$session) = $this->load_session($env);
 		$env[self::ENV_SESSION_KEY] = array_merge($session_was,$session);
 		$env[self::ENV_SESSION_OPTIONS_KEY] = $this->default_options;
