@@ -95,7 +95,7 @@ abstract class Id
 		$session = $env['rack.session']? $env['rack.session'] : array();
 		$options = $env['rack.session.options']? $env['rack.session.options'] : array();
 
-		if($options["drop"] || $options["renew"])
+		if(isset($options["drop"]) || isset($options["renew"]))
 		{
 			$id = isset($options["id"])? $options["id"] : $this->generate_sid();
 			$session_id = $this->destroy_session($env,$id,$options);
@@ -108,7 +108,7 @@ abstract class Id
 
 		if(!$data = $this->set_session($env,$session_id,$session,$options))
 			fwrite($env['rack.errors'],"Warning! Failed to save session. Content dropped.");
-		elseif($options["defer"] && !$options["renew"])
+		elseif(isset($options["defer"]) && !$options["renew"])
 			fwrite($env['rack.errors'],"Defering cookie for $id");
 		else
 		{
