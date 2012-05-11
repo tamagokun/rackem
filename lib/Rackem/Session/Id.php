@@ -108,7 +108,7 @@ abstract class Id
 
 		if(!$data = $this->set_session($env,$session_id,$session,$options))
 			fwrite($env['rack.errors'],"Warning! Failed to save session. Content dropped.");
-		elseif(isset($options["defer"]) && !$options["renew"])
+		elseif(isset($options["defer"]) && $options["defer"] && !$options["renew"])
 			fwrite($env['rack.errors'],"Defering cookie for $id");
 		else
 		{
