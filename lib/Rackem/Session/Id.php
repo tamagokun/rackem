@@ -95,7 +95,7 @@ abstract class Id
 		$session = $env['rack.session']? $env['rack.session'] : array();
 		$options = $env['rack.session.options']? $env['rack.session.options'] : array();
 
-		if(isset($options["drop"]) || isset($options["renew"]))
+		if((isset($options["drop"]) && $options["drop"]) || (isset($options["renew"]) && $options["renew"]))
 		{
 			$id = isset($options["id"])? $options["id"] : $this->generate_sid();
 			$session_id = $this->destroy_session($env,$id,$options);
