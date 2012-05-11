@@ -165,9 +165,9 @@ class Request
 			$this->env["rack.request.form_input"] = $this->env["rack.input"];
 			if(! $this->env["rack.request.form_hash"] = $this->parse_multipart($this->env))
 			{
-				$form_vars = str_replace("\0\z","",stream_get_contents($this->env["rack.input"]));
+				//$form_vars = str_replace("\0\z","",stream_get_contents($this->env["rack.input"]));
 				
-				$this->env["rack.request.form_vars"] = $form_vars;
+				//$this->env["rack.request.form_vars"] = $form_vars;
 				//$this->env["rack.request.form_hash"] = $this->parse_query($form_vars);
 				$this->env["rack.request.form_hash"] = $_POST;
 			}

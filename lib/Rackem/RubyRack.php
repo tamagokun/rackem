@@ -5,7 +5,8 @@ class RubyRack extends Rack
 {
 	protected static function build_env()
 	{
-		return json_decode(file_get_contents('php://stdin'), true);
+		$env = json_decode(file_get_contents('php://stdin'), true);
+		return new \ArrayObject($env);
 	}
 	
 	protected static function execute($result, $env)
