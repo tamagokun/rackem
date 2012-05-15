@@ -21,6 +21,7 @@ $ composer install
 Autoload
 
 ```php
+<?php
 require 'vendor/autoload.php'
 ```
 
@@ -56,6 +57,7 @@ require "rackem.php";
 Here would be an example of using a Closure:
 
 ```php
+<?php
 $app = function($env) {
   return array(200,array('Content-Type'=>'text/html'),array('Hello World!'));
 };
