@@ -1,5 +1,31 @@
 # Rack for PHP
 
+## Setup
+
+Add rackem/rackem to your `composer.json`
+
+```json
+{
+  "require": {
+	  "rackem/rackem": "dev-master"
+	}
+}
+```
+
+Install
+
+```shell
+$ composer install
+```
+
+Autoload
+
+```php
+require 'vendor/autoload.php'
+```
+
+Rackem also supports PSR-0 autoloading by using `require 'rackem.php';`
+
 ## Usage
 
 Any object that has a callable method `call()` can be considered a Rack application. Rack expects call to return an HTTP response array containing: status code, headers, and body.
