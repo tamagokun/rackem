@@ -35,17 +35,16 @@ Here is an example of a basic Rackem application:
 
 ```php
 <?php
-require "rackem.php";
 
-  class App
+class App
+{
+  public function call($env)
   {
-	public function call($env)
-	{
-	  return array(200,array('Content-Type'=>'text/html'),array('Hello World!'));
-	}
+	return array(200,array('Content-Type'=>'text/html'),array('Hello World!'));
   }
+}
 
-  \Rackem\Rack::run("App");
+\Rackem\Rack::run("App");
 ```
 
 `Rack::run()` accepts 1 of 3 things:
@@ -100,6 +99,25 @@ class MyMiddleware extends \Rackem\Middleware
   public function call($env)
   {
 	return $this->app->call($env);
+  }
+}
+```
+
+## Request and Response
+
+```php
+<?php
+
+class JsonFormatter extends \Rackem\Middleware
+{
+  public function call($env)
+  {
+	$req = new \Rackem\Request($env);
+	$res = new \Rackem\Response($this->app->call($env));
+	
+	if($req->params()->format == 'json')    //?format=json
+	  $res->write(json_encode($res->body));
+	return $res->finish();
   }
 }
 ```
