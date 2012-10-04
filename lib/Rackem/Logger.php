@@ -22,7 +22,7 @@ class Logger
 
 	public function close()
 	{
-		fclose($this->stream);
+		if(is_resource($this->stream)) fclose($this->stream);
 	}
 
 	public function info($msg) { return $this->log(Logger::INFO,func_get_args()); }

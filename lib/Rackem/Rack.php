@@ -14,10 +14,11 @@ class Rack
 			"PATH_INFO" => str_replace($script_name,"",$request_uri),
 			"SERVER_NAME" => $_SERVER['SERVER_NAME'],
 			"SERVER_PORT" => $_SERVER['SERVER_PORT'],
+			"QUERY_STRING" => isset($_SERVER['QUERY_STRING'])? $_SERVER['QUERY_STRING'] : '',
 			"rack.version" => static::version(),
 			"rack.url_scheme" => (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'])? 'https' : 'http',
 			"rack.input" => fopen('php://input', 'r'),
-			"rack.errors" => fopen('php://stderr', 'w'),
+			"rack.errors" => fopen('php://stderr', 'wb'),
 			"rack.multithread" => false,
 			"rack.multiprocess" => false,
 			"rack.run_once" => false,
@@ -33,16 +34,21 @@ class Rack
 		if(is_string($app)) $app = new $app();
 		return $app;
 	}
+
+	public static function cli_req_is_file()
+	{
+		return file_exists($_SERVER['SCRIPT_FILENAME']) && !preg_match('/\.php/',$_SERVER['SCRIPT_FILENAME']);
+	}
 	
 	protected static function default_env()
 	{
 		return $_SERVER;	//use array_map to manipulate?
 	}
-	
+
 	protected static function url_parts()
 	{
 		$request_uri = ($q = strpos($_SERVER['REQUEST_URI'],'?')) !== false? substr($_SERVER['REQUEST_URI'],0,$q) : $_SERVER['REQUEST_URI'];
-		$script_name = $_SERVER['SCRIPT_NAME'];
+		$script_name = php_sapi_name() == 'cli-server'? '/' : $_SERVER['SCRIPT_NAME'];
 		if(strpos($request_uri, $script_name) !== 0) $script_name = dirname($script_name);
 		return array($request_uri,rtrim($script_name,'/'));
 	}
@@ -77,6 +83,7 @@ class Rack
 	
 	public static function run($app)
 	{
+		if(php_sapi_name() == 'cli-server' && static::cli_req_is_file()) return false;	
 		$env = static::build_env();
 		$app = static::build_app($app);
 		ob_start();

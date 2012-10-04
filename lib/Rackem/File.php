@@ -57,9 +57,10 @@ class File
 	protected function fail($status, $body)
 	{
 		$body .= "\n";
+		$length = strlen($body);
 		return array($status,array(
 			"Content-Type"=>"text/plain",
-			"Content-Length"=>"{strlen($body)}",
+			"Content-Length"=>"{$length}",
 			"X-Cascade"=>"pass"
 			),array($body));
 	}
