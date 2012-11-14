@@ -86,7 +86,7 @@ class Request
 	{
 		if(isset($this->env["HTTP_X_FORWARDED_HOST"]))
 			return array_pop(split(",\s?",$this->env["HTTP_X_FORWARDED_HOST"]));
-		return (isset($this->env["HTTP_HOST"]))? $this->env["HTTP_HOST"] : "{$this->env["SERVER_ADDR"]}:{$this->env["SERVER_PORT"]}";
+		return (isset($this->env["HTTP_HOST"]))? $this->env["HTTP_HOST"] : "{$this->env["SERVER_NAME"]}:{$this->env["SERVER_PORT"]}";
 	}
 	
 	public function is_delete() { return $this->request_method() == "DELETE"; }
