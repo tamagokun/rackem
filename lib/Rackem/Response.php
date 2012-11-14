@@ -18,6 +18,11 @@ class Response
 		else
 			foreach($body as $part) $this->write($part);
 	}
+
+	public function body()
+	{
+		return implode("",$this->body);
+	}
 	
 	public function finish()
 	{
