@@ -16,4 +16,4 @@ $app = function($env) {
 
 \Rackem\Rack::use_middleware("\Rackem\ShowExceptions");
 \Rackem\Protection::protect();
-\Rackem\Rack::run($app);
+return \Rackem\Rack::run($app);
