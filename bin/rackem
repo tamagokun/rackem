@@ -1,0 +1,26 @@
+#!/usr/bin/env php
+<?php
+
+if(!class_exists("\\Rackem\Server"))
+{
+	try {
+		$dir = dirname(dirname(__DIR__));
+		require_once "{$dir}/autoload.php";
+	}catch(Exception $e)
+	{
+		echo "Failed to load Rack'em library. Is rackem installed in the proper location?\n";
+	}
+}
+
+$args = $GLOBALS['argv'];
+array_shift($args);
+$config = count($args) > 0? $args[0] : 'config.php';
+
+if(!file_exists($config))
+{
+	echo "configuration {$config} not found\n";
+	die(1);
+}
+
+\Rackem\Rack::$server = new \Rackem\Server('0.0.0.0','9393');
+\Rackem\Rack::$server->start(include($config));
