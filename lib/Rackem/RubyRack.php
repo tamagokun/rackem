@@ -19,17 +19,4 @@ class RubyRack extends Rack
 		$body = implode("",$body);
 		exit(implode("\n",array($status,$headers,$body)));
 	}
-	
-	public static function run($app = null)
-	{
-		$env = static::build_env();
-		$app = static::build_app($app);
-		
-		if(is_null($app) && !is_null($env['rack.ruby_bridge_response']))
-			$app = function($env) use ($env) { return $env['rack.ruby_bridge_response']; };
-		ob_start();
-		$result = self::middleware($app, $env);
-		$output = ob_get_clean();
-		static::execute($result, $env);
-	}
 }

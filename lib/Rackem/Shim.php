@@ -10,7 +10,7 @@ class Shim
 		$this->block = $block;
 	}
 	
-	public function call(&$env)
+	public function call($env)
 	{
 		$block = $this->block;
 		return $block($env);

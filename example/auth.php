@@ -12,4 +12,4 @@ class App
 \Rackem\Rack::use_middleware("\Rackem\Auth\Basic",function($username,$password) {
 	return $password == "poop";
 });
-\Rackem\Rack::run("App");
+return \Rackem\Rack::run("App");
