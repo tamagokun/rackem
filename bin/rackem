@@ -4,7 +4,7 @@
 if(!class_exists("\\Rackem\Server"))
 {
 	try {
-		$dir = dirname(dirname(__DIR__));
+		$dir = dirname(dirname(dirname(__DIR__)));
 		require_once "{$dir}/autoload.php";
 	}catch(Exception $e)
 	{
