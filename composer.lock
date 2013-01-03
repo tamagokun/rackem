@@ -1,5 +1,5 @@
 {
-    "hash": "3ed92828a0b6218145b86f7e3d487ba2",
+    "hash": "91d649692025f26d51f5b0267c22a0d5",
     "packages": [
         {
             "name": "evenement/evenement",
@@ -44,25 +44,30 @@
         },
         {
             "name": "guzzle/common",
-            "version": "v3.0.5",
+            "version": "v3.0.7",
             "target-dir": "Guzzle/Common",
             "source": {
                 "type": "git",
                 "url": "git://github.com/guzzle/common.git",
-                "reference": "v3.0.5"
+                "reference": "v3.0.7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/guzzle/common/archive/v3.0.5.zip",
-                "reference": "v3.0.5",
+                "url": "https://github.com/guzzle/common/archive/v3.0.7.zip",
+                "reference": "v3.0.7",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.2",
-                "symfony/event-dispatcher": "2.1.*"
+                "symfony/event-dispatcher": ">=2.1"
             },
-            "time": "2012-11-19 00:15:33",
+            "time": "2012-12-19 23:06:35",
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.0-dev"
+                }
+            },
             "installation-source": "dist",
             "autoload": {
                 "psr-0": {
@@ -84,27 +89,33 @@
         },
         {
             "name": "guzzle/http",
-            "version": "v3.0.5",
+            "version": "v3.0.7",
             "target-dir": "Guzzle/Http",
             "source": {
                 "type": "git",
                 "url": "git://github.com/guzzle/http.git",
-                "reference": "v3.0.5"
+                "reference": "v3.0.7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/guzzle/http/archive/v3.0.5.zip",
-                "reference": "v3.0.5",
+                "url": "https://github.com/guzzle/http/archive/v3.0.7.zip",
+                "reference": "v3.0.7",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.2",
+                "ext-curl": "*",
                 "guzzle/common": "self.version",
                 "guzzle/parser": "self.version",
                 "guzzle/stream": "self.version"
             },
-            "time": "2012-11-18 05:28:55",
+            "time": "2012-12-14 00:49:17",
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.0-dev"
+                }
+            },
             "installation-source": "dist",
             "autoload": {
                 "psr-0": {
@@ -134,24 +145,29 @@
         },
         {
             "name": "guzzle/parser",
-            "version": "v3.0.5",
+            "version": "v3.0.7",
             "target-dir": "Guzzle/Parser",
             "source": {
                 "type": "git",
                 "url": "git://github.com/guzzle/parser.git",
-                "reference": "v3.0.5"
+                "reference": "v3.0.7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/guzzle/parser/archive/v3.0.5.zip",
-                "reference": "v3.0.5",
+                "url": "https://github.com/guzzle/parser/archive/v3.0.7.zip",
+                "reference": "v3.0.7",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.2"
             },
-            "time": "2012-11-19 00:07:13",
+            "time": "2012-12-07 16:45:11",
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.0-dev"
+                }
+            },
             "installation-source": "dist",
             "autoload": {
                 "psr-0": {
@@ -174,25 +190,30 @@
         },
         {
             "name": "guzzle/stream",
-            "version": "v3.0.5",
+            "version": "v3.0.7",
             "target-dir": "Guzzle/Stream",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/stream",
-                "reference": "v3.0.5"
+                "reference": "v3.0.7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/guzzle/stream/archive/v3.0.5.zip",
-                "reference": "v3.0.5",
+                "url": "https://github.com/guzzle/stream/archive/v3.0.7.zip",
+                "reference": "v3.0.7",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.2",
                 "guzzle/common": "self.version"
             },
-            "time": "2012-11-11 23:54:57",
+            "time": "2012-12-07 16:45:11",
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.0-dev"
+                }
+            },
             "installation-source": "dist",
             "autoload": {
                 "psr-0": {
@@ -220,17 +241,17 @@
         },
         {
             "name": "react/event-loop",
-            "version": "v0.2.5",
+            "version": "v0.2.6",
             "target-dir": "React/EventLoop",
             "source": {
                 "type": "git",
                 "url": "https://github.com/reactphp/event-loop",
-                "reference": "v0.2.5"
+                "reference": "v0.2.6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/reactphp/event-loop/archive/v0.2.5.zip",
-                "reference": "v0.2.5",
+                "url": "https://github.com/reactphp/event-loop/archive/v0.2.6.zip",
+                "reference": "v0.2.6",
                 "shasum": ""
             },
             "require": {
@@ -240,7 +261,7 @@
                 "ext-libevent": ">=0.0.5",
                 "ext-libev": "*"
             },
-            "time": "2012-11-12 23:00:05",
+            "time": "2012-12-26 16:56:12",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -269,12 +290,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/reactphp/http",
-                "reference": "v0.2.5"
+                "reference": "v0.2.6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/reactphp/http/archive/v0.2.5.zip",
-                "reference": "v0.2.5",
+                "url": "https://github.com/reactphp/http/archive/v0.2.6.zip",
+                "reference": "v0.2.6",
                 "shasum": ""
             },
             "require": {
@@ -283,7 +304,7 @@
                 "guzzle/http": "3.0.*",
                 "guzzle/parser": "3.0.*"
             },
-            "time": "2012-11-10 20:17:27",
+            "time": "2012-12-26 16:33:04",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -307,17 +328,17 @@
         },
         {
             "name": "react/socket",
-            "version": "v0.2.5",
+            "version": "v0.2.6",
             "target-dir": "React/Socket",
             "source": {
                 "type": "git",
                 "url": "https://github.com/reactphp/socket",
-                "reference": "v0.2.5"
+                "reference": "v0.2.6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/reactphp/socket/archive/v0.2.5.zip",
-                "reference": "v0.2.5",
+                "url": "https://github.com/reactphp/socket/archive/v0.2.6.zip",
+                "reference": "v0.2.6",
                 "shasum": ""
             },
             "require": {
@@ -326,7 +347,7 @@
                 "react/event-loop": "0.2.*",
                 "react/stream": "0.2.*"
             },
-            "time": "2012-11-05 13:25:35",
+            "time": "2012-12-14 00:58:14",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -350,17 +371,17 @@
         },
         {
             "name": "react/stream",
-            "version": "v0.2.5",
+            "version": "v0.2.6",
             "target-dir": "React/Stream",
             "source": {
                 "type": "git",
                 "url": "https://github.com/reactphp/stream",
-                "reference": "v0.2.5"
+                "reference": "v0.2.6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/reactphp/stream/archive/v0.2.5.zip",
-                "reference": "v0.2.5",
+                "url": "https://github.com/reactphp/stream/archive/v0.2.6.zip",
+                "reference": "v0.2.6",
                 "shasum": ""
             },
             "require": {
@@ -371,7 +392,7 @@
                 "react/event-loop": "0.2.*",
                 "react/promise": "1.0.*"
             },
-            "time": "2012-11-19 08:24:10",
+            "time": "2012-12-14 00:58:14",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -396,17 +417,17 @@
         },
         {
             "name": "symfony/event-dispatcher",
-            "version": "v2.1.4",
+            "version": "v2.1.6",
             "target-dir": "Symfony/Component/EventDispatcher",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/EventDispatcher",
-                "reference": "v2.1.4"
+                "reference": "v2.1.6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/symfony/EventDispatcher/archive/v2.1.4.zip",
-                "reference": "v2.1.4",
+                "url": "https://github.com/symfony/EventDispatcher/archive/v2.1.6.zip",
+                "reference": "v2.1.6",
                 "shasum": ""
             },
             "require": {
@@ -419,13 +440,8 @@
                 "symfony/dependency-injection": "2.1.*",
                 "symfony/http-kernel": "2.1.*"
             },
-            "time": "2012-11-08 09:51:48",
+            "time": "2012-12-06 10:00:55",
             "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.1-dev"
-                }
-            },
             "installation-source": "dist",
             "autoload": {
                 "psr-0": {

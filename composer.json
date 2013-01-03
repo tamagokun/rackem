@@ -20,5 +20,6 @@
 		"psr-0": {
 			"Rackem": "lib"
 		}
-	}
+	},
+	"bin": ["bin/rackem"]
 }
