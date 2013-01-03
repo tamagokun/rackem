@@ -24,4 +24,4 @@ function table_cell($i)
 	
 $app = function() { return array(200, array(), array(multiplication_table(10))); };
 
-\Rackem\Rack::run($app);
+return \Rackem\Rack::run($app);

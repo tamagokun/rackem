@@ -46,4 +46,4 @@ class App
 \Rackem\Rack::use_middleware("\Rackem\RackLogger");
 \Rackem\Rack::use_middleware("ToJson");
 \Rackem\Rack::use_middleware("Goodbye");
-\Rackem\Rack::run("App");
+return \Rackem\Rack::run("App");
