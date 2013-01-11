@@ -44,6 +44,8 @@ class Server
 			$env = $this->env($req);
 			$res = new Response($app->call($env));
 
+			print_r($env);
+
 			fwrite($client, $this->write_response($req, $res));
 			fclose($client);
 			fclose($env['rack.input']);
@@ -81,6 +83,7 @@ class Server
 			'rack.session' => array(),
 			'rack.logger' => ""
 		);
+		foreach($req['headers'] as $k=>$v) $env[strtoupper(str_replace("-","_","http_$k"))] = $v;
 		return new \ArrayObject($env);
 	}
 
