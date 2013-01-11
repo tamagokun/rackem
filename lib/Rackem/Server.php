@@ -44,8 +44,6 @@ class Server
 			$env = $this->env($req);
 			$res = new Response($app->call($env));
 
-			print_r($env);
-
 			fwrite($client, $this->write_response($req, $res));
 			fclose($client);
 			fclose($env['rack.input']);
