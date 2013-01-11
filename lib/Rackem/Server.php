@@ -193,7 +193,7 @@ class Server
 		list($status, $headers, $body) = $res->finish();
 		$phrase = Utils::status_code($status);
 		$body = implode("", $body);
-		$head = "{$req['protocol']}/{$req['version']} $status $phrase";
+		$head = "{$req['protocol']}/{$req['version']} $status $phrase\r\n";
 
 		$raw_headers = array();
 		foreach($headers as $k=>$v) $raw_headers[] = "$k: $v";
