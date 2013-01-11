@@ -27,7 +27,7 @@ class Server
 		echo ">> Rackem web server\n";
 		echo ">> Listening on {$this->host}:{$this->port}, CTRL+C to stop\n";
 
-		while ($client = @stream_socket_accept($this->master))
+		while ($client = @stream_socket_accept($this->master, 0))
 		{
 			$buffer = '';
 
@@ -37,6 +37,7 @@ class Server
 			}
 			$req = $this->parse_request($buffer);
 
+			ob_start();
 			$env = $this->env($req);
 			$res = new Response($app->call($env));
 
@@ -44,6 +45,9 @@ class Server
 			fclose($client);
 		}
 		fclose($this->master);
+		fclose($env['rack.input']);
+		fclose($env['rack.errors']);
+		if($env['rack.logger']) $env['rack.logger']->close();
 	}
 
 	public function stop()
@@ -63,7 +67,17 @@ class Server
 			'PATH_INFO' => $req['request_url']['path'],
 			'SERVER_NAME' => $this->host,
 			'SERVER_PORT' => $this->port,
-			'QUERY_STRING' => $req['request_url']['query']
+			'SERVER_PROTOCOL' => $req['protocol'],
+			'QUERY_STRING' => $req['request_url']['query'],
+			'rack.version' => Rack::version(),
+			'rack.url_scheme' => $req['request_url']['scheme'],
+			'rack.input' => fopen('php://input', 'r'),
+			'rack.errors' => fopen('php://stderr', 'wb'),
+			'rack.multithread' => false,
+			'rack.multiprocess' => false,
+			'rack.run_once' => false,
+			'rack.session' => array(),
+			'rack.logger' => ""
 		);
 		return new \ArrayObject($env);
 	}
