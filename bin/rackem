@@ -19,7 +19,7 @@ $config = count($args) > 0? $args[0] : 'config.php';
 if(!file_exists($config))
 {
 	echo "configuration {$config} not found\n";
-	die(1);
+	exit(1);
 }
 
 \Rackem\Rack::$server = new \Rackem\Server('0.0.0.0','9393');
