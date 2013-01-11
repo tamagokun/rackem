@@ -31,7 +31,8 @@ class ShowExceptions
 	
 	protected function handle_exception($env,$exception)
 	{
-		fwrite($env['rack.errors'], $exception->__toString());
-		return array($exception->__toString(),"\n");
+		$string = $exception->__toString().PHP_EOL;
+		fwrite($env['rack.errors'], $string);
+		return array($string);
 	}
 }
