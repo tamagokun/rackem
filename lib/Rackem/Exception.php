@@ -1,7 +1,7 @@
 <?php
 namespace Rackem;
 
-class Exception extends \ErrorException 
+class Exception extends \ErrorException
 {
 	protected $status,$header,$body;
 
