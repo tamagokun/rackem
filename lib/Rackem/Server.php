@@ -27,8 +27,11 @@ class Server
 		echo ">> Rackem web server\n";
 		echo ">> Listening on {$this->host}:{$this->port}, CTRL+C to stop\n";
 
-		while ($client = @stream_socket_accept($this->master, 0))
+		$sockets = array($this->master);
+		$null = null;
+		while(1 === stream_select($sockets, $null, $null, null))
 		{
+			$client = stream_socket_accept($this->master);
 			$buffer = '';
 
 			while (!preg_match('/\r?\n\r?\n/', $buffer))
@@ -43,11 +46,10 @@ class Server
 
 			fwrite($client, $this->write_response($req, $res));
 			fclose($client);
+			fclose($env['rack.input']);
+			fclose($env['rack.errors']);
+			if($env['rack.logger']) $env['rack.logger']->close();
 		}
-		fclose($this->master);
-		fclose($env['rack.input']);
-		fclose($env['rack.errors']);
-		if($env['rack.logger']) $env['rack.logger']->close();
 	}
 
 	public function stop()
