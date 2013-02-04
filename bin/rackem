@@ -22,4 +22,4 @@ if(!file_exists($config))
 }
 
 \Rackem\Rack::$server = new \Rackem\Server('0.0.0.0','9393');
-\Rackem\Rack::$server->start(include($config));
+\Rackem\Rack::$server->start(realpath($config));
