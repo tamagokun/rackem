@@ -3,7 +3,8 @@ namespace Rackem;
 
 class Server
 {
-	private $host, $port;
+	public $reload = true;
+	private $host, $port, $app;
 
 	public function __construct($host = '0.0.0.0', $port = 9393)
 	{
@@ -23,6 +24,7 @@ class Server
 
 	public function start($app)
 	{
+		$this->app = include($app);
 		echo "== Rackem on http://{$this->host}:{$this->port}\n";
 		echo ">> Rackem web server\n";
 		echo ">> Listening on {$this->host}:{$this->port}, CTRL+C to stop\n";
@@ -42,7 +44,8 @@ class Server
 
 			ob_start();
 			$env = $this->env($req);
-			$res = new Response($app->call($env));
+			if($this->reload) $this->app = include($app);
+			$res = new Response($this->app->call($env));
 
 			fwrite($client, $this->write_response($req, $res));
 			fclose($client);

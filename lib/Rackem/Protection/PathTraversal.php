@@ -14,7 +14,7 @@ class PathTraversal extends \Rackem\Protection
 		}
 		return isset($result)? $result : $this->app->call($env);
 	}
-	
+
 	public function cleanup($path)
 	{
 		$parts = array();

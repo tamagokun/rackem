@@ -7,7 +7,7 @@ class XSSHeader extends \Rackem\Protection
 	{
 		return array('X-XSS-Protection' => "1; mode=block");
 	}
-	
+
 	public function call($env)
 	{
 		list($status,$headers,$body) = $this->app->call($env);

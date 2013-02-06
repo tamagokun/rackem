@@ -28,7 +28,7 @@ class MockRequest
 	public function patch($uri,$opts=array()) { return $this->request("PATCH",$uri,$opts); }
 	public function delete($uri,$opts=array()) { return $this->request("DELETE",$uri,$opts); }
 	public function head($uri,$opts=array()) { return $this->request("HEAD",$uri,$opts); }
-	
+
 	protected function request($method="GET",$uri="",$opts=array())
 	{
 		$opts["method"] = $method;
@@ -37,7 +37,7 @@ class MockRequest
 		$res->finish();
 		return $res;
 	}
-	
+
 	protected function build_app($app)
 	{
 		if(is_callable($app)) $app = new Shim($app);
