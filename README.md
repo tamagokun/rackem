@@ -135,6 +135,22 @@ class MyMiddleware extends \Rackem\Middleware
 }
 ```
 
+## Mapping
+
+You can route paths to applications easily:
+
+```php
+<?php
+
+\Rackem\Rack::map("/hello", function($env) {
+	return array(200, array("Content-Type"=>"text/html"), array("Hello from Rack'em!"));
+});
+
+\Rackem\Rack::map("/admin","MyAdminApp");
+
+return \Rackem\Rack::run();
+```
+
 ## Request and Response
 
 ```php
