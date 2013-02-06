@@ -5,7 +5,7 @@ class SessionHijacking extends \Rackem\Protection
 {
 	public $key = 'tracking';
 	public $track = array('HTTP_USER_AGENT','HTTP_ACCEPT_ENCODING','HTTP_ACCEPT_LANGUAGE');
-	
+
 	public function accepts($env)
 	{
 		$session = $this->session($env);

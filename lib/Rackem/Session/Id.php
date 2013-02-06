@@ -9,17 +9,17 @@ abstract class Id
 	const ENV_SESSION_OPTIONS_KEY = "rack.session.options";
 
 	public static $options = array(
-		"key" 			=> "rack.session",
-		"path"			=> "/",
-		"domain"		=> null,
-		"expire_after"	=> null,
-		"secure"		=> false,
-		"httponly"		=> true,
-		"drop"			=> false,
-		"defer"			=> false,
-		"renew"			=> false,
-		"sidbits"		=> 128,
-		"cookie_only"	=> true
+		"key"          => "rack.session",
+		"path"         => "/",
+		"domain"       => null,
+		"expire_after" => null,
+		"secure"       => false,
+		"httponly"     => true,
+		"drop"         => false,
+		"defer"        => false,
+		"renew"        => false,
+		"sidbits"      => 128,
+		"cookie_only"  => true
 	);
 
 	public $app,$default_options,$key,$cookie_only;
@@ -101,7 +101,7 @@ abstract class Id
 			$session_id = $this->destroy_session($env,$id,$options);
 			if(!$session_id) return array($status,$headers,$body);
 		}
-		
+
 		if(isset($options["skip"]) && $options["skip"])
 			return array($status,$headers,$body);
 		$session_id = isset($options["id"])? $options["id"] : $this->generate_sid();
