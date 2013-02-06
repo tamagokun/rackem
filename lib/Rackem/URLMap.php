@@ -26,10 +26,10 @@ class URLMap
 				continue;
 
 			$m = array();
-			if(preg_match($match, $path, $m) === false || empty($m)) continue;
+			if(!preg_match($match, $path, $m)) continue;
 
 			$rest = $m[1];
-			if($rest || !empty($rest) || substr($rest,0,1) == '/') continue;
+			if($rest && !empty($rest) && substr($rest,0,1) !== '/') continue;
 
 			//we have a match
 			$env['SCRIPT_NAME'] = "{$script_name}{$route}";
@@ -46,9 +46,8 @@ class URLMap
 		foreach($map as $route=>$app)
 		{
 			$host = null;
-			// if(preg_match('/https?:\/\/(.*?)(\/.*)/', $route, $m) !== false)
-			// 	list($host, $route) = $m;
-
+			if(preg_match('/https?:\/\/(.*?)(\/.*)/', $route, $m))
+				list($host, $route) = array_slice($m, 1);
 			if(substr($route,0,1) !== '/') throw new Exception('paths need to start with /');
 
 			$route = rtrim($route, "/");
