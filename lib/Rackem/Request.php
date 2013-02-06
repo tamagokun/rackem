@@ -4,7 +4,7 @@ namespace Rackem;
 class Request
 {
 	public $env;
-	
+
 	protected $form_data_media_types = array(
 		'application/x-www-form-urlencoded',
 		'multipart/form-data'
@@ -13,12 +13,12 @@ class Request
 		'multipart/related',
 		'multipart/mixed'
 	);
-	
+
 	public function __construct($env = array())
 	{
 		$this->env = $env;
 	}
-	
+
 	public function base_url()
 	{
 		$url = "{$this->scheme()}://{$this->host()}";
@@ -26,17 +26,17 @@ class Request
 			$url .= ":{$this->port()}";
 		return $url;
 	}
-	
+
 	public function body()
 	{
 		return $this->env["rack.input"];
 	}
-	
+
 	public function content_length()
 	{
 		return $this->env["CONTENT_LENGTH"];
 	}
-	
+
 	public function content_type()
 	{
 		return (isset($this->env["CONTENT_TYPE"]))? $this->env["CONTENT_TYPE"] : null;
@@ -56,18 +56,18 @@ class Request
 		$this->env["rack.request.cookie_hash"] = $hash;
 		return $hash;
 	}
-	
+
 	public function form_data()
 	{
 		return ($this->env["REQUEST_METHOD"] == "POST");
 	}
-	
+
 	public function fullpath()
 	{
 		$query_string = $this->query_string();
 		return empty($query_string)? $this->path() : "{$this->path()}?{$this->query_string()}";
 	}
-	
+
 	public function get()
 	{
 		if(isset($this->env["rack.request.query_string"]) && $this->env["rack.request.query_string"] == $this->query_string())
@@ -76,19 +76,19 @@ class Request
 		$this->env["rack.request.query_hash"] = $this->parse_query($this->query_string());
 		return $this->env["rack.request.query_hash"];
 	}
-	
+
 	public function host()
 	{
 		return preg_replace('/:\d+\z/',"",$this->host_with_port());
 	}
-	
+
 	public function host_with_port()
 	{
 		if(isset($this->env["HTTP_X_FORWARDED_HOST"]))
 			return array_pop(split(",\s?",$this->env["HTTP_X_FORWARDED_HOST"]));
 		return (isset($this->env["HTTP_HOST"]))? $this->env["HTTP_HOST"] : "{$this->env["SERVER_NAME"]}:{$this->env["SERVER_PORT"]}";
 	}
-	
+
 	public function is_delete() { return $this->request_method() == "DELETE"; }
 	public function is_get() { return $this->request_method() == "GET"; }
 	public function is_head() { return $this->request_method() == "HEAD"; }
@@ -97,8 +97,8 @@ class Request
 	public function is_post() { return $this->request_method() == "POST"; }
 	public function is_put() { return $this->request_method() == "PUT"; }
 	public function is_trace() { return $this->request_method() == "TRACE"; }
-	
-	public function is_xhr() 
+
+	public function is_xhr()
 	{
 		return isset($this->env["HTTP_X_REQUESTED_WITH"]) && $this->env["HTTP_X_REQUESTED_WITH"] == "XMLHttpRequest";
 	}
@@ -107,12 +107,12 @@ class Request
 	{
 		return $this->env['rack.logger'];
 	}
-	
+
 	public function media_type()
 	{
 		return (is_null($this->content_type()))? null:strtolower(array_shift(split("\s*[;,]\s*",$this->content_type(),2)));
 	}
-	
+
 	public function media_type_params()
 	{
 		if( is_null($this->content_type()) ) return array();
@@ -123,38 +123,38 @@ class Request
 		}, array_slice(split("\s*[;,]\s*",$this->content_type()),1));
 		return $params;
 	}
-	
+
 	public function content_charset()
 	{
 		$params = $this->media_type_params();
 		return (isset($params['charset']))? $params['charset'] : null;
 	}
-	
+
 	public function params()
 	{
 		return array_merge($this->get(),$this->post());
 	}
-	
+
 	public function parseable_data()
 	{
 		return in_array($this->media_type(), $this->parseable_data_media_types);
 	}
-	
+
 	public function path()
 	{
 		return $this->env["SCRIPT_NAME"] . $this->path_info();
 	}
-	
+
 	public function path_info()
 	{
 		return $this->env["PATH_INFO"];
 	}
-	
+
 	public function port()
 	{
 		return $this->env["SERVER_PORT"];
 	}
-	
+
 	public function post()
 	{
 		if(is_null($this->env["rack.input"])) return array();
@@ -175,7 +175,7 @@ class Request
 			$this->env["rack.request.form_hash"] = array();
 		return $this->env["rack.request.form_hash"];
 	}
-	
+
 	public function query_string()
 	{
 		return $this->env["QUERY_STRING"];
@@ -185,46 +185,45 @@ class Request
 	{
 		return $this->env["HTTP_REFERER"];
 	}
-	
+
 	public function request_method()
 	{
 		return $this->env["REQUEST_METHOD"];
 	}
-	
+
 	public function session($key=null)
 	{
 		return is_null($key)? $this->env["rack.session"] : $this->env["rack.session"][$key];
 	}
-	
+
 	public function scheme()
 	{
 		return $this->env["rack.url_scheme"];
 	}
-	
+
 	public function ssl()
 	{
 		return $this->scheme() == "https";
 	}
-	
+
 	public function url()
 	{
 		return "{$this->base_url()}{$this->fullpath()}";
 	}
-	
+
 	public function user_agent()
 	{
 		return $this->env["HTTP_USER_AGENT"];
 	}
-	
+
 	//private
 	private function parse_query($qs)
 	{
 		return Utils::parse_nested_query($qs);
 	}
-	
+
 	private function parse_multipart($env)
 	{
 		return array_merge($_POST,$_FILES);
 	}
-	
 }

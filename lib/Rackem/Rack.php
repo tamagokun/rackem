@@ -11,14 +11,20 @@ class Rack
 	{
 		return file_exists($_SERVER['SCRIPT_FILENAME']) && !preg_match('/\.php/',$_SERVER['SCRIPT_FILENAME']);
 	}
-	
-	public static function run($app)
+
+	public static function map($path, $app)
 	{
-		if(php_sapi_name() == 'cli-server' && static::cli_req_is_file()) return false;	
+		self::ensure_builder();
+		self::$builder->map($path, $app);
+	}
+
+	public static function run($app = null)
+	{
+		if(php_sapi_name() == 'cli-server' && static::cli_req_is_file()) return false;
 
 		self::ensure_builder();
-		self::$builder->run($app);
-		
+		if($app) self::$builder->run($app);
+
 		if(self::$server) return self::$builder;
 
 		// non-php/non-rack web server
@@ -29,13 +35,13 @@ class Rack
 		if($output) $result[1]['X-Output'] = json_encode($output);
 		static::execute($result, $env);
 	}
-		
+
 	public static function use_middleware($middleware,$options = array())
 	{
 		self::ensure_builder();
 		self::$builder->use_middleware($middleware, $options);
 	}
-	
+
 	public static function version()
 	{
 		return array(0,2);
@@ -68,7 +74,7 @@ class Rack
 
 	protected static function default_env()
 	{
-		return $_SERVER;	//use array_map to manipulate?
+		return $_SERVER;  //use array_map to manipulate?
 	}
 
 	protected static function ensure_builder()

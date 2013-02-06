@@ -3,18 +3,19 @@ namespace Rackem;
 
 class Builder
 {
-	protected $use, $run;
+	protected $map, $use, $run;
 
 	public function __construct($app = null, $middleware = array())
 	{
 		$this->run($app);
 		$this->use = $middleware;
+		$this->map = array();
 	}
 
 	public function call($env)
 	{
 		$this->use = array_reverse($this->use);
-		$app = $this->run;
+		$app = empty($this->map) ? $this->run : $this->generate_map($this->run, $this->map);
 		try
 		{
 			if(!empty($this->use)) foreach($this->use as $middleware) $app = $middleware($app);
@@ -27,7 +28,7 @@ class Builder
 
 	public function map($path, $block)
 	{
-		//not yet implemented
+		$this->map[$path] = $block;
 	}
 
 	public function run($app)
@@ -43,6 +44,14 @@ class Builder
 	}
 
 /* private */
+
+	private function generate_map($default_app, $map)
+	{
+		$mapped = $default_app ? array("/" => $default_app) : array();
+		foreach($map as $route=>$app)
+			$mapped[$route] = new Builder($app);
+		return new URLMap($mapped);
+	}
 
 	private function build_app($app)
 	{

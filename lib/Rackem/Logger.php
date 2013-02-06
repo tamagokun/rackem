@@ -51,7 +51,7 @@ class Logger
 		}
 		return fwrite($this->stream, $formatter($this->severity_label($level),@date($this->datetime_format),$prog,$message));
 	}
-	
+
 	protected function severity_label($level)
 	{
 		$ref = new \ReflectionClass($this);
