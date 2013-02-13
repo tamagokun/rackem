@@ -4,14 +4,14 @@ namespace Rackem;
 class Response
 {
 	public $status,$header,$body;
-	
+
 	public function __construct($body=array(), $status=200, $header=array())
 	{
 		if(func_num_args() == 1 && is_array(func_get_arg(0)))
 			list($status, $header, $body) = func_get_arg(0);
 		$this->status = $status;
 		$this->header = array_merge(array("Content-Type"=>"text/html"),$header);
-		
+
 		$this->body = array();
 		if(is_string($body))
 			$this->write($body);
@@ -23,7 +23,7 @@ class Response
 	{
 		return implode("",$this->body);
 	}
-	
+
 	public function finish()
 	{
 		if(in_array($this->status, array(204,205,304)))
@@ -33,17 +33,17 @@ class Response
 			return array($this->status, $this->header, array());
 		}else
 		{
-			$this->header["Content-Length"] = strlen(implode("",$this->body));
+			$this->header["Content-Length"] = strlen($this->body());
 		}
 		return array($this->status, $this->header, $this->body);
 	}
-	
+
 	public function redirect($target, $status=302)
 	{
 		$this->status = $status;
 		$this->header["Location"] = $target;
 	}
-	
+
 	public function send($args)
 	{
 		$args = (is_array($args))? $args : func_get_args();
@@ -55,7 +55,7 @@ class Response
 			elseif(is_array($arg) || is_string($arg)) $this->write($arg);
 		}
 	}
-	
+
 	public function write($value)
 	{
 		if(is_array($value)){
@@ -64,14 +64,14 @@ class Response
 		}
 		$this->body[] = $value;
 	}
-	
-	public function set_cookie($key,$value=array()) 
+
+	public function set_cookie($key,$value=array())
 	{
-		$this->header = Utils::set_cookie_header($this->header,$key,$value); 
+		$this->header = Utils::set_cookie_header($this->header,$key,$value);
 	}
-	
+
 	public function delete_cookie($key,$value=array())
 	{
-		$this->header = Utils::delete_cookie_header($this->header,$key,$value); 
+		$this->header = Utils::delete_cookie_header($this->header,$key,$value);
 	}
 }
