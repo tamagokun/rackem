@@ -19,7 +19,7 @@ class MockRequest
 
 	public function __construct($app)
 	{
-		$this->app = $this->build_app($app);
+		$this->app = new Builder($app);
 	}
 
 	public function get($uri,$opts=array()) { return $this->request("GET",$uri,$opts); }
@@ -29,23 +29,7 @@ class MockRequest
 	public function delete($uri,$opts=array()) { return $this->request("DELETE",$uri,$opts); }
 	public function head($uri,$opts=array()) { return $this->request("HEAD",$uri,$opts); }
 
-	protected function request($method="GET",$uri="",$opts=array())
-	{
-		$opts["method"] = $method;
-		$env = $this->env_for($uri,$opts);
-		$res = new Response($this->app->call($env));
-		$res->finish();
-		return $res;
-	}
-
-	protected function build_app($app)
-	{
-		if(is_callable($app)) $app = new Shim($app);
-		if(is_string($app)) $app = new $app();
-		return $app;
-	}
-
-	protected function env_for($uri="",$opts=array())
+	public function env_for($uri="",$opts=array())
 	{
 		$uri = parse_url($uri);
 		$uri["path"] = '/'.ltrim($uri["path"],'/');
@@ -66,5 +50,14 @@ class MockRequest
 		}
 
 		return $env;
+	}
+
+	protected function request($method="GET",$uri="",$opts=array())
+	{
+		$opts["method"] = $method;
+		$env = $this->env_for($uri,$opts);
+		$res = new Response($this->app->call($env));
+		$res->finish();
+		return $res;
 	}
 }

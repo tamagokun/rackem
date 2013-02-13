@@ -34,12 +34,12 @@ class Request
 
 	public function content_length()
 	{
-		return $this->env["CONTENT_LENGTH"];
+		return isset($this->env["CONTENT_LENGTH"])? $this->env["CONTENT_LENGTH"] : null;
 	}
 
 	public function content_type()
 	{
-		return (isset($this->env["CONTENT_TYPE"]))? $this->env["CONTENT_TYPE"] : null;
+		return isset($this->env["CONTENT_TYPE"])? $this->env["CONTENT_TYPE"] : null;
 	}
 
 	public function cookies($key=null)
@@ -110,7 +110,7 @@ class Request
 
 	public function media_type()
 	{
-		return (is_null($this->content_type()))? null:strtolower(array_shift(split("\s*[;,]\s*",$this->content_type(),2)));
+		return is_null($this->content_type())? null : strtolower(array_shift(split("\s*[;,]\s*",$this->content_type(),2)));
 	}
 
 	public function media_type_params()
@@ -152,7 +152,7 @@ class Request
 
 	public function port()
 	{
-		return $this->env["SERVER_PORT"];
+		return intval($this->env["SERVER_PORT"]);
 	}
 
 	public function post()
@@ -183,7 +183,7 @@ class Request
 
 	public function referer()
 	{
-		return $this->env["HTTP_REFERER"];
+		return isset($this->env["HTTP_REFERER"])? $this->env["HTTP_REFERER"] : null;
 	}
 
 	public function request_method()
