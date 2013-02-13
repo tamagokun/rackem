@@ -14,7 +14,7 @@ class URLMap
 	{
 		$path = $env['PATH_INFO'];
 		$script_name = $env['SCRIPT_NAME'];
-		$http_host = $env['HTTP_HOST'];
+		$http_host = isset($env['HTTP_HOST'])? $env['HTTP_HOST'] : null;
 		$server_name = $env['SERVER_NAME'];
 		$port = $env['SERVER_PORT'];
 
@@ -22,7 +22,7 @@ class URLMap
 		{
 			list($host, $route, $match, $app) = $info;
 
-			if($host !== $http_host && $host !== $server_name && !(!$host && ($http_host == $server_name || $http_host = "{$server_name}:{$port}")))
+			if(!($host === $http_host || $host === $server_name || (!$host && ($http_host == $server_name || $http_host == "{$server_name}:{$port}"))))
 				continue;
 
 			$m = array();
@@ -43,6 +43,7 @@ class URLMap
 
 	protected function remap($map)
 	{
+		$mapped = array();
 		foreach($map as $route=>$app)
 		{
 			$host = null;
@@ -54,8 +55,9 @@ class URLMap
 			$regex_route = str_replace("/", "\/+", $route);
 			$match = "/^{$regex_route}(.*)/";
 			
-			$map[$route] = array($host, $route, $match, $app);
+			$mapped[$route] = array($host, $route, $match, $app);
 		}
-		return $map;
+		uksort($mapped, function($a, $b) { return strlen($a) < strlen($b); });
+		return $mapped;
 	}
 }
