@@ -84,6 +84,7 @@ class Server
 			'rack.session' => array(),
 			'rack.logger' => ""
 		);
+		fwrite($env['rack.input'], $req['body']);
 		foreach($req['headers'] as $k=>$v) $env[strtoupper(str_replace("-","_","http_$k"))] = $v;
 		return new \ArrayObject($env);
 	}
