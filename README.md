@@ -2,6 +2,8 @@
 
 Rack'em is an attempt to provide the awesomeness that Rack has brought Ruby, to PHP.
 
+![https://api.travis-ci.org/tamagokun/rackem.png]
+
 ## Getting Started
 
 Rack'em likes [Composer](http://getcomposer.org/), go ahead and install it isn't already.
