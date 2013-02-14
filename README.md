@@ -2,6 +2,8 @@
 
 Rack'em is an attempt to provide the awesomeness that Rack has brought Ruby, to PHP.
 
+![](https://api.travis-ci.org/tamagokun/rackem.png)
+
 ```php
 <?php
 # config.php
@@ -34,16 +36,15 @@ $ curl https://raw.github.com/gist/4242494/5d6344d2976e07d051ace18d41fa035113353
 If you are using the global installtion method from above, you can easily do:
 
 ```bash
-$ cd ~/.composer && composer require rackem/rackem:dev-master
+$ cd ~/.composer && composer require rackem/rackem:*
 ```
 
 Otherwise, you need to add `rackem/rackem` to your project's composer.json:
 
 ```json
 {
-	"minimum-stability": "dev",
-  "require": {
-	  "rackem/rackem": "dev-master"
+	"require": {
+		"rackem/rackem": "*"
 	}
 }
 ```
@@ -51,10 +52,10 @@ Otherwise, you need to add `rackem/rackem` to your project's composer.json:
 There's also a shortcut to do this with Composer:
 
 ```bash
-$ composer require rackem/rackem:dev-master
+$ composer require rackem/rackem:*
 ```
 
-Optionally, there is a PSR-0 autoloader you can use:
+Optionally, there is a PSR autoloader you can use:
 
 ```php
 <?php
@@ -85,10 +86,10 @@ Here is an example of a basic Rackem application:
 
 class App
 {
-  public function call($env)
-  {
-	return array(200,array('Content-Type'=>'text/html'),array('Hello World!'));
-  }
+	public function call($env)
+	{
+		return array(200,array('Content-Type'=>'text/html'),array('Hello World!'));
+	}
 }
 
 return \Rackem\Rack::run("App");
@@ -105,7 +106,7 @@ Here would be an example of using a Closure:
 ```php
 <?php
 $app = function($env) {
-  return array(200,array('Content-Type'=>'text/html'),array('Hello World!'));
+	return array(200,array('Content-Type'=>'text/html'),array('Hello World!'));
 };
 return \Rackem\Rack::run($app);
 ```
@@ -121,15 +122,15 @@ Here is an example of a Middleware class that just passes the response on:
 
 class MyMiddleware
 {
-  public function __construct($app)
-  {
-	$this->app = $app;
-  }
+	public function __construct($app)
+	{
+		$this->app = $app;
+	}
 
-  public function call($env)
-  {
-	return $this->app->call($env);
-  }
+	public function call($env)
+	{
+		return $this->app->call($env);
+	}
 }
 
 \Rackem\Rack::use_middleware("MyMiddleware");
@@ -143,10 +144,10 @@ There is also a Middleware helper class to make things a bit easier:
 
 class MyMiddleware extends \Rackem\Middleware
 {
-  public function call($env)
-  {
-	return $this->app->call($env);
-  }
+	public function call($env)
+	{
+		return $this->app->call($env);
+	}
 }
 ```
 
