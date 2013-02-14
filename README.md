@@ -2,6 +2,21 @@
 
 Rack'em is an attempt to provide the awesomeness that Rack has brought Ruby, to PHP.
 
+```php
+<?php
+# config.php
+return \Rackem\Rack::run(function($env) {
+	return array(200, array("Content-Type"=>"text/html"), array("Hello, from Rack'em!"));
+});
+```
+
+```bash
+$ vendor/bin/rackem
+$ open http://localhost:9393
+```
+
+![](https://raw.github.com/tamagokun/rackem/master/hello-world.png)
+
 ## Getting Started
 
 Rack'em likes [Composer](http://getcomposer.org/), go ahead and install it isn't already.
@@ -158,23 +173,23 @@ return \Rackem\Rack::run();
 
 class JsonFormatter extends \Rackem\Middleware
 {
-  public function call($env)
-  {
-	$req = new \Rackem\Request($env);
-	$res = new \Rackem\Response($this->app->call($env));
-	
-	if($req->params()->format == 'json')    //?format=json
-	  $res->write(json_encode($res->body));
-	return $res->finish();
-  }
+	public function call($env)
+	{
+		$req = new \Rackem\Request($env);
+		$res = new \Rackem\Response($this->app->call($env));
+
+		if($req->params()->format == 'json')    //?format=json
+			$res->write(json_encode($res->body));
+		return $res->finish();
+	}
 }
 ```
 
 ## What it has
 
- - run apps using `return \Rackem\Rack::run("MyApp")`
- - stack some middleware on it `\Rackem\Rack::use_middleware("MyMiddleware");`
- - Request and Response objects for all sorts of awesome.
+ - run apps using `\Rackem\Rack::run`
+ - stack some middleware on it `\Rackem\Rack::use_middleware`
+ - Request and Response objects for helping out.
  - Rack compatible logger for logging to streams (STDERR, files, etc)
  - RubyRack class + config.ru for serving Rackem apps via Ruby web servers
  - Mime class for file type detection
@@ -184,10 +199,6 @@ class JsonFormatter extends \Rackem\Middleware
  - Session handling
  - Protection middlewares to prevent attacks (csrf,xss,clickjacking,ip spoofing,dir traversal,session hijacking)
  - rackem for serving applications locally
-
-## What it needs
-
- - specs
 
 ## Credits
 
