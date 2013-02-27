@@ -2,7 +2,7 @@
 
 Rack'em is an attempt to provide the awesomeness that Rack has brought Ruby, to PHP.
 
-![](https://api.travis-ci.org/tamagokun/rackem.png)
+![](https://api.travis-ci.org/tamagokun/rackem.png?branch=master)
 
 ```php
 <?php
