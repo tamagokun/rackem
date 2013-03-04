@@ -24,14 +24,13 @@ class Server
 
 	public function start($app)
 	{
-		$this->app = include($app);
 		echo "== Rackem on http://{$this->host}:{$this->port}\n";
 		echo ">> Rackem web server\n";
 		echo ">> Listening on {$this->host}:{$this->port}, CTRL+C to stop\n";
 
 		$sockets = array($this->master);
 		$null = null;
-		while(1 === stream_select($sockets, $null, $null, null))
+		while(1 === @stream_select($sockets, $null, $null, null))
 		{
 			$client = stream_socket_accept($this->master);
 			$buffer = '';
@@ -44,10 +43,17 @@ class Server
 
 			ob_start();
 			$env = $this->env($req);
-			if($this->reload) $this->app = include($app);
-			$res = new Response($this->app->call($env));
+			if($this->reload)
+			{
+				$res = shell_exec($this->run_from_cli($app, $env));
+				fwrite($client, $res);
+			}else
+			{
+				$this->app = include($app);
+				$res = new Response($this->app->call($env));
+				fwrite($client, $this->write_response($req, $res));
+			}
 
-			fwrite($client, $this->write_response($req, $res));
 			fclose($client);
 			fclose($env['rack.input']);
 			fclose($env['rack.errors']);
@@ -191,6 +197,31 @@ class Server
 		$parsed['request_url'] = $this->get_url_parts($parts['start'][1], $parsed);
 
 		return $parsed;
+	}
+
+	protected function run_from_cli($app, $env)
+	{
+		$request_uri = $env['PATH_INFO'];
+		$request_method = $env['REQUEST_METHOD'];
+		$query_string = $env['QUERY_STRING'];
+		$server_name = $env['SERVER_NAME'];
+		$server_port = $env['SERVER_PORT'];
+		$server_protocol = $env['SERVER_PROTOCOL'];
+		$rackem = dirname(dirname(__DIR__)).'/rackem.php';
+		$cmd = <<<EOT
+php --run '
+	\$_SERVER["REQUEST_URI"] = "$request_uri";
+	\$_SERVER["REQUEST_METHOD"] = "$request_method";
+	\$_SERVER["SCRIPT_NAME"] = "/";
+	\$_SERVER["QUERY_STRING"] = "$query_string";
+	\$_SERVER["SERVER_NAME"] = "$server_name";
+	\$_SERVER["SERVER_PORT"] = "$server_port";
+	\$_SERVER["SERVER_PROTOCOL"] = "$server_protocol";
+	include("$rackem");
+	include("$app");
+'
+EOT;
+		return $cmd;
 	}
 
 	protected function write_response($req, $res)
