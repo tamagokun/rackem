@@ -20,7 +20,7 @@ class Utils
 	{
 		$s = preg_split("/\A[\[\]]*([^\[\]]+)\]*/",$name, null, PREG_SPLIT_DELIM_CAPTURE);
 		list($k, $after) = array_slice($s, 1);
-		if(empty($k)) return;
+		if(!strlen($k)) return;
 
 		if($after == "") $params[$k] = $v;
 		elseif($after == "[]")
