@@ -165,11 +165,10 @@ class Request
 			$this->env["rack.request.form_input"] = $this->env["rack.input"];
 			if(! $this->env["rack.request.form_hash"] = $this->parse_multipart($this->env))
 			{
-				//$form_vars = str_replace("\0\z","",stream_get_contents($this->env["rack.input"]));
+				$form_vars = str_replace("\0\z","",stream_get_contents($this->env["rack.input"]));
 				
-				//$this->env["rack.request.form_vars"] = $form_vars;
-				//$this->env["rack.request.form_hash"] = $this->parse_query($form_vars);
-				$this->env["rack.request.form_hash"] = $_POST;
+				$this->env["rack.request.form_vars"] = $form_vars;
+				$this->env["rack.request.form_hash"] = $this->parse_query($form_vars);
 			}
 		}else
 			$this->env["rack.request.form_hash"] = array();
@@ -224,6 +223,6 @@ class Request
 
 	private function parse_multipart($env)
 	{
-		return array_merge($_POST,$_FILES);
+		return isset($_POST) || isset($_FILES)? array_merge($_POST,$_FILES) : false;
 	}
 }

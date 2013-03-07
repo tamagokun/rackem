@@ -10,24 +10,11 @@ class Server
 	{
 		$this->host = $host;
 		$this->port = $port;
-		$this->master = @stream_socket_server("tcp://$host:$port", $errno, $errstr);
-		if($this->master === false)
-		{
-			echo ">> Failed to start server.\n";
-			exit($errno > 0? $errno : 2);
-		}
-		stream_set_blocking($this->master, 0);
-		declare(ticks=1);
-		pcntl_signal(SIGINT, array($this, "stop"));
-		pcntl_signal(SIGTERM, array($this, "stop"));
 	}
 
 	public function start($app)
 	{
-		echo "== Rackem on http://{$this->host}:{$this->port}\n";
-		echo ">> Rackem web server\n";
-		echo ">> Listening on {$this->host}:{$this->port}, CTRL+C to stop\n";
-
+		$this->init();
 		$sockets = array($this->master);
 		$null = null;
 		while(1 === @stream_select($sockets, $null, $null, null))
@@ -39,26 +26,28 @@ class Server
 			{
 				$buffer .= fread($client, 2046);
 			}
-			$req = $this->parse_request($buffer);
 
 			ob_start();
-			$env = $this->env($req);
 			if($this->reload)
-			{
-				$res = shell_exec($this->run_from_cli($app, $env));
-				fwrite($client, $res);
-			}else
-			{
-				$this->app = include($app);
-				$res = new Response($this->app->call($env));
-				fwrite($client, $this->write_response($req, $res));
-			}
+				fwrite($client, $this->process_from_cli($app, $buffer));
+			else
+				fwrite($client, $this->process($app, $buffer));
 
 			fclose($client);
-			fclose($env['rack.input']);
-			fclose($env['rack.errors']);
-			if($env['rack.logger']) $env['rack.logger']->close();
+			// fclose($env['rack.input']);
+			// fclose($env['rack.errors']);
+			// if($env['rack.logger']) $env['rack.logger']->close();
 		}
+	}
+
+	public function process($app, $buffer)
+	{
+		$req = $this->parse_request($buffer);
+		$env = $this->env($req);
+
+		$this->app = include($app);
+		$res = new Response($this->app->call($env));
+		return $this->write_response($req, $res);
 	}
 
 	public function stop()
@@ -69,6 +58,24 @@ class Server
 	}
 
 /* private */
+
+	protected function init()
+	{
+		$this->master = @stream_socket_server("tcp://{$this->host}:{$this->port}", $errno, $errstr);
+		if($this->master === false)
+		{
+			echo ">> Failed to start server.\n";
+			echo $errstr;
+			exit($errno > 0? $errno : 2);
+		}
+		stream_set_blocking($this->master, 0);
+		declare(ticks=1);
+		pcntl_signal(SIGINT, array($this, "stop"));
+		pcntl_signal(SIGTERM, array($this, "stop"));
+		echo "== Rackem on http://{$this->host}:{$this->port}\n";
+		echo ">> Rackem web server\n";
+		echo ">> Listening on {$this->host}:{$this->port}, CTRL+C to stop\n";
+	}
 
 	protected function env($req)
 	{
@@ -82,7 +89,7 @@ class Server
 			'QUERY_STRING' => $req['request_url']['query'],
 			'rack.version' => Rack::version(),
 			'rack.url_scheme' => $req['request_url']['scheme'],
-			'rack.input' => fopen('php://input', 'r'),
+			'rack.input' => fopen('php://temp', 'r+'),
 			'rack.errors' => fopen('php://stderr', 'wb'),
 			'rack.multithread' => false,
 			'rack.multiprocess' => false,
@@ -91,6 +98,7 @@ class Server
 			'rack.logger' => ""
 		);
 		fwrite($env['rack.input'], $req['body']);
+		rewind($env['rack.input']);
 		foreach($req['headers'] as $k=>$v) $env[strtoupper(str_replace("-","_","http_$k"))] = $v;
 		return new \ArrayObject($env);
 	}
@@ -199,29 +207,26 @@ class Server
 		return $parsed;
 	}
 
-	protected function run_from_cli($app, $env)
+	protected function process_from_cli($app, $buffer)
 	{
-		$request_uri = $env['PATH_INFO'];
-		$request_method = $env['REQUEST_METHOD'];
-		$query_string = $env['QUERY_STRING'];
-		$server_name = $env['SERVER_NAME'];
-		$server_port = $env['SERVER_PORT'];
-		$server_protocol = $env['SERVER_PROTOCOL'];
-		$rackem = dirname(dirname(__DIR__)).'/rackem.php';
-		$cmd = <<<EOT
-php --run '
-	\$_SERVER["REQUEST_URI"] = "$request_uri";
-	\$_SERVER["REQUEST_METHOD"] = "$request_method";
-	\$_SERVER["SCRIPT_NAME"] = "/";
-	\$_SERVER["QUERY_STRING"] = "$query_string";
-	\$_SERVER["SERVER_NAME"] = "$server_name";
-	\$_SERVER["SERVER_PORT"] = "$server_port";
-	\$_SERVER["SERVER_PROTOCOL"] = "$server_protocol";
-	include("$rackem");
-	include("$app");
-'
-EOT;
-		return $cmd;
+		$res = "";
+		$spec = array(
+			0 => array("pipe", "r"),
+			1 => array("pipe", "w"),
+			2 => array("pipe", "w")
+		);
+
+		$proc = proc_open(dirname(dirname(__DIR__))."/bin/rackem $app --process", $spec, $pipes);
+		if(is_resource($proc))
+		{
+			fwrite($pipes[0], $buffer);
+			fclose($pipes[0]);
+
+			$res = stream_get_contents($pipes[1]);
+			fclose($pipes[1]);
+			proc_close($proc);
+		}
+		return $res;
 	}
 
 	protected function write_response($req, $res)

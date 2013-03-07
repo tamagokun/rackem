@@ -11,15 +11,45 @@ if(!class_exists("\\Rackem\Server"))
 	}
 }
 
-$args = $GLOBALS['argv'];
-array_shift($args);
-$config = count($args) > 0? $args[0] : 'config.php';
+$argv = $GLOBALS['argv'];
+array_shift($argv);
 
+$flags = array('h','process');
+$args = array();
+$opts = array();
+while(list($k,$arg) = each($argv))
+{
+	$opt_regex = '/-{1,2}(\w*)(=.*)?/';
+	if(preg_match($opt_regex,$arg,$m) !== 1)
+	{
+		$args[] = $arg;
+		continue;
+	}
+	$opts[$m[1]] = true;
+	if(!empty($m[2]))
+	{
+		$opts[$m[1]] = ltrim($m[2],'=');
+		continue;
+	}
+	if(in_array($m[1],$flags)) continue;
+	if(($next = current($argv)) === false) continue;
+	if(preg_match($opt_regex,$next) === 1) continue;
+	$opts[$m[1]] = $next;
+	each($argv);
+}
+
+$config = count($args) > 0? $args[0] : 'config.php';
 if(!file_exists($config))
 {
 	echo "configuration {$config} not found\n";
 	exit(1);
 }
 
-\Rackem\Rack::$server = new \Rackem\Server('0.0.0.0','9393');
-\Rackem\Rack::$server->start(realpath($config));
+$host = isset($opts['host'])? $opts['host'] : '0.0.0.0';
+$port = isset($opts['port'])? $opts['port'] : '9393';
+
+\Rackem\Rack::$server = new \Rackem\Server($host,$port);
+if(isset($opts['process']) && $opts['process'])
+	echo \Rackem\Rack::$server->process(realpath($config), stream_get_contents(fopen("php://stdin","r")));
+else
+	\Rackem\Rack::$server->start(realpath($config));
