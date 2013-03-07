@@ -11,8 +11,27 @@ class Utils
 		if(empty($qs)) return $params;
 		array_map(function($p) use (&$params) {
 			list($k,$v) = explode("=",$p,2);
-			$params[$k] = $v;
+			self::normalize_params($params, urldecode($k), urldecode($v));
 		},preg_split((!is_null($d))? "/[$d] */" : self::DEFAULT_SEP,$qs));
+		return $params;
+	}
+
+	public static function normalize_params(&$params, $name, $v=null)
+	{
+		$s = preg_split("/\A[\[\]]*([^\[\]]+)\]*/",$name, null, PREG_SPLIT_DELIM_CAPTURE);
+		print_r($s);
+		list($k, $after) = array_slice($s, 1);
+		if(empty($k)) return;
+
+		if($after == "") $params[$k] = $v;
+		elseif($after == "[]")
+		{
+			if(!is_array($params[$k])) $params[$k] = array();
+			$params[$k][] = $v;
+		}else
+		{
+			$params[$k] = self::normalize_params($params[$k], $after, $v);
+		}
 		return $params;
 	}
 

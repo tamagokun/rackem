@@ -27,16 +27,12 @@ class Server
 				$buffer .= fread($client, 2046);
 			}
 
-			ob_start();
 			if($this->reload)
 				fwrite($client, $this->process_from_cli($app, $buffer));
 			else
 				fwrite($client, $this->process($app, $buffer));
 
 			fclose($client);
-			// fclose($env['rack.input']);
-			// fclose($env['rack.errors']);
-			// if($env['rack.logger']) $env['rack.logger']->close();
 		}
 	}
 
@@ -47,12 +43,18 @@ class Server
 
 		$this->app = include($app);
 		$res = new Response($this->app->call($env));
-		return $this->write_response($req, $res);
+		$output = $this->write_response($req, $res);
+		fclose($env['rack.input']);
+		fclose($env['rack.errors']);
+		if($env['rack.logger']) $env['rack.logger']->close();
+		return $output;
 	}
 
 	public function stop()
 	{
 		echo ">> Stopping ...\n";
+		if(is_resource($this->proc)) proc_close($this->proc);
+		$this->proc = null;
 		fclose($this->master);
 		exit(0);
 	}
@@ -89,7 +91,7 @@ class Server
 			'QUERY_STRING' => $req['request_url']['query'],
 			'rack.version' => Rack::version(),
 			'rack.url_scheme' => $req['request_url']['scheme'],
-			'rack.input' => fopen('php://temp', 'r+'),
+			'rack.input' => fopen('php://temp', 'r+b'),
 			'rack.errors' => fopen('php://stderr', 'wb'),
 			'rack.multithread' => false,
 			'rack.multiprocess' => false,
@@ -216,15 +218,19 @@ class Server
 			2 => array("pipe", "w")
 		);
 
-		$proc = proc_open(dirname(dirname(__DIR__))."/bin/rackem $app --process", $spec, $pipes);
-		if(is_resource($proc))
+		$this->proc = proc_open(dirname(dirname(__DIR__))."/bin/rackem $app --process", $spec, $pipes);
+		stream_set_blocking($pipes[2], 0);
+		if(is_resource($this->proc))
 		{
 			fwrite($pipes[0], $buffer);
 			fclose($pipes[0]);
 
 			$res = stream_get_contents($pipes[1]);
 			fclose($pipes[1]);
-			proc_close($proc);
+
+			echo stream_get_contents($pipes[2]);
+			fclose($pipes[2]);
+			proc_close($this->proc);
 		}
 		return $res;
 	}
