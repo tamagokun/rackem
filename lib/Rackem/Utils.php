@@ -19,7 +19,6 @@ class Utils
 	public static function normalize_params(&$params, $name, $v=null)
 	{
 		$s = preg_split("/\A[\[\]]*([^\[\]]+)\]*/",$name, null, PREG_SPLIT_DELIM_CAPTURE);
-		print_r($s);
 		list($k, $after) = array_slice($s, 1);
 		if(empty($k)) return;
 
