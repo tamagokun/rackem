@@ -4,10 +4,11 @@ namespace Rackem;
 class Server
 {
 	public $reload = true;
-	private $host, $port, $app;
+	private $host, $port, $app, $proc;
 
 	public function __construct($host = '0.0.0.0', $port = 9393)
 	{
+		declare(ticks=1);
 		$this->host = $host;
 		$this->port = $port;
 	}
@@ -38,16 +39,18 @@ class Server
 
 	public function process($app, $buffer)
 	{
+		ob_start();
 		$req = $this->parse_request($buffer);
 		$env = $this->env($req);
 
 		$this->app = include($app);
 		$res = new Response($this->app->call($env));
-		$output = $this->write_response($req, $res);
+		$output = ob_get_clean();
+		fwrite($env['rack.errors'], $output);
 		fclose($env['rack.input']);
 		fclose($env['rack.errors']);
 		if($env['rack.logger']) $env['rack.logger']->close();
-		return $output;
+		return $this->write_response($req, $res);
 	}
 
 	public function stop()
@@ -71,7 +74,6 @@ class Server
 			exit($errno > 0? $errno : 2);
 		}
 		stream_set_blocking($this->master, 0);
-		declare(ticks=1);
 		pcntl_signal(SIGINT, array($this, "stop"));
 		pcntl_signal(SIGTERM, array($this, "stop"));
 		echo "== Rackem on http://{$this->host}:{$this->port}\n";
