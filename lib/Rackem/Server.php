@@ -23,11 +23,15 @@ class Server
 			$client = stream_socket_accept($this->master);
 			$buffer = '';
 
-			while (!preg_match('/\r?\n\r?\n/', $buffer))
+			while (!preg_match('/\r?\n\r?\n/', $buffer)) $buffer .= fread($client, 2046);
+			if(preg_match("/Content-Length: (\d+)/",$buffer,$m))
 			{
-				$buffer .= fread($client, 2046);
+				while($m[1] > 0)
+				{
+					$buffer .= fread($client, 8192);
+					$m[1] -= 8192;
+				}
 			}
-
 			if($this->reload)
 				fwrite($client, $this->process_from_cli($app, $buffer));
 			else
@@ -101,6 +105,16 @@ class Server
 			'rack.session' => array(),
 			'rack.logger' => ""
 		);
+		if(isset($req['headers']['Content-Type']))
+		{
+			$env['CONTENT_TYPE'] = $req['headers']['Content-Type'];
+			unset($req['headers']['Content-Type']);
+		}
+		if(isset($req['headers']['Content-Length']))
+		{
+			$env['CONTENT_LENGTH'] = $req['headers']['Content-Length'];
+			unset($req['headers']['Content-Length']);
+		}
 		fwrite($env['rack.input'], $req['body']);
 		rewind($env['rack.input']);
 		foreach($req['headers'] as $k=>$v) $env[strtoupper(str_replace("-","_","http_$k"))] = $v;
