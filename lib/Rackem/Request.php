@@ -110,7 +110,7 @@ class Request
 
 	public function media_type()
 	{
-		return is_null($this->content_type())? null : strtolower(array_shift(split("\s*[;,]\s*",$this->content_type(),2)));
+		return is_null($this->content_type())? null : strtolower(array_shift(preg_split('/\s*[;,]\s*/',$this->content_type(),2)));
 	}
 
 	public function media_type_params()
@@ -118,9 +118,9 @@ class Request
 		if( is_null($this->content_type()) ) return array();
 		$params = array();
 		return array_map(function($p) use (&$params) {
-			list($k,$v) = split("=",$p,2);
+			list($k,$v) = explode("=",$p,2);
 			$params[strtolower($k)] = $v;
-		}, array_slice(split("\s*[;,]\s*",$this->content_type()),1));
+		}, array_slice(preg_split('/\s*[;,]\s*/',$this->content_type()),1));
 		return $params;
 	}
 
@@ -166,9 +166,9 @@ class Request
 			if(! $this->env["rack.request.form_hash"] = $this->parse_multipart($this->env))
 			{
 				$form_vars = str_replace("\0\z","",stream_get_contents($this->env["rack.input"]));
-				
 				$this->env["rack.request.form_vars"] = $form_vars;
-				$this->env["rack.request.form_hash"] = $this->parse_query($form_vars);
+				// $this->env["rack.request.form_hash"] = $this->parse_query($form_vars);
+				$this->env["rack.request.form_hash"] = Utils::parse_form_data($form_vars, $this->content_type());
 			}
 		}else
 			$this->env["rack.request.form_hash"] = array();

@@ -16,6 +16,37 @@ class Utils
 		return $params;
 	}
 
+	public static function parse_form_data($body, $content_type)
+	{
+		$data = array();
+		preg_match('/boundary=(.*)$/', $content_type, $m);
+		if(!count($m))
+		{
+			parse_str(urldecode($body), $data);
+			return $data;
+		}
+
+		$boundary = $m[1];
+		$chunks = preg_split("/-+$boundary/", $body);
+		array_pop($chunks);
+
+		foreach($chunks as $id => $chunk)
+		{
+			if(empty($chunk)) continue;
+			if(strpos($chunk, 'application/octet-stream') !== false)
+			{
+				preg_match("/name=\"([^\"]*)\".*stream[\n|\r]+([^\n\r].*)?$/s", $chunk, $m);
+				$data['files'][$m[1]] = isset($m[2])? $m[2] : "";
+			}else
+			{
+				preg_match('/name=\"([^\"]*)\"[\n|\r]+([^\n\r].*)?\r$/s', $chunk, $m);
+				//add support for array addition something[]
+				$data[$m[1]] = isset($m[2])? $m[2] : "";
+			}
+		}
+		return $data;
+	}
+
 	public static function normalize_params(&$params, $name, $v=null)
 	{
 		$s = preg_split("/\A[\[\]]*([^\[\]]+)\]*/",$name, null, PREG_SPLIT_DELIM_CAPTURE);
