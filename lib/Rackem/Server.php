@@ -22,15 +22,23 @@ class Server
 		{
 			$client = stream_socket_accept($this->master);
 			$buffer = '';
+// while (substr($request, -4) !== "\r\n\r\n") {
 
-			while (!preg_match('/\r?\n\r?\n/', $buffer)) $buffer .= fread($client, 2046);
-			if(preg_match("/Content-Length: (\d+)/",$buffer,$m))
+			while(substr($buffer, -4) !== "\r\n\r\n")
 			{
-				while($m[1] > 0)
+				$buffer .= fread($client, 1024);
+			}
+
+			if(preg_match('/Content-Length: (\d+)/',$buffer,$m))
+			{
+				$length = $m[1] - (strlen($buffer) - strpos($buffer, "\r\n\r\n") + 4);
+				$body = '';
+				while(strlen($body) < $length)
 				{
-					$buffer .= fread($client, 8192);
-					$m[1] -= 8192;
+					$body .= fread($client, 1024);
 				}
+
+				$buffer = $buffer . $body;
 			}
 			if($this->reload)
 				fwrite($client, $this->process_from_cli($app, $buffer));
