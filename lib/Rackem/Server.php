@@ -22,7 +22,6 @@ class Server
 		{
 			$client = stream_socket_accept($this->master);
 			$buffer = '';
-// while (substr($request, -4) !== "\r\n\r\n") {
 
 			while(substr($buffer, -4) !== "\r\n\r\n")
 			{
