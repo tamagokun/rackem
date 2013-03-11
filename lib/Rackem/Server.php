@@ -4,7 +4,7 @@ namespace Rackem;
 class Server
 {
 	public $reload = true;
-	private $host, $port, $app, $proc;
+	private $host, $port, $app, $listening;
 
 	public function __construct($host = '0.0.0.0', $port = 9393)
 	{
@@ -16,35 +16,59 @@ class Server
 	public function start($app)
 	{
 		$this->init();
-		$sockets = array($this->master);
-		$null = null;
-		while(1 === @stream_select($sockets, $null, $null, null))
+		while($this->listening)
 		{
-			$client = stream_socket_accept($this->master);
-			$buffer = '';
-
-			while(substr($buffer, -4) !== "\r\n\r\n")
+			$client = @socket_accept($this->master);
+			if($client === false)
 			{
-				$buffer .= fread($client, 1024);
+				usleep(100);
+				continue;
 			}
-
-			if(preg_match('/Content-Length: (\d+)/',$buffer,$m))
+			if($client < 0)
 			{
-				$length = $m[1] - (strlen($buffer) - strpos($buffer, "\r\n\r\n") + 4);
-				$body = '';
-				while(strlen($body) < $length)
+				echo ">> Error: ", socket_strerror($client), "\n";
+				exit();
+			}
+			
+			$pid = pcntl_fork();
+			if($pid == -1)
+			{
+				echo ">> Fork failure.\n";
+				exit();
+			}else if($pid > 0)
+			{
+				socket_close($client);
+			}else
+			{
+				$this->listening = false;
+				socket_close($this->master);
+				$buffer = '';
+				//while(!preg_match('/\r?\n\r?\n/',$buffer, $s))
+				$buffer .= socket_read($client, 1024);
+
+				if(!strlen($buffer))
 				{
-					$body .= fread($client, 1024);
+					socket_close($client);
+					exit();
 				}
 
-				$buffer = $buffer . $body;
-			}
-			if($this->reload)
-				fwrite($client, $this->process_from_cli($app, $buffer));
-			else
-				fwrite($client, $this->process($app, $buffer));
+				if(preg_match('/Content-Length: (\d+)/',$buffer,$m))
+				{
+					$offset = strpos($buffer, "\r\n\r\n");
+					if($offset === false) $offset = strpos($buffer, "\n\n");
+					if($offset === false) $offset = strpos($buffer, "\r\r");
+					if($offset === false) $offset = strpos($buffer, "\r\n");
+					$length = $m[1] - $offset + 2;
+					$body = '';
+					while(strlen($body) < $length) $body .= socket_read($client, 1024);
+					$buffer = $buffer . $body;
+				}
 
-			fclose($client);
+				$res = $this->reload? $this->process_from_cli($app, $buffer) : $this->process($app, $buffer);
+				socket_write($client, $res);
+				socket_close($client);
+				exit();
+			}
 		}
 	}
 
@@ -64,12 +88,12 @@ class Server
 		return $this->write_response($req, $res);
 	}
 
+
 	public function stop()
 	{
-		echo ">> Stopping ...\n";
-		if(is_resource($this->proc)) proc_close($this->proc);
-		$this->proc = null;
-		fclose($this->master);
+		$this->listening = false;
+		$this->child_handler();
+		echo ">> Stopping...\n";
 		exit(0);
 	}
 
@@ -77,19 +101,35 @@ class Server
 
 	protected function init()
 	{
-		$this->master = @stream_socket_server("tcp://{$this->host}:{$this->port}", $errno, $errstr);
-		if($this->master === false)
+		if(($this->master = socket_create(AF_INET, SOCK_STREAM, SOL_TCP)) === false)
 		{
-			echo ">> Failed to start server.\n";
-			echo $errstr;
-			exit($errno > 0? $errno : 2);
+			echo ">> Failed to create socket.\n", socket_strerror($this->master), "\n";
+			exit(1);
 		}
-		stream_set_blocking($this->master, 0);
-		pcntl_signal(SIGINT, array($this, "stop"));
-		pcntl_signal(SIGTERM, array($this, "stop"));
+		if(@socket_bind($this->master, $this->host, $this->port) === false)
+		{
+			echo ">> Failed to bind socket.\n", socket_strerror(socket_last_error()), "\n";
+			exit(2);
+		}
+		if(@socket_listen($this->master, 0) === false)
+		{
+			echo ">> Failed to start server.\n", socket_strerror(socket_last_error()), "\n";
+			exit(3);
+		}
+		socket_set_nonblock($this->master);
+
 		echo "== Rackem on http://{$this->host}:{$this->port}\n";
 		echo ">> Rackem web server\n";
 		echo ">> Listening on {$this->host}:{$this->port}, CTRL+C to stop\n";
+		pcntl_signal(SIGINT, array($this, "stop"));
+		pcntl_signal(SIGTERM, array($this, "stop"));
+		pcntl_signal(SIGCHLD, array($this, "child_handler"));
+		$this->listening = true;
+	}
+
+	protected function child_handler()
+	{
+		pcntl_waitpid(-1, $status);
 	}
 
 	protected function env($req)
@@ -241,20 +281,20 @@ class Server
 			2 => array("pipe", "w")
 		);
 
-		$this->proc = proc_open(dirname(dirname(__DIR__))."/bin/rackem $app --process", $spec, $pipes);
+		$proc = proc_open(dirname(dirname(__DIR__))."/bin/rackem $app --process", $spec, $pipes);
 		stream_set_blocking($pipes[2], 0);
-		if(is_resource($this->proc))
-		{
-			fwrite($pipes[0], $buffer);
-			fclose($pipes[0]);
+		if(!is_resource($proc)) return "";
 
-			$res = stream_get_contents($pipes[1]);
-			fclose($pipes[1]);
+		fwrite($pipes[0], $buffer);
+		fclose($pipes[0]);
 
-			echo stream_get_contents($pipes[2]);
-			fclose($pipes[2]);
-			proc_close($this->proc);
-		}
+		$res = stream_get_contents($pipes[1]);
+		fclose($pipes[1]);
+
+		echo stream_get_contents($pipes[2]);
+		fclose($pipes[2]);
+
+		proc_close($proc);
 		return $res;
 	}
 

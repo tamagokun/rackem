@@ -5,17 +5,6 @@ class Utils
 {
 	const DEFAULT_SEP = "/[&;] */";
 
-	public static function parse_nested_query($qs, $d=null)
-	{
-		$params = array();
-		if(empty($qs)) return $params;
-		array_map(function($p) use (&$params) {
-			list($k,$v) = explode("=",$p,2);
-			self::normalize_params($params, urldecode($k), urldecode($v));
-		},preg_split((!is_null($d))? "/[$d] */" : self::DEFAULT_SEP,$qs));
-		return $params;
-	}
-
 	public static function parse_form_data($body, $content_type)
 	{
 		$data = array();
@@ -40,29 +29,12 @@ class Utils
 			}else
 			{
 				preg_match('/name=\"([^\"]*)\"[\n|\r]+([^\n\r].*)?\r$/s', $chunk, $m);
-				//add support for array addition something[]
-				$data[$m[1]] = isset($m[2])? $m[2] : "";
+				$fields = array();
+				parse_str(isset($m[2])? "{$m[1]}={$m[2]}" : "{$m[1]}=", $fields);
+				$data = array_merge_recursive($data, $fields);
 			}
 		}
 		return $data;
-	}
-
-	public static function normalize_params(&$params, $name, $v=null)
-	{
-		$s = preg_split("/\A[\[\]]*([^\[\]]+)\]*/",$name, null, PREG_SPLIT_DELIM_CAPTURE);
-		list($k, $after) = array_slice($s, 1);
-		if(!strlen($k)) return;
-
-		if($after == "") $params[$k] = $v;
-		elseif($after == "[]")
-		{
-			if(!is_array($params[$k])) $params[$k] = array();
-			$params[$k][] = $v;
-		}else
-		{
-			$params[$k] = self::normalize_params($params[$k], $after, $v);
-		}
-		return $params;
 	}
 
 	public static function parse_query($qs, $d=null)

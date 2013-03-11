@@ -163,13 +163,9 @@ class Request
 		if($this->form_data() || $this->parseable_data())
 		{
 			$this->env["rack.request.form_input"] = $this->env["rack.input"];
-			if(! $this->env["rack.request.form_hash"] = $this->parse_multipart($this->env))
-			{
-				$form_vars = str_replace("\0\z","",stream_get_contents($this->env["rack.input"]));
-				$this->env["rack.request.form_vars"] = $form_vars;
-				// $this->env["rack.request.form_hash"] = $this->parse_query($form_vars);
-				$this->env["rack.request.form_hash"] = Utils::parse_form_data($form_vars, $this->content_type());
-			}
+			$form_vars = str_replace("\0\z","",stream_get_contents($this->env["rack.input"]));
+			$this->env["rack.request.form_vars"] = $form_vars;
+			$this->env["rack.request.form_hash"] = $this->parse_multipart($form_vars);
 		}else
 			$this->env["rack.request.form_hash"] = array();
 		return $this->env["rack.request.form_hash"];
@@ -215,14 +211,16 @@ class Request
 		return $this->env["HTTP_USER_AGENT"];
 	}
 
-	//private
+//private
 	private function parse_query($qs)
 	{
-		return Utils::parse_nested_query($qs);
+		parse_str(urldecode($qs), $data);
+		return $data;
 	}
 
-	private function parse_multipart($env)
+	private function parse_multipart($d)
 	{
-		return isset($_POST) || isset($_FILES)? array_merge($_POST,$_FILES) : false;
+		if(!empty($_POST) || !empty($_FILES)) return array_merge($_POST, $_FILES);
+		return Utils::parse_form_data($d, $this->content_type());
 	}
 }
