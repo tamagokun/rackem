@@ -4,12 +4,12 @@ namespace Rackem;
 class MockRequest
 {
 	public $app;
-	
+
 	public static function default_env() {
 		return array(
 			"rack.version" => \Rackem::version(),
 			"rack.url_scheme" => (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'])? 'https' : 'http',
-			"rack.input" => fopen('php://input', 'r'),
+			"rack.input" => fopen('php://temp', 'r+b'),
 			"rack.errors" => fopen('php://stderr', 'wb'),
 			"rack.multithread" => false,
 			"rack.multiprocess" => false,
@@ -46,7 +46,8 @@ class MockRequest
 
 		if(isset($opts["params"]))
 		{
-		
+			fwrite($env["rack.input"], http_build_query($opts["params"]));
+			rewind($env["rack.input"]);
 		}
 
 		return $env;

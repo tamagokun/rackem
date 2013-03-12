@@ -13,17 +13,23 @@ class Request extends ObjectBehavior
 
 	public function it_should_parse_get_variables()
 	{
-		
+		$request = new \Rackem\MockRequest(null);
+		$this->env = $request->env_for("/?foo=bar");
+		$this->get()->shouldReturn(array("foo"=>"bar"));
 	}
 
 	public function it_should_parse_post_variables()
 	{
-		
+		$request = new \Rackem\MockRequest(null);
+		$this->env = $request->env_for("/", array("params"=>array("foo"=>"bar"), "method"=>"POST"));
+		$this->post()->shouldReturn(array("foo"=>"bar"));
 	}
 
 	public function it_should_contain_all_variables_in_params()
 	{
-		
+		$request = new \Rackem\MockRequest(null);
+		$this->env = $request->env_for("/?foo=bar", array("params"=>array("fizz"=>"bazz"), "method"=>"POST"));
+		$this->params()->shouldReturn(array("foo"=>"bar", "fizz"=>"bazz"));
 	}
 
 	public function it_should_parse_requests_properly()
