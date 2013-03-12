@@ -1,5 +1,5 @@
 <?php
-if(!class_exists("SplClassLoader")) require "vendor/SplClassLoader.php";
+if(!class_exists("ClassLoader")) require "vendor/ClassLoader.php";
 
-$loader = new SplClassLoader('Rackem', __DIR__.'/lib');
+$loader = new ClassLoader(array(__DIR__.'/lib'));
 $loader->register();
