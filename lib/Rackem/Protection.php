@@ -9,15 +9,15 @@ class Protection extends \Rackem\Middleware
 		'status' => 403, 'allow_empty_referrer' => true
 	);
 
-	public static function protect($except = array(), $rackem = "\Rackem\Rack")
+	public static function protect($except = array(), $rackem = "\Rackem")
 	{
-		if(!in_array('frame_options',$except))     $rackem::use_middleware("\Rackem\Protection\FrameOptions");
-		if(!in_array('ip_spoofing',$except))       $rackem::use_middleware("\Rackem\Protection\IPSpoofing");
-		if(!in_array('json_csrf',$except))         $rackem::use_middleware("\Rackem\Protection\JsonCsrf");
-		if(!in_array('path_traversal',$except))    $rackem::use_middleware("\Rackem\Protection\PathTraversal");
-		if(!in_array('remote_token',$except))      $rackem::use_middleware("\Rackem\Protection\RemoteToken");
-		if(!in_array('session_hijacking',$except)) $rackem::use_middleware("\Rackem\Protection\SessionHijacking");
-		if(!in_array('xss_header',$except))        $rackem::use_middleware("\Rackem\Protection\XSSHeader");
+		if(!in_array('frame_options',$except))     call_user_func(array($rackem,"use_middleware"),"\Rackem\Protection\FrameOptions");
+		if(!in_array('ip_spoofing',$except))       call_user_func(array($rackem,"use_middleware"),"\Rackem\Protection\IPSpoofing");
+		if(!in_array('json_csrf',$except))         call_user_func(array($rackem,"use_middleware"),"\Rackem\Protection\JsonCsrf");
+		if(!in_array('path_traversal',$except))    call_user_func(array($rackem,"use_middleware"),"\Rackem\Protection\PathTraversal");
+		if(!in_array('remote_token',$except))      call_user_func(array($rackem,"use_middleware"),"\Rackem\Protection\RemoteToken");
+		if(!in_array('session_hijacking',$except)) call_user_func(array($rackem,"use_middleware"),"\Rackem\Protection\SessionHijacking");
+		if(!in_array('xss_header',$except))        call_user_func(array($rackem,"use_middleware"),"\Rackem\Protection\XSSHeader");
 	}
 
 	public function __construct($app,$options=array())
