@@ -72,7 +72,7 @@ class Rackem
 
 	protected static function ensure_builder()
 	{
-		if(!self::$builder) self::$builder = new Builder();
+		if(!self::$builder) self::$builder = new Rackem\Builder();
 	}
 
 	protected static function execute($result, $env)
