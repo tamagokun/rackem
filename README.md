@@ -7,7 +7,7 @@ Rack'em is an attempt to provide the awesomeness that Rack has brought Ruby, to 
 ```php
 <?php
 # config.php
-return \Rackem\Rack::run(function($env) {
+return \Rackem::run(function($env) {
 	return array(200, array("Content-Type"=>"text/html"), array("Hello, from Rack'em!"));
 });
 ```
@@ -92,7 +92,7 @@ class App
 	}
 }
 
-return \Rackem\Rack::run("App");
+return \Rackem::run("App");
 ```
 
 `Rack::run()` accepts 1 of 3 things:
@@ -108,7 +108,7 @@ Here would be an example of using a Closure:
 $app = function($env) {
 	return array(200,array('Content-Type'=>'text/html'),array('Hello World!'));
 };
-return \Rackem\Rack::run($app);
+return \Rackem::run($app);
 ```
 
 ## Middleware
@@ -133,8 +133,8 @@ class MyMiddleware
 	}
 }
 
-\Rackem\Rack::use_middleware("MyMiddleware");
-return \Rackem\Rack::run( new App() );
+\Rackem::use_middleware("MyMiddleware");
+return \Rackem::run( new App() );
 ```
 
 There is also a Middleware helper class to make things a bit easier:
@@ -158,13 +158,13 @@ You can route paths to applications easily:
 ```php
 <?php
 
-\Rackem\Rack::map("/hello", function($env) {
+\Rackem::map("/hello", function($env) {
 	return array(200, array("Content-Type"=>"text/html"), array("Hello from Rack'em!"));
 });
 
-\Rackem\Rack::map("/admin","MyAdminApp");
+\Rackem::map("/admin","MyAdminApp");
 
-return \Rackem\Rack::run();
+return \Rackem::run();
 ```
 
 ## Request and Response
@@ -188,8 +188,8 @@ class JsonFormatter extends \Rackem\Middleware
 
 ## What it has
 
- - run apps using `\Rackem\Rack::run`
- - stack some middleware on it `\Rackem\Rack::use_middleware`
+ - run apps using `\Rackem::run`
+ - stack some middleware on it `\Rackem::use_middleware`
  - Request and Response objects for helping out.
  - Rack compatible logger for logging to streams (STDERR, files, etc)
  - RubyRack class + config.ru for serving Rackem apps via Ruby web servers

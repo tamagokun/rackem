@@ -142,7 +142,7 @@ class Server
 			'SERVER_PORT' => $this->port,
 			'SERVER_PROTOCOL' => $req['protocol'],
 			'QUERY_STRING' => $req['request_url']['query'],
-			'rack.version' => Rack::version(),
+			'rack.version' => \Rackem::version(),
 			'rack.url_scheme' => $req['request_url']['scheme'],
 			'rack.input' => fopen('php://temp', 'r+b'),
 			'rack.errors' => fopen('php://stderr', 'wb'),

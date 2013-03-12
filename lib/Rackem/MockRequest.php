@@ -7,7 +7,7 @@ class MockRequest
 	
 	public static function default_env() {
 		return array(
-			"rack.version" => Rack::version(),
+			"rack.version" => \Rackem::version(),
 			"rack.url_scheme" => (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'])? 'https' : 'http',
 			"rack.input" => fopen('php://input', 'r'),
 			"rack.errors" => fopen('php://stderr', 'wb'),

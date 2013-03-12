@@ -15,7 +15,7 @@ class Protection extends \Rackem\Middleware
 		if(!in_array('ip_spoofing',$except))       $rackem::use_middleware("\Rackem\Protection\IPSpoofing");
 		if(!in_array('json_csrf',$except))         $rackem::use_middleware("\Rackem\Protection\JsonCsrf");
 		if(!in_array('path_traversal',$except))    $rackem::use_middleware("\Rackem\Protection\PathTraversal");
-		if(!in_array('remote_token',$except)) 	   $rackem::use_middleware("\Rackem\Protection\RemoteToken");
+		if(!in_array('remote_token',$except))      $rackem::use_middleware("\Rackem\Protection\RemoteToken");
 		if(!in_array('session_hijacking',$except)) $rackem::use_middleware("\Rackem\Protection\SessionHijacking");
 		if(!in_array('xss_header',$except))        $rackem::use_middleware("\Rackem\Protection\XSSHeader");
 	}
