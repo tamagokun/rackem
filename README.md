@@ -203,4 +203,6 @@ class JsonFormatter extends \Rackem\Middleware
 
 ## Credits
 
+Everyone who has worked on the Rack project. A lot of the code is ported directly from Rack.
+
 [creationx](https://github.com/creationix/rack-php) for a Rack script that will serve a PHP-based Rack-compliant application.
