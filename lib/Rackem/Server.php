@@ -88,11 +88,11 @@ class Server
 		return $this->write_response($req, $res);
 	}
 
-
 	public function stop()
 	{
 		$this->listening = false;
 		$this->child_handler();
+		@socket_close($this->master);
 		echo ">> Stopping...\n";
 		exit(0);
 	}
@@ -276,9 +276,9 @@ class Server
 	{
 		$res = "";
 		$spec = array(
-			0 => array("pipe", "r"),
-			1 => array("pipe", "w"),
-			2 => array("pipe", "w")
+			0 => array("pipe", "rb"),
+			1 => array("pipe", "wb"),
+			2 => array("pipe", "wb")
 		);
 
 		$proc = proc_open(dirname(dirname(__DIR__))."/bin/rackem $app --process", $spec, $pipes);

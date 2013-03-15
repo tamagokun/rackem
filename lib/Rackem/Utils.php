@@ -17,15 +17,22 @@ class Utils
 
 		$boundary = $m[1];
 		$chunks = preg_split("/-+$boundary/", $body);
-		array_pop($chunks);
 
 		foreach($chunks as $id => $chunk)
 		{
 			if(empty($chunk)) continue;
-			if(strpos($chunk, 'application/octet-stream') !== false)
+			if(strpos($chunk, 'Content-Type') !== false)
 			{
-				preg_match("/name=\"([^\"]*)\".*stream[\n|\r]+([^\n\r].*)?$/s", $chunk, $m);
-				$data['files'][$m[1]] = isset($m[2])? $m[2] : "";
+				preg_match('/name="([^"]*)"; filename="([^"]*)".*Content-Type: (.*?)[\n|\r]+([^\n\r].*)?$/s', $chunk, $m);
+				$file_name = tempnam(sys_get_temp_dir(), 'RackemMultipart');
+				$file = fopen($file_name, 'w+');
+				fwrite($file, $m[4]);
+				rewind($file);
+				$data[$m[1]] = array(
+					"name" => $m[2],
+					"type" => $m[3],
+					"tmp_name" => $file_name
+				);
 			}else
 			{
 				preg_match('/name=\"([^\"]*)\"[\n|\r]+([^\n\r].*)?\r$/s', $chunk, $m);
