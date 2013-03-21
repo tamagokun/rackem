@@ -25,14 +25,14 @@ class ShowExceptions
 
 	public function exception_handler($e)
 	{
-		$body = $this->handle_exception($this->env,$e);
-		throw new Exception(500, array('Content-Type' => 'text/html'), $body);
+		$body = $this->log_exception($this->env,$e);
+		throw new Exception(500, array('Content-Type' => 'text/html'), array($body));
 	}
 
-	protected function handle_exception($env,$exception)
+	public function log_exception($env, $exception)
 	{
 		$string = $exception->__toString().PHP_EOL;
 		fwrite($env['rack.errors'], $string);
-		return array($string);
+		return $string;
 	}
 }
