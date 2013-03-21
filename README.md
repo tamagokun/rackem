@@ -21,7 +21,7 @@ $ open http://localhost:9393
 
 ## Getting Started
 
-Rack'em likes [Composer](http://getcomposer.org/), go ahead and install it isn't already.
+Rack'em likes [Composer](http://getcomposer.org/), go ahead and install it if it isn't already.
 
 I like to install Rack'em globally so that I can use it in any project. Unfortunately, Composer does not have a way of doing this by default, so here is an easy way to allow global package installation:
 
