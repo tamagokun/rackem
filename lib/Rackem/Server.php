@@ -138,7 +138,7 @@ class Server
 			'REQUEST_METHOD' => $req['method'],
 			'SCRIPT_NAME' => "",
 			'PATH_INFO' => $req['request_url']['path'],
-			'SERVER_NAME' => $this->host,
+			'SERVER_NAME' => $req['request_url']['host'],
 			'SERVER_PORT' => $this->port,
 			'SERVER_PROTOCOL' => $req['protocol'],
 			'QUERY_STRING' => $req['request_url']['query'],
