@@ -64,7 +64,8 @@ class Server
 					$buffer = $buffer . $body;
 				}
 
-				$res = $this->reload? $this->process_from_cli($app, $buffer) : $this->process($app, $buffer);
+				socket_getpeername($client, $c_name);
+				$res = $this->reload? $this->process_from_cli($app, $buffer, $c_name) : $this->process($app, $buffer, $c_name);
 				socket_write($client, $res);
 				socket_close($client);
 				exit();
@@ -72,8 +73,9 @@ class Server
 		}
 	}
 
-	public function process($app, $buffer)
+	public function process($app, $buffer, $client)
 	{
+		$start = microtime(true);
 		ob_start();
 		$req = $this->parse_request($buffer);
 		$env = $this->env($req);
@@ -82,9 +84,15 @@ class Server
 		$res = new Response($this->app->call($env));
 		$output = ob_get_clean();
 		fwrite($env['rack.errors'], $output);
+		// fwrite($env['rack.errors'], $this->log_request($req, $res));
 		fclose($env['rack.input']);
 		fclose($env['rack.errors']);
-		if($env['rack.logger']) $env['rack.logger']->close();
+		if($env['rack.logger'])
+		{
+			$time = microtime(true) - $start;
+			fwrite($env['rack.logger']->stream, $this->log_request($req, $res, $client, $time));
+			$env['rack.logger']->close();
+		}
 		return $this->write_response($req, $res);
 	}
 
@@ -150,7 +158,7 @@ class Server
 			'rack.multiprocess' => false,
 			'rack.run_once' => false,
 			'rack.session' => array(),
-			'rack.logger' => ""
+			'rack.logger' => new \Rackem\Logger(fopen('php://stderr', 'wb'))
 		);
 		if(isset($req['headers']['Content-Type']))
 		{
@@ -166,6 +174,15 @@ class Server
 		rewind($env['rack.input']);
 		foreach($req['headers'] as $k=>$v) $env[strtoupper(str_replace("-","_","http_$k"))] = $v;
 		return new \ArrayObject($env);
+	}
+
+	protected function log_request($req, $res, $client, $time)
+	{
+		$date = @date("D M d H:i:s Y");
+		$time = sprintf('%.4f', $time);
+		$request = $req['method'].' '.$req['request_url']['path'].' '.$req['protocol'].'/'.$req['version'];
+
+		return "{$client} - - [{$date}] \"{$request}\" {$res->status} - {$time}\n";
 	}
 
 	protected function get_url_parts($request, $parts)
@@ -272,7 +289,7 @@ class Server
 		return $parsed;
 	}
 
-	protected function process_from_cli($app, $buffer)
+	protected function process_from_cli($app, $buffer, $client)
 	{
 		$res = "";
 		$spec = array(
@@ -281,7 +298,7 @@ class Server
 			2 => array("pipe", "wb")
 		);
 
-		$proc = proc_open(dirname(dirname(__DIR__))."/bin/rackem $app --process", $spec, $pipes);
+		$proc = proc_open(dirname(dirname(__DIR__))."/bin/rackem $app --process --client $client", $spec, $pipes);
 		stream_set_blocking($pipes[2], 0);
 		if(!is_resource($proc)) return "";
 
