@@ -9,6 +9,7 @@ class SessionHijacking extends \Rackem\Protection
 	public function accepts($env)
 	{
 		$session = $this->session($env);
+		if(!$session) return true;
 		if(array_key_exists($this->key,$session))
 		{
 			foreach($session[$this->key] as $k=>$v)
