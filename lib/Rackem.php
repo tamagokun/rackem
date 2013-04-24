@@ -2,7 +2,7 @@
 
 class Rackem
 {
-	public static $server = null;
+	public static $handler = "cgi";
 	protected static $builder = null;
 
 	public static function cli_req_is_file()
@@ -23,10 +23,11 @@ class Rackem
 		self::ensure_builder();
 		if($app) self::$builder->run($app);
 
-		if(self::$server) return self::$builder;
+		if(self::$handler == "php") return self::$builder;
 
 		// typical web server
-		$env = static::build_env();
+		if(in_array('--ruby', $GLOBALS['argv'])) self::$handler = "ruby";
+		$env = static::env();
 		ob_start();
 		$result = self::$builder->call($env);
 		$output = ob_get_clean();
@@ -47,7 +48,12 @@ class Rackem
 
 /* private */
 
-	protected static function build_env()
+	protected static function env()
+	{
+		return self::$handler == "ruby" ? static::build_env_ruby() : static::build_env_cgi();
+	}
+
+	protected static function build_env_cgi()
 	{
 		list($request_uri,$script_name) = static::url_parts();
 		$env = array_merge($_SERVER, array(
@@ -70,6 +76,12 @@ class Rackem
 		return new \ArrayObject($env);
 	}
 
+	protected static function build_env_ruby()
+	{
+		$env = json_decode(file_get_contents('php://stdin'), true);
+		return new \ArrayObject($env);
+	}
+
 	protected static function ensure_builder()
 	{
 		if(!self::$builder) self::$builder = new Rackem\Builder();
@@ -78,6 +90,13 @@ class Rackem
 	protected static function execute($result, $env)
 	{
 		list($status, $headers, $body) = $result;
+		if(self::$handler == "ruby")
+		{
+			foreach($headers as $k=>&$v) if(is_numeric($v)) $v = (string)$v;
+			$headers = json_encode($headers);
+			$body = implode("",$body);
+			exit(implode("\n",array($status,$headers,$body)));
+		}
 		fclose($env['rack.input']);
 		fclose($env['rack.errors']);
 		if($env['rack.logger']) $env['rack.logger']->close();

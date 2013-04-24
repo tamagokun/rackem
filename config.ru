@@ -7,7 +7,7 @@ class RubyBridge
 		req = Rack::Request.new(env)
 		req.params()
 		data = JSON.dump(env)
-		IO.popen("./rackup.php", 'r+') do |io|
+		IO.popen("php ./config.php --ruby", 'r+') do |io|
 			io.write data
 			io.close_write
 			response = io.readlines
