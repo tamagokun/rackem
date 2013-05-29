@@ -130,6 +130,11 @@ class Server
 			echo ">> Failed to create socket.\n", socket_strerror($this->master), "\n";
 			exit(1);
 		}
+		if(!socket_set_option($this->master, SOL_SOCKET, SO_REUSEADDR, 1))
+		{
+			echo ">> Failed to create socket.\n", socket_strerror($this->master), "\n";
+			exit(1);
+		}
 		if(@socket_bind($this->master, $this->host, $this->port) === false)
 		{
 			echo ">> Failed to bind socket.\n", socket_strerror(socket_last_error()), "\n";
