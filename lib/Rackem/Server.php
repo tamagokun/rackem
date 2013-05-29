@@ -79,7 +79,7 @@ class Server
 				while($offset < $len)
 				{
 					$bytes = @socket_write($client, substr($res, $offset), $len-$offset);
-					$offset += $n;
+					$offset += $bytes;
 					$timeout++;
 					if($timeout >= 10000) break;
 				}
