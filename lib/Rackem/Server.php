@@ -43,8 +43,14 @@ class Server
 				$this->listening = false;
 				socket_close($this->master);
 				$buffer = '';
-				//while(!preg_match('/\r?\n\r?\n/',$buffer, $s))
-				$buffer .= socket_read($client, 1024);
+				$timeout = 0;
+				
+				while(!preg_match('/\r?\n\r?\n/',$buffer))
+				{
+					$buffer .= socket_read($client, 1024);
+					$timeout++;
+					if($timeout >= 10000) break;
+				}
 
 				if(!strlen($buffer))
 				{
@@ -66,7 +72,17 @@ class Server
 
 				socket_getpeername($client, $c_name);
 				$res = $this->reload? $this->process_from_cli($app, $buffer, $c_name) : $this->process($app, $buffer, $c_name);
-				socket_write($client, $res);
+
+				$len = strlen($res);
+				$offset = 0;
+				$timeout = 0;
+				while($offset < $len)
+				{
+					$bytes = @socket_write($client, substr($res, $offset), $len-$offset);
+					$offset += $n;
+					$timeout++;
+					if($timeout >= 10000) break;
+				}
 				socket_close($client);
 				exit();
 			}
