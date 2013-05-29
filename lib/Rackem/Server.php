@@ -43,8 +43,14 @@ class Server
 				$this->listening = false;
 				socket_close($this->master);
 				$buffer = '';
-				//while(!preg_match('/\r?\n\r?\n/',$buffer, $s))
-				$buffer .= socket_read($client, 1024);
+				$timeout = 0;
+				
+				while(!preg_match('/\r?\n\r?\n/',$buffer))
+				{
+					$buffer .= socket_read($client, 1024);
+					$timeout++;
+					if($timeout >= 10000) break;
+				}
 
 				if(!strlen($buffer))
 				{
@@ -66,7 +72,17 @@ class Server
 
 				socket_getpeername($client, $c_name);
 				$res = $this->reload? $this->process_from_cli($app, $buffer, $c_name) : $this->process($app, $buffer, $c_name);
-				socket_write($client, $res);
+
+				$len = strlen($res);
+				$offset = 0;
+				$timeout = 0;
+				while($offset < $len)
+				{
+					$bytes = @socket_write($client, substr($res, $offset), $len-$offset);
+					$offset += $bytes;
+					$timeout++;
+					if($timeout >= 10000) break;
+				}
 				socket_close($client);
 				exit();
 			}
@@ -110,6 +126,11 @@ class Server
 	protected function init()
 	{
 		if(($this->master = socket_create(AF_INET, SOCK_STREAM, SOL_TCP)) === false)
+		{
+			echo ">> Failed to create socket.\n", socket_strerror($this->master), "\n";
+			exit(1);
+		}
+		if(!socket_set_option($this->master, SOL_SOCKET, SO_REUSEADDR, 1))
 		{
 			echo ">> Failed to create socket.\n", socket_strerror($this->master), "\n";
 			exit(1);
