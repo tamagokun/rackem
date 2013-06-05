@@ -103,7 +103,8 @@ class Rackem
 		$headers['X-Powered-By'] = "Rack'em ".implode(".",$env['rack.version']);
 		$headers['Status'] = $status;
 		header($env['SERVER_PROTOCOL']." ".$status);
-		foreach($headers as $key=>$value) header("$key: $value");
+		foreach($headers as $key=>$values)
+			foreach(explode("\n",$values) as $value) header("$key: $value");
 		echo implode("",$body);
 		exit();
 	}

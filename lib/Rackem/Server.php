@@ -344,7 +344,9 @@ class Server
 		$head = "{$req['protocol']}/{$req['version']} $status $phrase\r\n";
 
 		$raw_headers = array();
-		foreach($headers as $k=>$v) $raw_headers[] = "$k: $v";
+
+		foreach($headers as $key=>$values)
+			foreach(explode("\n",$values) as $value) $raw_headers[] = "$key: $value";
 
 		$head .= implode("\r\n", $raw_headers);
 		return "$head\r\n\r\n$body";
