@@ -64,7 +64,7 @@ class Server
 					if($offset === false) $offset = strpos($buffer, "\n\n");
 					if($offset === false) $offset = strpos($buffer, "\r\r");
 					if($offset === false) $offset = strpos($buffer, "\r\n");
-					$length = $m[1] - $offset + 2;
+					$length = $m[1] - (strlen($buffer) - $offset);
 					$body = '';
 					while(strlen($body) < $length) $body .= socket_read($client, 1024);
 					$buffer = $buffer . $body;
