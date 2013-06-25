@@ -60,10 +60,9 @@ class Server
 
 				if(preg_match('/Content-Length: (\d+)/',$buffer,$m))
 				{
-					$offset = strpos($buffer, "\r\n\r\n");
-					if($offset === false) $offset = strpos($buffer, "\n\n");
-					if($offset === false) $offset = strpos($buffer, "\r\r");
-					if($offset === false) $offset = strpos($buffer, "\r\n");
+					$s = preg_split('/(\r?\n\r?\n)/',$buffer,-1,PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_OFFSET_CAPTURE);
+					$offset = array_pop($s);
+					$offset = $offset[1];
 					$length = $m[1] - (strlen($buffer) - $offset);
 					$body = '';
 					while(strlen($body) < $length) $body .= socket_read($client, 1024);
