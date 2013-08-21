@@ -100,14 +100,14 @@ class Server
 		$output = ob_get_clean();
 		fwrite($env['rack.errors'], $output);
 		// fwrite($env['rack.errors'], $this->log_request($req, $res));
-		fclose($env['rack.input']);
-		fclose($env['rack.errors']);
 		if($env['rack.logger'])
 		{
 			$time = microtime(true) - $start;
 			fwrite($env['rack.logger']->stream, $this->log_request($req, $res, $client, $time));
 			$env['rack.logger']->close();
 		}
+		fclose($env['rack.input']);
+		if(is_resource($env['rack.errors'])) fclose($env['rack.errors']);
 		return $this->write_response($req, $res);
 	}
 
