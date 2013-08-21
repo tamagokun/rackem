@@ -11,6 +11,9 @@ if(!class_exists("\\Rackem\Server"))
 	}
 }
 
+if(function_exists("date_default_timezone_set"))
+	date_default_timezone_set('UTC');
+
 $argv = $GLOBALS['argv'];
 array_shift($argv);
 
