@@ -36,6 +36,7 @@ class Utils
 			}else
 			{
 				preg_match('/name=\"([^\"]*)\"[\n|\r]+([^\n\r].*)?\r$/s', $chunk, $m);
+				if(empty($m)) continue;
 				$fields = array();
 				parse_str(isset($m[2])? "{$m[1]}={$m[2]}" : "{$m[1]}=", $fields);
 				$data = array_merge_recursive($data, $fields);
