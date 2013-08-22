@@ -30,14 +30,14 @@ class Utils
 				rewind($file);
 				$fields = array();
 				parse_str("{$m[1]}[name]={$m[2]}&{$m[1]}[type]={$m[3]}&{$m[1]}[tmp_name]={$file_name}", $fields);
-				$data = array_merge_recursive($data, $fields);
+				$data = self::array_merge_recursive($data, $fields);
 			}else
 			{
 				preg_match('/name=\"([^\"]*)\"[\n|\r]+([^\n\r].*)?\r$/s', $chunk, $m);
 				if(empty($m)) continue;
 				$fields = array();
 				parse_str(isset($m[2])? "{$m[1]}={$m[2]}" : "{$m[1]}=", $fields);
-				$data = array_merge_recursive($data, $fields);
+				$data = self::array_merge_recursive($data, $fields);
 			}
 		}
 		return $data;
@@ -163,6 +163,26 @@ class Utils
 			return false;
 		}
 		return self::$http_status_codes[$status];
+	}
+
+//private
+	private static function array_merge_recursive()
+	{
+		$arrays = func_get_args();
+		$base = array_shift($arrays);
+
+		foreach ($arrays as $array)
+		{
+			reset($base);
+			while (list($key, $value) = @each($array))
+			{
+				if (is_array($value) && isset($base[$key]) && is_array($base[$key]))
+					$base[$key] = self::array_merge_recursive($base[$key], $value);
+				else
+					$base[$key] = $value;
+			}
+		}
+		return $base;
 	}
 
 	private static $http_status_codes = array(
