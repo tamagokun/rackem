@@ -176,8 +176,10 @@ class Utils
 			reset($base);
 			while (list($key, $value) = @each($array))
 			{
-				if (is_array($value) && isset($base[$key]) && is_array($base[$key]))
+				if(is_array($value) && isset($base[$key]) && is_array($base[$key]))
 					$base[$key] = self::array_merge_recursive($base[$key], $value);
+				elseif(isset($base[$key]))
+					$base[] = $value;
 				else
 					$base[$key] = $value;
 			}
