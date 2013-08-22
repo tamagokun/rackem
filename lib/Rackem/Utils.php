@@ -28,11 +28,9 @@ class Utils
 				$file = fopen($file_name, 'w+');
 				fwrite($file, $m[4]);
 				rewind($file);
-				$data[$m[1]] = array(
-					"name" => $m[2],
-					"type" => $m[3],
-					"tmp_name" => $file_name
-				);
+				$fields = array();
+				parse_str("{$m[1]}[name]={$m[2]}&{$m[1]}[type]={$m[3]}&{$m[1]}[tmp_name]={$file_name}", $fields);
+				$data = array_merge_recursive($data, $fields);
 			}else
 			{
 				preg_match('/name=\"([^\"]*)\"[\n|\r]+([^\n\r].*)?\r$/s', $chunk, $m);
