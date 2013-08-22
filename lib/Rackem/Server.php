@@ -61,7 +61,7 @@ class Server
 				if(preg_match('/Content-Length: (\d+)/',$buffer,$m))
 				{
 					$s = preg_split('/(\r?\n\r?\n)/',$buffer,-1,PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_OFFSET_CAPTURE);
-					$offset = array_pop($s);
+					$offset = $s[1];
 					$offset = $offset[1];
 					$length = $m[1] - (strlen($buffer) - $offset);
 					$body = '';
