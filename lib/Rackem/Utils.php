@@ -9,11 +9,8 @@ class Utils
 	{
 		$data = array();
 		preg_match('/boundary=(.*)$/', $content_type, $m);
-		if(!count($m))
-		{
-			parse_str(urldecode($body), $data);
-			return $data;
-		}
+		// handle as standard POST body
+		if(!count($m)) return self::parse_nested_query(urldecode($body));
 
 		$boundary = $m[1];
 		$chunks = preg_split("/-+$boundary/", $body);
@@ -28,15 +25,13 @@ class Utils
 				$file = fopen($file_name, 'w+');
 				fwrite($file, $m[4]);
 				rewind($file);
-				$fields = array();
-				parse_str("{$m[1]}[name]={$m[2]}&{$m[1]}[type]={$m[3]}&{$m[1]}[tmp_name]={$file_name}", $fields);
+				$fields = self::parse_nested_query("{$m[1]}[name]={$m[2]}&{$m[1]}[type]={$m[3]}&{$m[1]}[tmp_name]={$file_name}");
 				$data = self::array_merge_recursive($data, $fields);
 			}else
 			{
 				preg_match('/name=\"([^\"]*)\"[\n|\r]+([^\n\r].*)?\r$/s', $chunk, $m);
 				if(empty($m)) continue;
-				$fields = array();
-				parse_str(isset($m[2])? "{$m[1]}={$m[2]}" : "{$m[1]}=", $fields);
+				$fields = self::parse_nested_query(isset($m[2])? "{$m[1]}={$m[2]}" : "{$m[1]}=");
 				$data = self::array_merge_recursive($data, $fields);
 			}
 		}
@@ -56,6 +51,58 @@ class Utils
 			}else
 				$params[$k] = $v;
 		},preg_split(!is_null($d)? "/[$d] */" : self::DEFAULT_SEP,$qs));
+		return $params;
+	}
+
+	public static function parse_nested_query($qs, $d=null)
+	{
+		$params = array();
+		array_map(function($p) use(&$params) {
+			if(empty($p)) return;
+			list($k,$v) = explode("=",$p,2);
+			if(preg_match('/^([^\[]*)(\[.*\])$/', $k, $m))
+			{
+				$params = self::normalize_params($params, $k, $v);
+			}else
+			{
+				if(isset($params[$k]))
+				{
+					if(!is_array($params[$k])) $params[$k] = array($params[$k]);
+					$params[$k][] = $v;
+				}else $params[$k] = $v;
+			}
+		},preg_split(!is_null($d)? "/[$d] */" : self::DEFAULT_SEP,$qs));
+
+		return $params;
+	}
+
+	public static function normalize_params($params, $name, $v)
+	{
+		preg_match_all('/(\[?(.[^\[\]]*)\]?)/', $name, $m);
+		if(!count($m)) return $params;
+		$keys = $m[0];
+		$names = $m[2];
+
+		$k = array_shift($names);
+		array_shift($keys);
+
+		if(empty($keys))
+		{
+			if(isset($params[$k]))
+			{
+				if(!is_array($params[$k])) $params[$k] = array($params[$k]);
+				$params[$k][] = $v;
+			}else $params[$k] = $v;
+		}else if($k == "[]")
+		{
+			if(!isset($params[$k])) $params[$k] = array();
+			$params[$k][] = $v;
+		}else
+		{
+			if(!isset($params[$k])) $params[$k] = array();
+			$params[$k] = self::normalize_params($params[$k], implode("", $keys), $v);
+		}
+
 		return $params;
 	}
 
