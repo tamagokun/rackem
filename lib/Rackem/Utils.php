@@ -10,7 +10,7 @@ class Utils
 		$data = array();
 		preg_match('/boundary=(.*)$/', $content_type, $m);
 		// handle as standard POST body
-		if(!count($m)) return self::parse_nested_query(urldecode($body));
+		if(!count($m)) return self::parse_nested_query($body);
 
 		$boundary = $m[1];
 		$chunks = preg_split("/-+$boundary/", $body);
@@ -43,7 +43,7 @@ class Utils
 		$params = array();
 		array_map(function($p) use(&$params) {
 			if(empty($p)) return;
-			list($k,$v) = explode("=",$p,2);
+			list($k,$v) = array_merge(explode("=",$p,2), array(""));
 			if(isset($params[$k]))
 			{
 				if(!is_array($params[$k])) $params[$k] = array($params[$k]);
@@ -59,7 +59,9 @@ class Utils
 		$params = array();
 		array_map(function($p) use(&$params) {
 			if(empty($p)) return;
-			list($k,$v) = explode("=",$p,2);
+			list($k,$v) = array_merge(explode("=",$p,2), array(""));
+			$k = urldecode($k);
+			$v = urldecode($v);
 			if(preg_match('/^([^\[]*)(\[.*\])$/', $k, $m))
 			{
 				$params = self::normalize_params($params, $k, $v);
