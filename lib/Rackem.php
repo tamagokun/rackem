@@ -26,7 +26,8 @@ class Rackem
 		if(self::$handler == "php") return self::$builder;
 
 		// typical web server
-		if(in_array('--ruby', $GLOBALS['argv'])) self::$handler = "ruby";
+		if(isset($GLOBALS['argv']))
+			if(in_array('--ruby', $GLOBALS['argv'])) self::$handler = "ruby";
 		$env = static::env();
 		ob_start();
 		$result = self::$builder->call($env);
