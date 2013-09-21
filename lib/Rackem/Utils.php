@@ -64,7 +64,7 @@ class Utils
 			$v = urldecode($v);
 			if(preg_match('/^([^\[]*)(\[.*\])$/', $k, $m))
 			{
-				$params = self::normalize_params($params, $k, $v);
+				$params = \Rackem\Utils::normalize_params($params, $k, $v);
 			}else
 			{
 				if(isset($params[$k]))
