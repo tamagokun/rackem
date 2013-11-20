@@ -6,14 +6,25 @@ class Server
 	public $reload = true;
 	private $host, $port, $app, $listening;
 
-	public function __construct($host = '0.0.0.0', $port = 9393)
+	public function __construct($host = '0.0.0.0', $port = 9393, $defaults = array())
 	{
 		declare(ticks=1);
 		$this->host = $host;
 		$this->port = $port;
+
+		\Rackem::$handler = new $defaults['handler']();
+
+		$this->app = $defaults['app'];
 	}
 
-	public function start($app)
+	public function app()
+	{
+		if(file_exists($this->app)) return include($this->app);
+		$app = $this->app;
+		return new $app();
+	}
+
+	public function start()
 	{
 		$this->init();
 		while($this->listening)
@@ -70,7 +81,7 @@ class Server
 				}
 
 				socket_getpeername($client, $c_name);
-				$res = $this->reload? $this->process_from_cli($app, $buffer, $c_name) : $this->process($app, $buffer, $c_name);
+				$res = $this->reload? $this->process_from_cli($buffer, $c_name) : $this->process($buffer, $c_name);
 
 				$len = strlen($res);
 				$offset = 0;
@@ -88,15 +99,15 @@ class Server
 		}
 	}
 
-	public function process($app, $buffer, $client)
+	public function process($buffer, $client)
 	{
 		$start = microtime(true);
 		ob_start();
 		$req = $this->parse_request($buffer);
 		$env = $this->env($req);
 
-		$this->app = include($app);
-		$res = new Response($this->app->call($env));
+		$app = $this->app();
+		$res = new Response($app->call($env));
 		$output = ob_get_clean();
 		fwrite($env['rack.errors'], $output);
 		// fwrite($env['rack.errors'], $this->log_request($req, $res));
@@ -309,7 +320,7 @@ class Server
 		return $parsed;
 	}
 
-	protected function process_from_cli($app, $buffer, $client)
+	protected function process_from_cli($buffer, $client)
 	{
 		$res = "";
 		$spec = array(
@@ -317,6 +328,8 @@ class Server
 			1 => array("pipe", "wb"),
 			2 => array("pipe", "wb")
 		);
+
+		$app = file_exists($this->app) ? $this->app : "--basic";
 
 		$proc = proc_open(dirname(dirname(__DIR__))."/bin/rackem $app --process --client $client", $spec, $pipes);
 		stream_set_blocking($pipes[2], 0);
