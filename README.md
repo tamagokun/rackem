@@ -175,7 +175,7 @@ class JsonFormatter extends \Rackem\Middleware
 		$res = new \Rackem\Response($this->app->call($env));
 
 		if($req->params()->format == 'json')    //?format=json
-			$res->write(json_encode($res->body));
+			$res[] = json_encode($res->body);
 		return $res->finish();
 	}
 }
