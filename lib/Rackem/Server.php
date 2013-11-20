@@ -6,15 +6,14 @@ class Server
 	public $reload = true;
 	private $host, $port, $app, $listening;
 
-	public function __construct($host = '0.0.0.0', $port = 9393, $defaults = array())
+	public function __construct($host = '0.0.0.0', $port = 9393, $app)
 	{
 		declare(ticks=1);
 		$this->host = $host;
 		$this->port = $port;
+		$this->app = $app;
 
-		\Rackem::$handler = new $defaults['handler']();
-
-		$this->app = $defaults['app'];
+		\Rackem::$handler = new \Rackem\Handler\Rackem();
 	}
 
 	public function app()

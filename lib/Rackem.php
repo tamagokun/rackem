@@ -19,6 +19,8 @@ class Rackem
 		self::$builder->run($app);
 
 		if(!self::$handler) self::$handler = new \Rackem\Handler\Sapi();
+		if(isset($GLOBALS['argv']) && in_array('--ruby', $GLOBALS['argv'])) self::$handler = new \Rackem\Handler\Ruby();
+
 		return self::$handler->run(self::$builder);
 	}
 
