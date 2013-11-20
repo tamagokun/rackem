@@ -1,9 +1,9 @@
 <?php
 namespace Rackem;
 
-class Response
+class Response implements \ArrayAccess
 {
-	public $status,$header,$body;
+	public $status, $header, $body;
 
 	public function __construct($body=array(), $status=200, $header=array())
 	{
@@ -13,15 +13,12 @@ class Response
 		$this->header = array_merge(array("Content-Type"=>"text/html"),$header);
 
 		$this->body = array();
-		if(is_string($body))
-			$this->write($body);
-		else
-			foreach($body as $part) $this->write($part);
+		$this->write($body);
 	}
 
 	public function body()
 	{
-		return implode("",$this->body);
+		return $this->__toString();
 	}
 
 	public function finish()
@@ -31,10 +28,9 @@ class Response
 			unset($this->header["Content-Type"]);
 			unset($this->header["Content-Length"]);
 			return array($this->status, $this->header, array());
-		}else
-		{
-			$this->header["Content-Length"] = strlen($this->body());
 		}
+
+		$this->header["Content-Length"] = strlen($this);
 		return array($this->status, $this->header, $this->body);
 	}
 
@@ -58,11 +54,12 @@ class Response
 
 	public function write($value)
 	{
-		if(is_array($value)){
+		if(is_array($value))
+		{
 			foreach($value as $piece) $this->write($piece);
 			return;
 		}
-		$this->body[] = $value;
+		$this[] = $value;
 	}
 
 	public function set_cookie($key,$value=array())
@@ -73,5 +70,33 @@ class Response
 	public function delete_cookie($key,$value=array())
 	{
 		$this->header = Utils::delete_cookie_header($this->header,$key,$value);
+	}
+
+	public function __toString()
+	{
+		return implode("", $this->body);
+	}
+
+// ArrayAccess
+	public function offsetSet($offset, $value)
+	{
+		if(is_null($offset))
+			$this->body[] = $value;
+		else
+			$this->body[$offset] = $value;
+	}
+
+	public function offsetExists($offset)
+	{
+		return isset($this->body[$offset]);
+	}
+
+	public function offsetUnset($offset)
+	{
+		unset($this->body[$offset]);
+	}
+	public function offsetGet($offset)
+	{
+		return isset($this->body[$offset]) ? $this->body[$offset] : null;
 	}
 }
