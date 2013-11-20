@@ -14,11 +14,11 @@ class Builder
 
 	public function call($env)
 	{
-		$this->use = array_reverse($this->use);
+		$this->use = $this->use ? array_reverse($this->use) : array();
 		$app = empty($this->map) ? $this->run : $this->generate_map($this->run, $this->map);
 		try
 		{
-			if(!empty($this->use)) foreach($this->use as $middleware) $app = $middleware($app);
+			foreach($this->use as $middleware) $app = $middleware($app);
 			return $app->call($env);
 		}catch(Exception $e)
 		{

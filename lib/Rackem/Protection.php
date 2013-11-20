@@ -4,9 +4,12 @@ namespace Rackem;
 class Protection extends \Rackem\Middleware
 {
 	public $default_options = array(
-		'reaction' => 'default_reaction', 'logging' => true,
-		'message' => 'Forbidden', 'session_key' => 'rack.session',
-		'status' => 403, 'allow_empty_referrer' => true
+		'reaction' => 'default_reaction',
+		'logging' => true,
+		'message' => 'Forbidden',
+		'session_key' => 'rack.session',
+		'status' => 403,
+		'allow_empty_referrer' => true
 	);
 
 	public static function protect($except = array(), $rackem = "\Rackem")

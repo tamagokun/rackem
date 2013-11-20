@@ -17,7 +17,7 @@ if(function_exists("date_default_timezone_set"))
 $argv = $GLOBALS['argv'];
 array_shift($argv);
 
-$flags = array('h','process');
+$flags = array('h','process','ruby','basic');
 $args = array();
 $opts = array();
 while(list($k,$arg) = each($argv))
@@ -41,10 +41,14 @@ while(list($k,$arg) = each($argv))
 	each($argv);
 }
 
-$config = count($args) > 0? $args[0] : 'config.php';
-if(!file_exists($config))
+$app = count($args) > 0? $args[0] : 'config.php';
+
+if(isset($opts['basic']))
 {
-	echo "configuration {$config} not found\n";
+	$app = "\\Rackem\\BasicWebServer";
+}else if(!file_exists($app))
+{
+	echo "configuration {$app} not found\n";
 	exit(1);
 }
 
@@ -52,9 +56,8 @@ $host = isset($opts['host'])? $opts['host'] : '0.0.0.0';
 $port = isset($opts['port'])? $opts['port'] : '9393';
 $client = isset($opts['client'])? $opts['client'] : false;
 
-\Rackem::$handler = "php";
-$server = new \Rackem\Server($host,$port);
+$server = new \Rackem\Server($host, $port, $app);
 if(isset($opts['process']) && $opts['process'])
-	echo $server->process(realpath($config), stream_get_contents(fopen("php://stdin","r")), $client);
+	echo $server->process(stream_get_contents(fopen("php://stdin","r")), $client);
 else
-	$server->start(realpath($config));
+	$server->start();
