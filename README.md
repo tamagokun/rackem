@@ -19,43 +19,32 @@ $ open http://localhost:9393
 
 ![](https://raw.github.com/tamagokun/rackem/master/hello-world.png)
 
+## Features
+
+* Tiny
+* Provides a common interface for applications
+* Environment values are consistent regardless of web server
+* Run applications locally without other dependencies
+
 ## Getting Started
 
 Rack'em likes [Composer](http://getcomposer.org/), go ahead and install it if it isn't already.
 
-I like to install Rack'em globally so that I can use it in any project. Unfortunately, Composer does not have a way of doing this by default, so here is an easy way to allow global package installation:
-
-### Setting up Composer for global installtion
-
-```bash
-$ curl https://raw.github.com/gist/4242494/5d6344d2976e07d051ace18d41fa035113353e90/global_composer.sh | sh
-```
-
 ### Installing Rack'em
 
-If you are using the global installtion method from above, you can easily do:
+Installing with Composer is the way to go:
 
 ```bash
-$ cd ~/.composer && composer require rackem/rackem:*
+$ composer require rackem/rackem:@stable
 ```
 
-Otherwise, you need to add `rackem/rackem` to your project's composer.json:
-
-```json
-{
-	"require": {
-		"rackem/rackem": "*"
-	}
-}
-```
-
-There's also a shortcut to do this with Composer:
+Installing globally is awesome:
 
 ```bash
-$ composer require rackem/rackem:*
+$ composer global require rackem/rackem:@stable
 ```
 
-Optionally, there is a PSR autoloader you can use:
+Optionally, download Rack'em and require rackem.php:
 
 ```php
 <?php
@@ -64,7 +53,7 @@ require 'rackem/rackem.php';
 
 ## rackem
 
-rackem is a tool for running Rack'em applications without the need for a web server. This makes developing Rack applications with PHP a breeze.
+rackem is a HTTP server for running Rack'em applications. This makes developing PHP applications a breeze.
 
 Provide rackem your main application script, and you are good to go:
 
@@ -77,9 +66,9 @@ $ rackem config.php
 
 ## Usage
 
-Any object that has a callable method `call()` can be considered a Rack application. Rack expects call to return an HTTP response array containing: status code, headers, and body.
+Anything that `is_callable()` or has an instance method `call()` can be considered an application. The application must return an HTTP response array containing: status code, headers, and body.
 
-Here is an example of a basic Rackem application:
+Here is an example of a basic Rack'em application:
 
 ```php
 <?php
@@ -113,18 +102,23 @@ return \Rackem::run($app);
 
 ## Middleware
 
-Just like Rack, Rack'em supports the use of Middleware. Middleware is basically a Rack application that must be passed `$app` in its constructor, with an optional `$options` parameter. `$app` is an instance of the previous application in the Rack stack.
+Fill your rack with middleware for ultimate awesomeness.
 
-Here is an example of a Middleware class that just passes the response on:
+Middleware is basically an application that is passed the previous application in the stack and optionally an array of options in its constructor.
+
+The most basic middleware (hint: it doesn't do anything):
 
 ```php
 <?php
 
 class MyMiddleware
 {
-	public function __construct($app)
+	public $app, $options;
+
+	public function __construct($app, $options = array())
 	{
 		$this->app = $app;
+		$this->options = $options;
 	}
 
 	public function call($env)
@@ -137,7 +131,7 @@ class MyMiddleware
 return \Rackem::run( new App() );
 ```
 
-There is also a Middleware helper class to make things a bit easier:
+There is also of course a helper class to make things a bit easier:
 
 ```php
 <?php
@@ -146,7 +140,8 @@ class MyMiddleware extends \Rackem\Middleware
 {
 	public function call($env)
 	{
-		return $this->app->call($env);
+		// do stuff
+		return parent::call($env);
 	}
 }
 ```
