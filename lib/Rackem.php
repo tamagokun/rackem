@@ -32,7 +32,7 @@ class Rackem
 
 	public static function version()
 	{
-		return array(1,1);
+		return array(0,4,5);
 	}
 
 /* private */
