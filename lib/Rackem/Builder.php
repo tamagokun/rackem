@@ -14,7 +14,7 @@ class Builder
 
 	public function call($env)
 	{
-		$this->use = $ths->use ? array_reverse($this->use) : array();
+		$this->use = $this->use ? array_reverse($this->use) : array();
 		$app = empty($this->map) ? $this->run : $this->generate_map($this->run, $this->map);
 		try
 		{
