@@ -84,7 +84,7 @@ class App
 return \Rackem::run("App");
 ```
 
-`Rack::run()` accepts 1 of 3 things:
+`Rackem::run()` accepts 1 of 3 things:
 
  - String referencing a Class
  - Class instance
