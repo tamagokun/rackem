@@ -97,7 +97,7 @@ class BasicRequest
 /* private */
 	private function authorization_keys()
 	{
-		$keys = array('PHP_AUTH_USER','HTTP_AUTHORIZATION','X-HTTP_AUTHORIZATION','X_HTTP_AUTHORIZATION');	
+		$keys = array('PHP_AUTH_USER','HTTP_AUTHORIZATION','X-HTTP_AUTHORIZATION','X_HTTP_AUTHORIZATION');
 		foreach($keys as $key)
 			if(isset($this->env[$key])) $this->key = $key;
 		return $this->key;
