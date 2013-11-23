@@ -1,0 +1,328 @@
+---
+title: Documentation
+layout: default
+---
+
+<section>
+	<h1>Getting Started</h1>
+
+	<p>The easiest way to get up and running is by installing <a href="">Composer</a>, go ahead and install it now if you haven't already.</p>
+
+	<p>Once composer is installed, you can require <code>rackem/rackem</code> as a dependency of your project.</p>
+	$ composer require rackem/rackem:@stable
+
+	<p>Installing Rack'em globally is also pretty cool:</p>
+	$ composer global require rackem/rackem:@stable
+	<p>This way, so long as $COMPOSER_PATH is a part of $PATH, you can serve rackem applications as simply as <code>rackem</code></p>
+
+</section>
+
+<section>
+	<h2>Your first Rack'em application</h2>
+
+	<p>The best way to explain how Rack'em works is to dive right in with a tutorial.</p>
+
+	<h3>Create a project</h3>
+
+	<p>Create a project and require <code>rackem/rackem</code></p>
+
+	$ mkdir tutorial
+	$ cd tutorial
+	$ composer require rackem/rackem:@stable
+	$ composer install
+
+	<h3>Create an application</h3>
+
+	<p>A Rack'em application is any object that reponds to the method <code>call()</code> or a function closure. The rackem utility by defeault will look for <code>config.php</code> as your main application script, so we will create one now.</p>
+
+	$ touch config.php
+
+	{% highlight php %}
+<?php
+# config.php
+return \Rackem::run(function($env) {
+    return array(200, array("Content-Type"=>"text/html"), array("Hello, from Rack'em!"));
+});
+	{% endhighlight %}
+
+	<h3>Run it</h3>
+
+	<p>Once you have your config.php saved, all you need to do is run the rackem utility, and your first application is running!</p>
+
+	$ vendor/bin/rackem
+== Rackem on http://0.0.0.0:9393
+>> Rackem web server
+>> Listening on 0.0.0.0:9393, CTRL+C to stop
+
+	<p>Browse to http://localhost:9393 to see the output.</p>
+
+</section>
+
+<section>
+	<h2>rackem</h2>
+
+	<p>The rackem utility is a tiny web server that can serve up any Rack'em application. Though it is pretty fast when used developing locally, I would not recommend using it as a production web server.</p>
+
+	<p>When running the server, it will by default look for your main application script in config.php, you can alternatively specify the name of your main application script.</p>
+
+	$ vendor/bin/rackem index.php
+
+	<p>By default rackem will run on localhost with port 9393. Both host and port are configurable:</p>
+
+	$ vendor/bin/rackem index.php --host dev.local --port 3000
+
+	<p>If you pass <code>--basic</code> rackem will give you a basic html web server for serving up static websites.</p>
+
+	$ vendor/bin/rackem --basic
+
+</section>
+
+<section>
+	<h1>Class Reference</h1>
+</section>
+
+<section>
+	<h2>Rackem</h2>
+	<ul class="settings">
+		<li>
+			\Rackem::map($path, $app)
+		</li>
+		<li>
+			\Rackem::use_middleware($middleware, $options = array())
+		</li>
+		<li>
+			\Rackem::run($app)
+		</li>
+	</ul>
+</section>
+
+<section>
+	<h2>Rackem\Builder</h2>
+	<ul class="settings">
+
+		<li>
+			__construct($app = null, $middleware = array() )
+		</li>
+		<li>
+			->call($env)
+		</li>
+		<li>
+			->map($path, $app)
+		</li>
+		<li>
+			->run($app)
+		</li>
+		<li>
+			->use_middleware($middleware, $options = array())
+		</li>
+
+	</ul>
+
+</section>
+
+<section>
+	<h2>Rackem\Exception</h2>
+	<ul class="settings">
+		<li>
+			__construct($status, $header, $body)
+		</li>
+		<li>
+			->finish()
+		</li>
+	</ul>
+
+</section>
+
+<section>
+	<h2>Rackem\File</h2>
+
+	<ul class="settings">
+		<li>
+			__construct($root_path, $cache_control = null)
+		</li>
+		<li>
+			->call($env)
+		</li>
+		<li>
+			->serving($env)
+		</li>
+	</ul>
+
+</section>
+
+<section>
+	<h2>Rackem\Middleware</h2>
+	<ul class="settings">
+		<li>
+			__construct($app, $options = array())
+		</li>
+		<li>
+			->call($env)
+		</li>
+	</ul>
+
+</section>
+
+<section>
+	<h2>Rackem\Protection</h2>
+	<ul class="settings">
+		<li>\Rackem\Protection::protect($except = array(), $rackem = "\Rackem")
+		</li>
+	</ul>
+
+</section>
+
+<section>
+	<h2>Rackem\Request</h2>
+	<ul class="settings">
+		<li>
+			__construct($env = aray())
+		</li>
+		<li>
+			->base_url()
+		</li>
+		<li>
+			->body()
+		</li>
+		<li>
+			->content_length()
+		</li>
+		<li>
+			->content_type()
+		</li>
+		<li>
+			->cookies($key = null)
+		</li>
+		<li>
+			->form_data()
+		</li>
+		<li>
+			->fullpath()
+		</li>
+		<li>
+			->get()
+		</li>
+		<li>
+			->host()
+		</li>
+		<li>
+			->host_with_port()
+		</li>
+		<li>
+			->is_delete()
+		</li>
+		<li>
+			->is_get()
+		</li>
+		<li>
+			->is_head()
+		</li>
+		<li>
+			->is_options()
+		</li>
+		<li>
+			->is_patch()
+		</li>
+		<li>
+			->is_post()
+		</li>
+		<li>
+			->is_put()
+		</li>
+		<li>
+			->is_trace()
+		</li>
+		<li>
+			->is_xhr()
+		</li>
+		<li>
+			->logger()
+		</li>
+		<li>
+			->media_type()
+		</li>
+		<li>
+			->media_type_params()
+		</li>
+		<li>
+			->content_charset()
+		</li>
+		<li>
+			->params()
+		</li>
+		<li>
+			->parseable_data()
+		</li>
+		<li>
+			->path()
+		</li>
+		<li>
+			->path_info()
+		</li>
+		<li>
+			->port()
+		</li>
+		<li>
+			->post()
+		</li>
+		<li>
+			->query_string()
+		</li>
+		<li>
+			->referer()
+		</li>
+		<li>
+			->request_method()
+		</li>
+		<li>
+			->session($key = null)
+		</li>
+		<li>
+			->scheme()
+		</li>
+		<li>
+			->ssl()
+		</li>
+		<li>
+			->url()
+		</li>
+		<li>
+			->user_agent()
+		</li>
+	</ul>
+
+</section>
+
+<section>
+	<h2>Rackem\Response</h2>
+	<ul class="settings">
+		<li>
+			__construct($body = array(), $status = 200, $header = array())
+		</li>
+		<li>
+			[]
+		</li>
+		<li>
+			->body(), __toString()
+		</li>
+		<li>
+			->finish()
+		</li>
+		<li>
+			->redirect($target, $status = 302)
+		</li>
+		<li>
+			->send($args)
+		</li>
+		<li>
+			->write($body)
+		</li>
+		<li>
+			->set_cookie($key, $value = array())
+		</li>
+		<li>
+			->delete_cookie($key, $value = array())
+		</li>
+	</ul>
+
+</section>

@@ -1,0 +1,9 @@
+name: Rack'em
+pygments: true
+permalink: /:title
+
+navigation:
+- title: Documentation
+  url: docs.html
+- title: Apps & Middleware
+  url: middleware.html

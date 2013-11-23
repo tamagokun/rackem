@@ -1,0 +1,196 @@
+
+/* Documentation Defaults */
+body {
+	margin: 0;
+	line-height: 1.4;
+	font-family: Helvetica, Arial, sans-serif;
+}
+
+a {
+	-webkit-transition: all 400ms ease;
+	-moz-transition: all 400ms ease;
+	-ms-transition: all 400ms ease;
+	transition: all 400ms ease;
+}
+
+img {
+	max-width: 100%;
+}
+
+header {
+	text-align: center;
+	padding: 10.25% 14.75%;
+}
+
+nav a {
+	margin: 0 2%;
+	display: inline-block;
+	text-decoration: none;
+}
+
+footer {
+	padding: 0 14.75%;
+	text-align: right;
+}
+
+section {
+	padding: 0 14.75%;
+}
+
+.cf:before,
+.cf:after,
+section:before,
+section:after {
+	content: " ";
+	display: table;
+}
+
+.cf:after,
+section:after {
+	clear: both;
+}
+
+@media all and (min-width: 768px) {
+	.annotate p,
+	.annotate ul {
+		clear: left;
+		float: left;
+		width: 40%;
+	}
+
+	.annotate > pre,
+	.annotate .highlight {
+		margin: 1em 0 1em 1em;
+		float: right;
+		width: 50%;
+	}
+}
+
+/*
+ * Custom Styles
+ *
+ * */
+body {
+	background: white;
+	color: #B3AFAF;
+}
+
+section,
+footer {
+	max-width: 640px;
+	margin: 0 auto;
+}
+
+section.annotate {
+	max-width: 800px;
+}
+
+a {
+	color: #26ae90;
+}
+
+a:hover { color: #1b7a66; }
+
+h1 a {
+	text-decoration: none;
+	color: #456;
+}
+
+nav a {
+	padding: .25em .5em;
+	border-radius: 4px;
+	color: #2D1B19;
+}
+
+nav a.active,
+nav a:hover {
+	background: rgba(33,33,33,.25);
+	color: white;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	color: black;
+	font-weight: 200;
+}
+
+header h1 {
+	text-indent: -1000em;
+	background: url(/img/Logo.svg) no-repeat center center;
+	overflow: hidden;
+	height: 100px;
+	background-size: 80%;
+}
+
+header h1 a {
+	display: block;
+}
+
+@media all and (min-width: 560px) {
+	header h1 {
+		background-size: auto;
+	}
+}
+
+#main pre {
+	border-radius: 8px;
+	padding: 0 1em;
+}
+
+#main .highlight pre {
+	padding-top: 1em;
+}
+
+footer {
+	padding-top: 1em;
+	color: #405162;
+}
+
+footer p {
+	padding: 2em 0 1em;
+	border-top: 1px solid #405162;
+}
+
+.settings {
+	list-style: none;
+	margin: 1em 0;
+	padding: 0;
+	border-top: 1px solid #ddd;
+}
+
+.settings li {
+	border-bottom: 1px solid #ddd;
+}
+
+.settings li > code {
+	margin-top: 1em;
+	padding: .25em 0;
+	display: inline-block;
+}
+
+.settings p {
+	margin-top: 0;
+}
+
+.disclaimer {
+	text-align: center;
+	font-style: italic;
+}
+
+p code {
+	background: #ffee77;
+	border-radius: .5em;
+	padding: .25em .5em;
+	font-size: 0.858em;
+}
+
+#github {
+	position: fixed;
+	top: 0;
+	right: 0;
+	padding: .5em 0 .25em 1em;
+	background: rgba(33,33,33,.2);
+}
+
+.asciicast {
+	margin: 2em auto;
+}

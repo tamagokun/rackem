@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{{ site.name }}</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width">
+	<meta name="description" content="Rack for PHP. A tiny but powerful application framework for PHP.">
+	<meta name="keywords" content="php, github, rack, rackem, framework, web, server">
+	<link rel="stylesheet" href="css/site.css" type="text/css" charset="utf-8">
+	<link rel="stylesheet" href="css/syntax.css" type="text/css" charset="utf-8">
+</head>
+<body>
+	<header>
+		<h1><a href="index.html">Rack'em</a></h1>
+		<nav>
+			{% for link in site.navigation %}
+				<a {% if page.url contains link.url %}class="active"{% endif %} href="{{link.url}}">{{link.title}}</a>
+			{% endfor %}
+		</nav>
+	</header>
+	<div id="main">
+		{{ content }}
+	</div>
+	<footer>
+		<p>{{site.name}} is a project by <a href="http://ripeworks.com/">Ripeworks</a>.</p>
+	</footer>
+	<div id="github">
+		<iframe src="http://ghbtns.com/github-btn.html?user=tamagokun&repo=rackem&type=watch&count=true"
+			allowtransparency="true" frameborder="0" scrolling="0" width="90" height="20"></iframe>
+		<iframe src="http://ghbtns.com/github-btn.html?user=tamagokun&repo=rackem&type=fork&count=true"
+			allowtransparency="true" frameborder="0" scrolling="0" width="90" height="20"></iframe>
+	</div>
+	<script src="js/jquery-2.0.3.min.js"></script>
+	<script src="js/rainbow-custom.min.js"></script>
+	<script src="js/main.js"></script>
+	<script type="text/javascript">
+		var analytics=analytics||[];(function(){var e=["identify","track","trackLink","trackForm","trackClick","trackSubmit","page","pageview","ab","alias","ready","group"],t=function(e){return function(){analytics.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var n=0;n<e.length;n++)analytics[e[n]]=t(e[n])})(),analytics.load=function(e){var t=document.createElement("script");t.type="text/javascript",t.async=!0,t.src=("https:"===document.location.protocol?"https://":"http://")+"d2dq2ahtl5zl1z.cloudfront.net/analytics.js/v1/"+e+"/analytics.min.js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(t,n)};
+		analytics.load("14bhakvieo");
+	</script>
+</body>
+</html>
