@@ -1,6 +1,6 @@
 # Rack for PHP
 
-Rack'em is an attempt to provide the awesomeness that Rack has brought Ruby, to PHP.
+Rack'em is an attempt to provide the awesomeness that Rack has brought Ruby, to PHP. See the [documentation and more](http://ripeworks.com/rackem).
 
 ![](https://api.travis-ci.org/tamagokun/rackem.png?branch=master)
 
@@ -17,13 +17,14 @@ $ vendor/bin/rackem
 $ open http://localhost:9393
 ```
 
-![](https://raw.github.com/tamagokun/rackem/master/hello-world.png)
+![](https://raw.github.com/tamagokun/rackem/gh-pages/img/hello-world.png)
 
 ## Features
 
 * Tiny
 * Provides a common interface for applications
-* Environment values are consistent regardless of web server
+* Painlessly stack application logic using "middleware"
+* Environment values are consistent regardless of web server (see [Rack specification](http://rack.rubyforge.org/doc/SPEC.html))
 * Run applications locally without other dependencies
 
 ## Getting Started
@@ -32,13 +33,11 @@ Rack'em likes [Composer](http://getcomposer.org/), go ahead and install it if it
 
 ### Installing Rack'em
 
-Installing with Composer is the way to go:
-
 ```bash
 $ composer require rackem/rackem:@stable
 ```
 
-Installing globally is awesome:
+Installing globally is awesome too:
 
 ```bash
 $ composer global require rackem/rackem:@stable
@@ -59,8 +58,8 @@ Provide rackem your main application script, and you are good to go:
 
 ```bash
 $ rackem config.php
-== Rackem on http://0.0.0.0:9393
->> Rackem web server
+== Rack'em on http://0.0.0.0:9393
+>> Rack'em web server
 >> Listening on 0.0.0.0:9393, CTRL+C to stop
 ```
 
@@ -181,20 +180,14 @@ class JsonFormatter extends \Rackem\Middleware
 }
 ```
 
-## What it has
+## Contributing
 
- - run apps using `\Rackem::run`
- - stack some middleware on it `\Rackem::use_middleware`
- - Request and Response objects for helping out.
- - Rack compatible logger for logging to streams (STDERR, files, etc)
- - RubyRack class + config.ru for serving Rackem apps via Ruby web servers
- - Mime class for file type detection
- - Exceptions middleware for handling exceptions
- - File middleware for serving files
- - Basic authentication middleware
- - Session handling
- - Protection middlewares to prevent attacks (csrf,xss,clickjacking,ip spoofing,dir traversal,session hijacking)
- - rackem for serving applications locally
+Accepting pull requests for features and fixes!
+
+Things that are in need:
+
+* more code coverage
+* web server test bed
 
 ## Credits
 
