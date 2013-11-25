@@ -86,10 +86,10 @@ section.annotate {
 }
 
 a {
-	color: #26ae90;
+	color: #7A4944;
 }
 
-a:hover { color: #1b7a66; }
+a:hover { color: #2D1B19; }
 
 h1 a {
 	text-decoration: none;
@@ -123,12 +123,6 @@ header h1 {
 
 header h1 a {
 	display: block;
-}
-
-@media all and (min-width: 560px) {
-	header h1 {
-		background-size: auto;
-	}
 }
 
 #main pre {
@@ -183,11 +177,7 @@ p code {
 }
 
 #github {
-	position: fixed;
-	top: 0;
-	right: 0;
-	padding: .5em 0 .25em 1em;
-	background: rgba(33,33,33,.2);
+	padding: 3em 0 0 0;
 }
 
 .asciicast {
@@ -209,4 +199,14 @@ p code {
 .middleware li a {
 	display: block;
 	font-size: 1.15em;
+}
+
+@media all and (min-width: 560px) {
+	header h1 {
+		background-size: auto;
+	}
+
+	#github {
+		margin-bottom: -3em;
+	}
 }

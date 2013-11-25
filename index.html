@@ -5,7 +5,7 @@ title: Rack'em
 
 <section>
 	<h1>Rack for PHP</h1>
-	<p>Rack'em is a micro-sized common interface for PHP applications and web servers.
+	<p>Rack'em is a micro-sized modular interface for PHP applications and web servers.
 	<p>It is an attempt to provide the awesomeness that Rack has brought Ruby, to PHP.</p>
 	<h2>Features</h2>
 	<ul>
@@ -16,7 +16,9 @@ title: Rack'em
 		<li>Run applications locally without other dependencies</li>
 	</ul>
 	<h2>Gets it</h2>
-	<pre class="terminal"><code>$ composer require rackem/rackem:@stable</code></pre>
+	<pre class="terminal">
+		<code><span class="y">$ composer require rackem/rackem:@stable</span></code>
+	</pre>
 
 </section>
 
@@ -35,6 +37,8 @@ return \Rackem::run(function($env) {
 });
 	{% endhighlight %}
 
-	<pre class="terminal"><code>$ vendor/bin/rackem
-$ open http://localhost:9393</code></pre>
+	<pre class="terminal">
+		<code><span class="y">$ vendor/bin/rackem
+$ open http://localhost:9393</span></code>
+	</pre>
 </section>

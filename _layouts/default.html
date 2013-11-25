@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>{{ site.name }}</title>
+	<title>{{ site.name }} - a modular PHP web server interface</title>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width">
 	<meta name="description" content="Rack for PHP. A tiny but powerful application framework for PHP.">
@@ -17,6 +17,14 @@
 				<a {% if page.url contains link.url %}class="active"{% endif %} href="{{link.url}}">{{link.title}}</a>
 			{% endfor %}
 		</nav>
+		{% if page.url == "/index.html" %}
+			<div id="github">
+				<iframe src="http://ghbtns.com/github-btn.html?user=tamagokun&repo=rackem&type=watch&count=true"
+					allowtransparency="true" frameborder="0" scrolling="0" width="90" height="20"></iframe>
+				<iframe src="http://ghbtns.com/github-btn.html?user=tamagokun&repo=rackem&type=fork&count=true"
+					allowtransparency="true" frameborder="0" scrolling="0" width="90" height="20"></iframe>
+			</div>
+		{% endif %}
 	</header>
 	<div id="main">
 		{{ content }}
@@ -24,12 +32,6 @@
 	<footer>
 		<p>{{site.name}} is a project by <a href="http://ripeworks.com/">Ripeworks</a>.</p>
 	</footer>
-	<div id="github">
-		<iframe src="http://ghbtns.com/github-btn.html?user=tamagokun&repo=rackem&type=watch&count=true"
-			allowtransparency="true" frameborder="0" scrolling="0" width="90" height="20"></iframe>
-		<iframe src="http://ghbtns.com/github-btn.html?user=tamagokun&repo=rackem&type=fork&count=true"
-			allowtransparency="true" frameborder="0" scrolling="0" width="90" height="20"></iframe>
-	</div>
 	<script src="js/jquery-2.0.3.min.js"></script>
 	<script src="js/rainbow-custom.min.js"></script>
 	<script src="js/main.js"></script>

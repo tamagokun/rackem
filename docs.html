@@ -6,18 +6,18 @@ layout: default
 <section>
 	<h1>Getting Started</h1>
 
-	<p>The easiest way to get up and running is by installing <a href="">Composer</a>, go ahead and install it now if you haven't already.</p>
+	<p>The easiest way to get up and running is by installing <a href="http://getcomposer.org/">Composer</a>. Go ahead and install it now if you haven't already.</p>
 
 	<p>Once composer is installed, you can require <code>rackem/rackem</code> as a dependency of your project.</p>
 	<pre class="terminal">
-		<code>$ composer require rackem/rackem:@stable</code>
+		<code><span class="y">$ composer require rackem/rackem:@stable</span></code>
 	</pre>
 
 	<p>Installing Rack'em globally is also pretty cool:</p>
 	<pre class="terminal">
-		<code>$ composer global require rackem/rackem:@stable</code>
+		<code><span class="y">$ composer global require rackem/rackem:@stable</span></code>
 	</pre>
-	<p>If you have installed rackem globally, you can serve rackem applications as simply as <code>rackem</code></p>
+	<p>If you have installed rackem globally, you can serve Rack'em applications as simply as <code>rackem</code></p>
 
 </section>
 
@@ -31,10 +31,10 @@ layout: default
 	<p>Create a project and require <code>rackem/rackem</code></p>
 
 	<pre class="terminal">
-	<code>$ mkdir tutorial
+	<code><span class="y">$ mkdir tutorial
 $ cd tutorial
 $ composer require rackem/rackem:@stable
-$ composer install</code>
+$ composer install</span></code>
 	</pre>
 
 	<h3>Create an application</h3>
@@ -42,7 +42,7 @@ $ composer install</code>
 	<p>A Rack'em application is any object that reponds to the method <code>call()</code> or a function closure. The rackem utility by default will look for <code>config.php</code> as your main application script, so we will create one now.</p>
 
 	<pre class="terminal">
-	<code>$ touch config.php</code>
+	<code><span class="y">$ touch config.php</span></code>
 	</pre>
 
 	{% highlight php %}
@@ -64,13 +64,13 @@ return \Rackem::run(function($env) {
 	<p>Once you have your config.php saved, all you need to do is run the rackem utility, and your first application is running!</p>
 
 	<pre class="terminal">
-	<code>$ vendor/bin/rackem
-== Rackem on http://0.0.0.0:9393
->> Rackem web server
+	<code><span class="y">$ vendor/bin/rackem</span>
+== Rack'em on http://0.0.0.0:9393
+>> Rack'em web server
 >> Listening on 0.0.0.0:9393, CTRL+C to stop</code>
 	</pre>
 
-	<p>Browse to http://localhost:9393 to see the output.</p>
+	<p>Browse to http://localhost:9393 to see your application in action.</p>
 
 </section>
 
@@ -82,19 +82,19 @@ return \Rackem::run(function($env) {
 	<p>When running the server, it will by default look for your main application script in config.php, you can alternatively specify the name of your main application script.</p>
 
 	<pre class="terminal">
-	<code>$ vendor/bin/rackem index.php</code>
+	<code><span class="y">$ vendor/bin/rackem index.php</span></code>
 	</pre>
 
 	<p>By default rackem will run on localhost with port 9393. Both host and port are configurable:</p>
 
 	<pre class="terminal">
-	<code>$ vendor/bin/rackem index.php --host dev.local --port 3000</code>
+	<code><span class="y">$ vendor/bin/rackem index.php --host dev.local --port 3000</span></code>
 	</pre>
 
 	<p>If you pass <code>--basic</code> rackem will give you a basic html web server for serving up static websites.</p>
 
 	<pre class="terminal">
-	<code>$ vendor/bin/rackem --basic</code>
+	<code><span class="y">$ vendor/bin/rackem --basic</span></code>
 	</pre>
 
 </section>
@@ -105,67 +105,112 @@ return \Rackem::run(function($env) {
 
 <section>
 	<h2>Rackem</h2>
+	<p>Probably the class you are looking for. Provides helper functions for quickly creating and managing application stacks. Utilizes a single <code>Rackem\Builder</code> instance.</p>
 	<ul class="settings">
 		<li>
 			<code data-language="php">\Rackem::map($path, $app)</code>
+			<p>Map an application to a url path.</p>
+			<p>Example:</p>
+			{% highlight php %}
+<?php
+\Rackem::map("/admin", $admin_app);
+
+return \Rackem::run($app);
+			{% endhighlight %}
 		</li>
 		<li>
 			<code data-language="php">\Rackem::use_middleware($middleware, $options = array())</code>
+			<p>Adds a middleware to the stack. You can pass in a string reference to a class with an options array, or an instantiated middleware.</p>
 		</li>
 		<li>
 			<code data-language="php">\Rackem::run($app)</code>
+			<p>Dispatch an application to be handled by a web server. You must <code>return</code> this call in order for Rack'em to properly handle things.</p>
+		</li>
+		<li>
+			<code data-language="php">\Rackem::version()</code>
+			<p>Returns an array of the current Rack'em version.</p>
 		</li>
 	</ul>
 </section>
 
 <section>
 	<h2>Rackem\Builder</h2>
+	<p>Builder is the bread and butter of creating a Rack'em application stack.</p>
 	<ul class="settings">
-
 		<li>
 			<code data-language="php">__construct($app = null, $middleware = array() )</code>
+			<p>Optionally pass in a default application and set of middleware when creating your instance.</p>
 		</li>
 		<li>
 			<code data-language="php">->call($env)</code>
+			<p>Returns response of application stack as an array of status code, headers, and body.</p>
 		</li>
 		<li>
 			<code data-language="php">->map($path, $app)</code>
+			<p>Map an application to a url path.</p>
 		</li>
 		<li>
 			<code data-language="php">->run($app)</code>
+			<p>Sets <code>$app</code> as the main application.</p>
 		</li>
 		<li>
 			<code data-language="php">->use_middleware($middleware, $options = array())</code>
+			<p>Adds a middleware to the stack. You can pass in a string reference to a class with an options array, or an instantiated middleware.</p>
 		</li>
-
 	</ul>
 
 </section>
 
 <section>
 	<h2>Rackem\Exception</h2>
+	<p>Halt an application with a specified response array.</p>
+	<p>Example:</p>
+	{% highlight php %}
+<?php
+
+public function call($env)
+{
+	throw new \Rackem\Exception(404, array("text/plain"), array("Not found"));
+}
+	{% endhighlight %}
 	<ul class="settings">
 		<li>
 			<code data-language="php">__construct($status, $header, $body)</code>
+			<p>Creates an Exception with the specified http response array.</p>
 		</li>
 		<li>
 			<code data-language="php">->finish()</code>
+			<p>Returns the response array.</p>
 		</li>
 	</ul>
 </section>
 
 <section>
 	<h2>Rackem\File</h2>
+	<p>An application used for serving file requests through Rack'em.</p>
+	<p>Example:</p>
+	{% highlight php %}
+<?php
+
+public function call($env)
+{
+	$file = new \Rackem\File(__DIR__);
+	return $file->call($env);
+}
+	{% endhighlight %}
 
 	<ul class="settings">
 		<li>
 			<code data-language="php">__construct($root_path, $cache_control = null)</code>
+			<p>File must live under <code>$root_path</code> or a 404 response is returned. Optionally specify a Cache-Control header value.</p>
 		</li>
 		<li>
 			<code data-language="php">->call($env)</code>
+			<p>On success will return the file contents as an http response array. Uses <code>$env['PATH_INFO']</code> to determine the path to the file.</p>
 		</li>
 		<li>
 			<code data-language="php">->serving($env)</code>
+			<p>Reads file and prepares http headers for response.</p>
 		</li>
 	</ul>
 
@@ -173,12 +218,15 @@ return \Rackem::run(function($env) {
 
 <section>
 	<h2>Rackem\Middleware</h2>
+	<p>This is a base class used as a starting point when creating new middleware. <em>Abstract class intended for extending.</em></p>
 	<ul class="settings">
 		<li>
 			<code data-language="php">__construct($app, $options = array())</code>
+			<p>middleware must accept the previous application in the stack in their constructor.</p>
 		</li>
 		<li>
 			<code data-language="php">->call($env)</code>
+			<p>Returns response of previous application and middleware as an array of status code, headers, and body. This method must call the previous application using: <code>$this->app->call($env)</code>.</p>
 		</li>
 	</ul>
 
@@ -186,130 +234,206 @@ return \Rackem::run(function($env) {
 
 <section>
 	<h2>Rackem\Protection</h2>
+	<p>A middleware that will help protect your application from common web exploits.</p>
+	<p>Protects against:</p>
+	<ul>
+		<li>Cross Site Request Forgery</li>
+		<li>Cross Site Scripting</li>
+		<li>Clickjacking</li>
+		<li>Directory Traversal</li>
+		<li>Session Hijacking</li>
+		<li>IP Spoofing</li>
+	</ul>
 	<ul class="settings">
 		<li>
 			<code data-language="php">\Rackem\Protection::protect($except = array(), $rackem = "\Rackem")</code>
+			<p>Hooks up protection middleware to your application in one line. Pass an array of protection middleware class names to exclude particular middlewares.</p>
+			<p>By default this method will use <code>\Rackem::use_middleware</code>, if you are using an instance of <code>Rackem\Builder</code> to create your application stack, pass it in as the second paramter.</p>
 		</li>
 	</ul>
-
 </section>
 
 <section>
 	<h2>Rackem\Request</h2>
+	<p>Easily get particular types of information from an http request.</p>
+	<p>Example:</p>
+	{% highlight php %}
+<?php
+
+public function call($env)
+{
+	$req = new \Rackem\Request($env);
+
+	$req->base_url();
+	$req->path_info();
+	$req->content_type();
+}
+	{% endhighlight %}
 	<ul class="settings">
 		<li>
-			<code data-language="php">__construct($env = aray())</code>
+			<code data-language="php">__construct($env = array())</code>
+			<p>Pass in a Rack'em environment object.</p>
 		</li>
 		<li>
 			<code data-language="php">->base_url()</code>
+			<p>Returns the base url of the application.</p>
+			<p>Example: http://example.com</p>
 		</li>
 		<li>
 			<code data-language="php">->body()</code>
+			<p>Returns the <code>rack.input</code> stream.</p>
 		</li>
 		<li>
 			<code data-language="php">->content_length()</code>
+			<p>Returns the content length of the request or <code>null</code> if there is none.</p>
 		</li>
 		<li>
 			<code data-language="php">->content_type()</code>
+			<p>Returns the content type of the request.</p>
 		</li>
 		<li>
 			<code data-language="php">->cookies($key = null)</code>
+			<p>Returns an array of cookies from the request.</p>
 		</li>
 		<li>
 			<code data-language="php">->form_data()</code>
+			<p>Returns <code>true</code> if the request method is POST.</p>
 		</li>
 		<li>
 			<code data-language="php">->fullpath()</code>
+			<p>Returns the full path of the request including the SCRIPT_NAME and QUERY_STRING.</p>
+			<p>Example: /app/some/request?foo=bar</p>
 		</li>
 		<li>
 			<code data-language="php">->get()</code>
+			<p>Returns an array of all query string variables from the request.</p>
+			<p>Similar to <code>$_GET</code>.</p>
 		</li>
 		<li>
 			<code data-language="php">->host()</code>
+			<p>Returns the host name of the request.</p>
+			<p>Example: ripeworks.com</p>
 		</li>
 		<li>
 			<code data-language="php">->host_with_port()</code>
+			<p>Returns the host name of the request with the port</p>
+			<p>Example: ripeworks.com:80</p>
 		</li>
 		<li>
 			<code data-language="php">->is_delete()</code>
+			<p>Returns <code>true</code> if the request method is DELETE.</p>
 		</li>
 		<li>
 			<code data-language="php">->is_get()</code>
+			<p>Returns <code>true</code> if the request method is GET.</p>
 		</li>
 		<li>
 			<code data-language="php">->is_head()</code>
+			<p>Returns <code>true</code> if the request method is HEAD.</p>
 		</li>
 		<li>
 			<code data-language="php">->is_options()</code>
+			<p>Returns <code>true</code> if the request method is OPTIONS.</p>
 		</li>
 		<li>
 			<code data-language="php">->is_patch()</code>
+			<p>Returns <code>true</code> if the request method is PATCH.</p>
 		</li>
 		<li>
 			<code data-language="php">->is_post()</code>
+			<p>Returns <code>true</code> if the request method is POST.</p>
 		</li>
 		<li>
 			<code data-language="php">->is_put()</code>
+			<p>Returns <code>true</code> if the request method is PUT.</p>
 		</li>
 		<li>
 			<code data-language="php">->is_trace()</code>
+			<p>Returns <code>true</code> if the request method is TRACE.</p>
 		</li>
 		<li>
 			<code data-language="php">->is_xhr()</code>
+			<p>Returns <code>true</code> if the request is an AJAX request.</p>
 		</li>
 		<li>
 			<code data-language="php">->logger()</code>
+			<p>Returns the <code>rack.logger</code> stream object for logging.</p>
 		</li>
 		<li>
 			<code data-language="php">->media_type()</code>
+			<p>Returns the media type of the request if it exists.</p>
+			<p>Example: </p>
 		</li>
 		<li>
 			<code data-language="php">->media_type_params()</code>
+			<p>Returns an array of any parameters from the media type.</p>
 		</li>
 		<li>
 			<code data-language="php">->content_charset()</code>
+			<p>Returns the charset of the request if present.</p>
 		</li>
 		<li>
 			<code data-language="php">->params()</code>
+			<p>Returns an array of all passed variables both GET and POST.</p>
+			<p>Similar to: <code>array_marge($_GET, $_POST)</code></p>
 		</li>
 		<li>
 			<code data-language="php">->parseable_data()</code>
+			<p>Returns <code>true</code> if parseable data exists.</p>
+			<p>Content type is of <code>multipart/related</code> or <code>multipart/mixed</code></p>
 		</li>
 		<li>
 			<code data-language="php">->path()</code>
+			<p>Returns the path of the request including the SCRIPT_NAME.</p>
 		</li>
 		<li>
 			<code data-language="php">->path_info()</code>
+			<p>Returns the path of the request.</p>
+			<p>Example: /css/site.css</p>
 		</li>
 		<li>
 			<code data-language="php">->port()</code>
+			<p>Returns the port of the request.</p>
 		</li>
 		<li>
 			<code data-language="php">->post()</code>
+			<p>Returns an array of POST variables from the request body.</p>
+			<p>Similar to <code>$_POST</code></p>
 		</li>
 		<li>
 			<code data-language="php">->query_string()</code>
+			<p>Returns the query string of the request.</p>
 		</li>
 		<li>
 			<code data-language="php">->referer()</code>
+			<p>Returns the request referer if present.</p>
 		</li>
 		<li>
 			<code data-language="php">->request_method()</code>
+			<p>Returns the request method of the request.</p>
+			<p>Example: GET</p>
 		</li>
 		<li>
 			<code data-language="php">->session($key = null)</code>
+			<p>Returns the session variable for <code>$key</code> if present, or an array of all session variables if <code>$key</code> is null.</p>
+			<p>Similar to: <code>$_SESSION</code></p>
 		</li>
 		<li>
 			<code data-language="php">->scheme()</code>
+			<p>Returns the scheme of the request. http or https.</p>
 		</li>
 		<li>
 			<code data-language="php">->ssl()</code>
+			<p>Returns <code>true</code> if the request is secured with SSL.</p>
 		</li>
 		<li>
 			<code data-language="php">->url()</code>
+			<p>Returns the full url of the request.</p>
+			<p>Example: http://ripeworks.com/css/site.css</p>
 		</li>
 		<li>
 			<code data-language="php">->user_agent()</code>
+			<p>Returns the user agent of the request.</p>
 		</li>
 	</ul>
 
@@ -317,33 +441,72 @@ return \Rackem::run(function($env) {
 
 <section>
 	<h2>Rackem\Response</h2>
+	<p>Used to easily formulate a response array. Will also attempt to normalize some headers like Content-Length.</p>
+	<p>Example:</p>
+	{% highlight php %}
+<?php
+
+// Application example
+public function call($env)
+{
+	$res = new \Rackem\Response(array(), 200, array("Content-Type"=>"text/html"));
+	$res[] = "<h1>Hello down there!</h1>";
+	return $res->finish();
+}
+
+// Middleware example
+public function call($env)
+{
+	$res = new \Rackem\Response($this->app->call($env));
+	$res[] = "Adding some content to the response...";
+	return $res->finish();
+}
+	{% endhighlight %}
 	<ul class="settings">
 		<li>
 			<code data-language="php">__construct($body = array(), $status = 200, $header = array())</code>
+			<p>You can directly pass in an http response array, or separately provide the body, status code, and headers.</p>
 		</li>
 		<li>
 			<code data-language="php">[]</code>
+			<p>This class implements <code>ArrayAccess</code>, so you can use various array methods to alter the body of the response.</p>
 		</li>
 		<li>
 			<code data-language="php">->body(), __toString()</code>
+			<p>Returns the body of the response as a string.</p>
 		</li>
 		<li>
 			<code data-language="php">->finish()</code>
+			<p>Returns the http response array.</p>
 		</li>
 		<li>
 			<code data-language="php">->redirect($target, $status = 302)</code>
+			<p>Create the necessary response headers to perform a redirection.</p>
 		</li>
 		<li>
 			<code data-language="php">->send($args)</code>
+			<p>Set various parts of the response based on the value of <code>$args</code>.</p>
+			<p>Example:</p>
+			{% highlight php %}
+<?php
+
+$res = new \Rackem\Response();
+$res->send(200); // status code set to 200
+$res->send(array("Hello, world!")); // "Hello, world!" written to body
+$res->send(array("Content-Type" => "text/plain")); // content-type header set to text/plain
+		{% endhighlight %}
 		</li>
 		<li>
 			<code data-language="php">->write($body)</code>
+			<p>Write a string or array to the response body.</p>
 		</li>
 		<li>
 			<code data-language="php">->set_cookie($key, $value = array())</code>
+			<p>Set the cookie at <code>$key</code> to <code>$value</code>.</p>
 		</li>
 		<li>
 			<code data-language="php">->delete_cookie($key, $value = array())</code>
+			<p>Delete the cookie at <code>$key</code> with value <code>$value</code>.</p>
 		</li>
 	</ul>
 
