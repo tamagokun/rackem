@@ -187,7 +187,7 @@ public function call($env)
 
 <section>
 	<h2>Rackem\File</h2>
-	<p>An application used for serving file requests through Rack'em.</p>
+	<p>An application used for serving file requests through Rack'em. Uses <code>$env['PATH_INFO']</code> to determine the path to the file.</p>
 	<p>Example:</p>
 	{% highlight php %}
 <?php
@@ -206,7 +206,7 @@ public function call($env)
 		</li>
 		<li>
 			<code data-language="php">->call($env)</code>
-			<p>On success will return the file contents as an http response array. Uses <code>$env['PATH_INFO']</code> to determine the path to the file.</p>
+			<p>On success will return the file contents as an http response array.</p>
 		</li>
 		<li>
 			<code data-language="php">->serving($env)</code>
