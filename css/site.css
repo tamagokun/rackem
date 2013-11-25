@@ -167,6 +167,7 @@ footer p {
 .disclaimer {
 	text-align: center;
 	font-style: italic;
+	padding: 3em 0 1em 0;
 }
 
 p code {
