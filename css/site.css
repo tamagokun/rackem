@@ -19,7 +19,7 @@ img {
 
 header {
 	text-align: center;
-	padding: 10.25% 14.75%;
+	padding: 8.25% 14.75%;
 }
 
 nav a {
@@ -115,7 +115,7 @@ h1, h2, h3, h4, h5, h6 {
 
 header h1 {
 	text-indent: -1000em;
-	background: url(/img/Logo.svg) no-repeat center center;
+	background: url(../img/Logo.svg) no-repeat center center;
 	overflow: hidden;
 	height: 100px;
 	background-size: 80%;
@@ -142,12 +142,11 @@ header h1 a {
 
 footer {
 	padding-top: 1em;
-	color: #405162;
 }
 
 footer p {
 	padding: 2em 0 1em;
-	border-top: 1px solid #405162;
+	border-top: 1px solid #ddd;
 }
 
 .settings {
