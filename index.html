@@ -12,7 +12,7 @@ title: Rack'em
 		<li>Tiny</li>
 		<li>Provides a common interface for applications</li>
 		<li>Painlessly stack application logic using "middleware"</li>
-		<li>Environment values are consistent regardless of web server (see Rack speficication)</li>
+		<li>Environment values are consistent regardless of web server (see <a href="http://rack.rubyforge.org/doc/SPEC.html">Rack specification</a>)</li>
 		<li>Run applications locally without other dependencies</li>
 	</ul>
 	<h2>Gets it</h2>
@@ -27,7 +27,11 @@ title: Rack'em
 <?php
 # config.php
 return \Rackem::run(function($env) {
-	return array(200, array("Content-Type"=>"text/html"), array("Hello, from Rack'em!"));
+	return array(
+		200,
+		array("Content-Type"=>"text/html"),
+		array("<h1>Hello, from Rack'em!</h1>")
+	);
 });
 	{% endhighlight %}
 

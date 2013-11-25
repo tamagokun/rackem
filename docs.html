@@ -9,11 +9,15 @@ layout: default
 	<p>The easiest way to get up and running is by installing <a href="">Composer</a>, go ahead and install it now if you haven't already.</p>
 
 	<p>Once composer is installed, you can require <code>rackem/rackem</code> as a dependency of your project.</p>
-	$ composer require rackem/rackem:@stable
+	<pre class="terminal">
+		<code>$ composer require rackem/rackem:@stable</code>
+	</pre>
 
 	<p>Installing Rack'em globally is also pretty cool:</p>
-	$ composer global require rackem/rackem:@stable
-	<p>This way, so long as $COMPOSER_PATH is a part of $PATH, you can serve rackem applications as simply as <code>rackem</code></p>
+	<pre class="terminal">
+		<code>$ composer global require rackem/rackem:@stable</code>
+	</pre>
+	<p>If you have installed rackem globally, you can serve rackem applications as simply as <code>rackem</code></p>
 
 </section>
 
@@ -26,33 +30,45 @@ layout: default
 
 	<p>Create a project and require <code>rackem/rackem</code></p>
 
-	$ mkdir tutorial
-	$ cd tutorial
-	$ composer require rackem/rackem:@stable
-	$ composer install
+	<pre class="terminal">
+	<code>$ mkdir tutorial
+$ cd tutorial
+$ composer require rackem/rackem:@stable
+$ composer install</code>
+	</pre>
 
 	<h3>Create an application</h3>
 
-	<p>A Rack'em application is any object that reponds to the method <code>call()</code> or a function closure. The rackem utility by defeault will look for <code>config.php</code> as your main application script, so we will create one now.</p>
+	<p>A Rack'em application is any object that reponds to the method <code>call()</code> or a function closure. The rackem utility by default will look for <code>config.php</code> as your main application script, so we will create one now.</p>
 
-	$ touch config.php
+	<pre class="terminal">
+	<code>$ touch config.php</code>
+	</pre>
 
 	{% highlight php %}
 <?php
 # config.php
 return \Rackem::run(function($env) {
-    return array(200, array("Content-Type"=>"text/html"), array("Hello, from Rack'em!"));
+		return array(
+			200,
+			array("Content-Type"=>"text/html"),
+			array("<h1>Hello, from Rack'em!</h1>")
+		);
 });
 	{% endhighlight %}
+
+	<p>A Rack'em application must return an array containing the HTTP response status, headers, and body. In our example application you can see that we are specifying a 200 response code, setting the Content Type to text/html, and supplying a short html greeting.</p>
 
 	<h3>Run it</h3>
 
 	<p>Once you have your config.php saved, all you need to do is run the rackem utility, and your first application is running!</p>
 
-	$ vendor/bin/rackem
+	<pre class="terminal">
+	<code>$ vendor/bin/rackem
 == Rackem on http://0.0.0.0:9393
 >> Rackem web server
->> Listening on 0.0.0.0:9393, CTRL+C to stop
+>> Listening on 0.0.0.0:9393, CTRL+C to stop</code>
+	</pre>
 
 	<p>Browse to http://localhost:9393 to see the output.</p>
 
@@ -65,15 +81,21 @@ return \Rackem::run(function($env) {
 
 	<p>When running the server, it will by default look for your main application script in config.php, you can alternatively specify the name of your main application script.</p>
 
-	$ vendor/bin/rackem index.php
+	<pre class="terminal">
+	<code>$ vendor/bin/rackem index.php</code>
+	</pre>
 
 	<p>By default rackem will run on localhost with port 9393. Both host and port are configurable:</p>
 
-	$ vendor/bin/rackem index.php --host dev.local --port 3000
+	<pre class="terminal">
+	<code>$ vendor/bin/rackem index.php --host dev.local --port 3000</code>
+	</pre>
 
 	<p>If you pass <code>--basic</code> rackem will give you a basic html web server for serving up static websites.</p>
 
-	$ vendor/bin/rackem --basic
+	<pre class="terminal">
+	<code>$ vendor/bin/rackem --basic</code>
+	</pre>
 
 </section>
 
@@ -85,13 +107,13 @@ return \Rackem::run(function($env) {
 	<h2>Rackem</h2>
 	<ul class="settings">
 		<li>
-			\Rackem::map($path, $app)
+			<code data-language="php">\Rackem::map($path, $app)</code>
 		</li>
 		<li>
-			\Rackem::use_middleware($middleware, $options = array())
+			<code data-language="php">\Rackem::use_middleware($middleware, $options = array())</code>
 		</li>
 		<li>
-			\Rackem::run($app)
+			<code data-language="php">\Rackem::run($app)</code>
 		</li>
 	</ul>
 </section>
@@ -101,19 +123,19 @@ return \Rackem::run(function($env) {
 	<ul class="settings">
 
 		<li>
-			__construct($app = null, $middleware = array() )
+			<code data-language="php">__construct($app = null, $middleware = array() )</code>
 		</li>
 		<li>
-			->call($env)
+			<code data-language="php">->call($env)</code>
 		</li>
 		<li>
-			->map($path, $app)
+			<code data-language="php">->map($path, $app)</code>
 		</li>
 		<li>
-			->run($app)
+			<code data-language="php">->run($app)</code>
 		</li>
 		<li>
-			->use_middleware($middleware, $options = array())
+			<code data-language="php">->use_middleware($middleware, $options = array())</code>
 		</li>
 
 	</ul>
@@ -124,13 +146,12 @@ return \Rackem::run(function($env) {
 	<h2>Rackem\Exception</h2>
 	<ul class="settings">
 		<li>
-			__construct($status, $header, $body)
+			<code data-language="php">__construct($status, $header, $body)</code>
 		</li>
 		<li>
-			->finish()
+			<code data-language="php">->finish()</code>
 		</li>
 	</ul>
-
 </section>
 
 <section>
@@ -138,13 +159,13 @@ return \Rackem::run(function($env) {
 
 	<ul class="settings">
 		<li>
-			__construct($root_path, $cache_control = null)
+			<code data-language="php">__construct($root_path, $cache_control = null)</code>
 		</li>
 		<li>
-			->call($env)
+			<code data-language="php">->call($env)</code>
 		</li>
 		<li>
-			->serving($env)
+			<code data-language="php">->serving($env)</code>
 		</li>
 	</ul>
 
@@ -154,10 +175,10 @@ return \Rackem::run(function($env) {
 	<h2>Rackem\Middleware</h2>
 	<ul class="settings">
 		<li>
-			__construct($app, $options = array())
+			<code data-language="php">__construct($app, $options = array())</code>
 		</li>
 		<li>
-			->call($env)
+			<code data-language="php">->call($env)</code>
 		</li>
 	</ul>
 
@@ -166,7 +187,8 @@ return \Rackem::run(function($env) {
 <section>
 	<h2>Rackem\Protection</h2>
 	<ul class="settings">
-		<li>\Rackem\Protection::protect($except = array(), $rackem = "\Rackem")
+		<li>
+			<code data-language="php">\Rackem\Protection::protect($except = array(), $rackem = "\Rackem")</code>
 		</li>
 	</ul>
 
@@ -176,118 +198,118 @@ return \Rackem::run(function($env) {
 	<h2>Rackem\Request</h2>
 	<ul class="settings">
 		<li>
-			__construct($env = aray())
+			<code data-language="php">__construct($env = aray())</code>
 		</li>
 		<li>
-			->base_url()
+			<code data-language="php">->base_url()</code>
 		</li>
 		<li>
-			->body()
+			<code data-language="php">->body()</code>
 		</li>
 		<li>
-			->content_length()
+			<code data-language="php">->content_length()</code>
 		</li>
 		<li>
-			->content_type()
+			<code data-language="php">->content_type()</code>
 		</li>
 		<li>
-			->cookies($key = null)
+			<code data-language="php">->cookies($key = null)</code>
 		</li>
 		<li>
-			->form_data()
+			<code data-language="php">->form_data()</code>
 		</li>
 		<li>
-			->fullpath()
+			<code data-language="php">->fullpath()</code>
 		</li>
 		<li>
-			->get()
+			<code data-language="php">->get()</code>
 		</li>
 		<li>
-			->host()
+			<code data-language="php">->host()</code>
 		</li>
 		<li>
-			->host_with_port()
+			<code data-language="php">->host_with_port()</code>
 		</li>
 		<li>
-			->is_delete()
+			<code data-language="php">->is_delete()</code>
 		</li>
 		<li>
-			->is_get()
+			<code data-language="php">->is_get()</code>
 		</li>
 		<li>
-			->is_head()
+			<code data-language="php">->is_head()</code>
 		</li>
 		<li>
-			->is_options()
+			<code data-language="php">->is_options()</code>
 		</li>
 		<li>
-			->is_patch()
+			<code data-language="php">->is_patch()</code>
 		</li>
 		<li>
-			->is_post()
+			<code data-language="php">->is_post()</code>
 		</li>
 		<li>
-			->is_put()
+			<code data-language="php">->is_put()</code>
 		</li>
 		<li>
-			->is_trace()
+			<code data-language="php">->is_trace()</code>
 		</li>
 		<li>
-			->is_xhr()
+			<code data-language="php">->is_xhr()</code>
 		</li>
 		<li>
-			->logger()
+			<code data-language="php">->logger()</code>
 		</li>
 		<li>
-			->media_type()
+			<code data-language="php">->media_type()</code>
 		</li>
 		<li>
-			->media_type_params()
+			<code data-language="php">->media_type_params()</code>
 		</li>
 		<li>
-			->content_charset()
+			<code data-language="php">->content_charset()</code>
 		</li>
 		<li>
-			->params()
+			<code data-language="php">->params()</code>
 		</li>
 		<li>
-			->parseable_data()
+			<code data-language="php">->parseable_data()</code>
 		</li>
 		<li>
-			->path()
+			<code data-language="php">->path()</code>
 		</li>
 		<li>
-			->path_info()
+			<code data-language="php">->path_info()</code>
 		</li>
 		<li>
-			->port()
+			<code data-language="php">->port()</code>
 		</li>
 		<li>
-			->post()
+			<code data-language="php">->post()</code>
 		</li>
 		<li>
-			->query_string()
+			<code data-language="php">->query_string()</code>
 		</li>
 		<li>
-			->referer()
+			<code data-language="php">->referer()</code>
 		</li>
 		<li>
-			->request_method()
+			<code data-language="php">->request_method()</code>
 		</li>
 		<li>
-			->session($key = null)
+			<code data-language="php">->session($key = null)</code>
 		</li>
 		<li>
-			->scheme()
+			<code data-language="php">->scheme()</code>
 		</li>
 		<li>
-			->ssl()
+			<code data-language="php">->ssl()</code>
 		</li>
 		<li>
-			->url()
+			<code data-language="php">->url()</code>
 		</li>
 		<li>
-			->user_agent()
+			<code data-language="php">->user_agent()</code>
 		</li>
 	</ul>
 
@@ -297,31 +319,31 @@ return \Rackem::run(function($env) {
 	<h2>Rackem\Response</h2>
 	<ul class="settings">
 		<li>
-			__construct($body = array(), $status = 200, $header = array())
+			<code data-language="php">__construct($body = array(), $status = 200, $header = array())</code>
 		</li>
 		<li>
-			[]
+			<code data-language="php">[]</code>
 		</li>
 		<li>
-			->body(), __toString()
+			<code data-language="php">->body(), __toString()</code>
 		</li>
 		<li>
-			->finish()
+			<code data-language="php">->finish()</code>
 		</li>
 		<li>
-			->redirect($target, $status = 302)
+			<code data-language="php">->redirect($target, $status = 302)</code>
 		</li>
 		<li>
-			->send($args)
+			<code data-language="php">->send($args)</code>
 		</li>
 		<li>
-			->write($body)
+			<code data-language="php">->write($body)</code>
 		</li>
 		<li>
-			->set_cookie($key, $value = array())
+			<code data-language="php">->set_cookie($key, $value = array())</code>
 		</li>
 		<li>
-			->delete_cookie($key, $value = array())
+			<code data-language="php">->delete_cookie($key, $value = array())</code>
 		</li>
 	</ul>
 
