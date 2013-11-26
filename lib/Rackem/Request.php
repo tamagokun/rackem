@@ -110,24 +110,27 @@ class Request
 
 	public function media_type()
 	{
-		return is_null($this->content_type())? null : strtolower(array_shift(preg_split('/\s*[;,]\s*/',$this->content_type(),2)));
+		if(is_null($this->content_type())) return null;
+		$media_type = preg_split('/\s*[;,]\s*/', $this->content_type(), 2);
+		return strtolower(array_shift($media_type));
 	}
 
 	public function media_type_params()
 	{
 		if( is_null($this->content_type()) ) return array();
 		$params = array();
-		return array_map(function($p) use (&$params) {
+		$media_type_params = preg_split('/\s*[;,]\s*/', $this->content_type());
+		array_map(function($p) use (&$params) {
 			list($k,$v) = explode("=",$p,2);
 			$params[strtolower($k)] = $v;
-		}, array_slice(preg_split('/\s*[;,]\s*/',$this->content_type()),1));
+		}, array_slice($media_type_params, 1));
 		return $params;
 	}
 
 	public function content_charset()
 	{
 		$params = $this->media_type_params();
-		return (isset($params['charset']))? $params['charset'] : null;
+		return isset($params['charset'])? $params['charset'] : null;
 	}
 
 	public function params()

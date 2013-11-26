@@ -65,4 +65,19 @@ class Request extends ObjectBehavior
 		$this->ssl()->shouldReturn(true);
 		$this->url()->shouldReturn("https://google.com:7685/bar/foo?baz=true");
 	}
+
+	public function it_should_parse_content_information_properly()
+	{
+		$request = new \Rackem\MockRequest(null);
+		$env = $request->env_for("/foo");
+		$env['CONTENT_LENGTH'] = "1337";
+		$env['CONTENT_TYPE'] = 'application/x-www-form-urlencoded; charset=UTF-8';
+		$this->env = $env;
+
+		$this->content_length()->shouldReturn('1337');
+		$this->content_type()->shouldReturn('application/x-www-form-urlencoded; charset=UTF-8');
+		$this->content_charset()->shouldReturn('UTF-8');
+		$this->media_type()->shouldReturn('application/x-www-form-urlencoded');
+		$this->media_type_params()->shouldReturn(array('charset'=>'UTF-8'));
+	}
 }
