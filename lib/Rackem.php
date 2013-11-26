@@ -13,8 +13,6 @@ class Rackem
 
 	public static function run($app = null)
 	{
-		if(!$app) return false;
-
 		self::ensure_builder();
 		self::$builder->run($app);
 
