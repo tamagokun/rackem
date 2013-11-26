@@ -156,8 +156,8 @@ class Server
 		}
 		socket_set_nonblock($this->master);
 
-		echo "== Rackem on http://{$this->host}:{$this->port}\n";
-		echo ">> Rackem web server\n";
+		echo "== Rack'em on http://{$this->host}:{$this->port}\n";
+		echo ">> Rack'em web server\n";
 		echo ">> Listening on {$this->host}:{$this->port}, CTRL+C to stop\n";
 		pcntl_signal(SIGINT, array($this, "stop"));
 		pcntl_signal(SIGTERM, array($this, "stop"));
