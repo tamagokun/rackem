@@ -188,6 +188,7 @@ Things that are in need:
 
 * more code coverage
 * web server test bed
+* benchmarking
 
 ## Credits
 
