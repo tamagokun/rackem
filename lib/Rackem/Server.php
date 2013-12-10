@@ -4,7 +4,7 @@ namespace Rackem;
 class Server
 {
 	public $reload = true;
-	private $host, $port, $app, $listening;
+	private $app, $is_fork, $host, $port, $running;
 
 	public function __construct($host = '0.0.0.0', $port = 9393, $app)
 	{
@@ -23,79 +23,19 @@ class Server
 		return new $app();
 	}
 
-	public function start()
+	public function handle_client($socket)
 	{
-		$this->init();
-		while($this->listening)
-		{
-			$client = @socket_accept($this->master);
-			if($client === false)
-			{
-				usleep(100);
-				continue;
-			}
-			if($client < 0)
-			{
-				echo ">> Error: ", socket_strerror($client), "\n";
-				exit();
-			}
-			
-			$pid = pcntl_fork();
-			if($pid == -1)
-			{
-				echo ">> Fork failure.\n";
-				exit();
-			}else if($pid > 0)
-			{
-				socket_close($client);
-			}else
-			{
-				$this->listening = false;
-				socket_close($this->master);
-				$buffer = '';
-				$timeout = 0;
-				
-				while(!preg_match('/\r?\n\r?\n/',$buffer))
-				{
-					$buffer .= socket_read($client, 1024);
-					$timeout++;
-					if($timeout >= 10000) break;
-				}
+		if($socket === false) return;
 
-				if(!strlen($buffer))
-				{
-					socket_close($client);
-					exit();
-				}
+		stream_set_blocking($socket, 1);
+		$buffer = stream_socket_recvfrom($socket, 4096);
 
-				if(preg_match('/Content-Length: (\d+)/',$buffer,$m))
-				{
-					$s = preg_split('/(\r?\n\r?\n)/',$buffer,-1,PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_OFFSET_CAPTURE);
-					$offset = $s[1];
-					$offset = $offset[1];
-					$length = $m[1] - (strlen($buffer) - $offset);
-					$body = '';
-					while(strlen($body) < $length) $body .= socket_read($client, 1024);
-					$buffer = $buffer . $body;
-				}
+		if($buffer == '' || $buffer === false) return;
 
-				socket_getpeername($client, $c_name);
-				$res = $this->reload? $this->process_from_cli($buffer, $c_name) : $this->process($buffer, $c_name);
+		$c_name = stream_socket_get_name($socket, true);
+		$res = $this->reload? $this->process_from_cli($buffer, $c_name) : $this->process($buffer, $c_name);
 
-				$len = strlen($res);
-				$offset = 0;
-				$timeout = 0;
-				while($offset < $len)
-				{
-					$bytes = @socket_write($client, substr($res, $offset), $len-$offset);
-					$offset += $bytes;
-					$timeout++;
-					if($timeout >= 10000) break;
-				}
-				socket_close($client);
-				exit();
-			}
-		}
+		fwrite($socket, $res);
 	}
 
 	public function process($buffer, $client)
@@ -121,12 +61,55 @@ class Server
 		return $this->write_response($req, $res);
 	}
 
+	public function start()
+	{
+		$this->init();
+		$this->running = true;
+
+		while($this->step())
+		{
+
+		}
+	}
+
+	public function step()
+	{
+		$read = array($this->master);
+		$write = array();
+		$except = null;
+
+		if(stream_select($read, $write, $except, 0) > 0)
+		{
+			$client = stream_socket_accept($this->master);
+			if(function_exists('pcntl_fork'))
+			{
+				$pid = pcntl_fork();
+
+				if($pid == -1)
+					die('could not fork');
+				else if ($pid)
+					return $pid; // parent process
+
+				$this->is_fork = true;
+			}
+			$this->handle_client($client);
+			if(is_resource($client))
+			{
+				stream_socket_shutdown($client, STREAM_SHUT_RDWR);
+				fclose($client);
+			}
+			if(function_exists('pcntl_fork')) exit;
+		}
+
+		return $this->running;
+	}
+
 	public function stop()
 	{
-		$this->listening = false;
-		$this->child_handler();
-		@socket_close($this->master);
-		echo ">> Stopping...\n";
+		$this->running = false;
+		if(function_exists('pcntl_fork')) $this->child_handler();
+		fclose($this->master);
+		if(!$this->is_fork) echo ">> Stopping...\n";
 		exit(0);
 	}
 
@@ -134,35 +117,23 @@ class Server
 
 	protected function init()
 	{
-		if(($this->master = socket_create(AF_INET, SOCK_STREAM, SOL_TCP)) === false)
-		{
-			echo ">> Failed to create socket.\n", socket_strerror($this->master), "\n";
-			exit(1);
-		}
-		if(!socket_set_option($this->master, SOL_SOCKET, SO_REUSEADDR, 1))
-		{
-			echo ">> Failed to create socket.\n", socket_strerror($this->master), "\n";
-			exit(1);
-		}
-		if(@socket_bind($this->master, $this->host, $this->port) === false)
+		$this->master = @stream_socket_server("tcp://{$this->host}:{$this->port}", $errno, $errstr);
+		if($this->master === false)
 		{
 			echo ">> Failed to bind socket.\n", socket_strerror(socket_last_error()), "\n";
 			exit(2);
 		}
-		if(@socket_listen($this->master, 0) === false)
-		{
-			echo ">> Failed to start server.\n", socket_strerror(socket_last_error()), "\n";
-			exit(3);
-		}
-		socket_set_nonblock($this->master);
+		stream_set_blocking($this->master, 0);
 
 		echo "== Rack'em on http://{$this->host}:{$this->port}\n";
 		echo ">> Rack'em web server\n";
 		echo ">> Listening on {$this->host}:{$this->port}, CTRL+C to stop\n";
-		pcntl_signal(SIGINT, array($this, "stop"));
-		pcntl_signal(SIGTERM, array($this, "stop"));
-		pcntl_signal(SIGCHLD, array($this, "child_handler"));
-		$this->listening = true;
+		if(function_exists('pcntl_signal'))
+		{
+			pcntl_signal(SIGINT, array($this, "stop"));
+			pcntl_signal(SIGTERM, array($this, "stop"));
+			pcntl_signal(SIGCHLD, array($this, "child_handler"));
+		}
 	}
 
 	protected function child_handler()

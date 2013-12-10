@@ -41,7 +41,7 @@ while(list($k,$arg) = each($argv))
 	each($argv);
 }
 
-$app = count($args) > 0? $args[0] : 'config.php';
+$app = count($argv) > 0? $argv[0] : 'config.php';
 
 if(isset($opts['basic']))
 {
