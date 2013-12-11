@@ -114,7 +114,7 @@ class Server
 		$this->master = @stream_socket_server("tcp://{$this->host}:{$this->port}", $errno, $errstr);
 		if($this->master === false)
 		{
-			echo ">> Failed to bind socket.\n", socket_strerror(socket_last_error()), "\n";
+			echo ">> Failed to bind socket.\n", $errno, " - ", $errstr, "\n";
 			exit(2);
 		}
 		stream_set_blocking($this->master, 0);
@@ -220,7 +220,7 @@ class Server
 		$headers = array();
 		$body = '';
 
-		$lines = preg_split('/(\\r?\\n)/',$req, -1, PREG_SPLIT_DELIM_CAPTURE);
+		$lines = preg_split('/(\\r?\\n)/', $req, -1, PREG_SPLIT_DELIM_CAPTURE);
 		for($i=0, $total = count($lines); $i < $total; $i += 2)
 		{
 			$line = $lines[$i];
