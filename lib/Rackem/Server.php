@@ -37,7 +37,7 @@ class Server
 			if(strlen($buffer) > 0 && $chunk == '') break;
 		}
 
-		if($buffer == '' || $buffer === false) return;
+		if($buffer === '' || $buffer === false) return;
 
 		$client = stream_socket_get_name($socket, false);
 		$res = $this->reload? $this->process_from_cli($buffer, $client) : $this->process($buffer, $client);
