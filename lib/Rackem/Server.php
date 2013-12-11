@@ -39,7 +39,7 @@ class Server
 
 		if($buffer == '' || $buffer === false) return;
 
-		$client = stream_socket_get_name($socket, true);
+		$client = stream_socket_get_name($socket, false);
 		$res = $this->reload? $this->process_from_cli($buffer, $client) : $this->process($buffer, $client);
 
 		fwrite($socket, $res);
