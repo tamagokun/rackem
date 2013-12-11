@@ -4,7 +4,7 @@ namespace Rackem;
 class Server
 {
 	public $reload = true;
-	private $app, $is_fork, $host, $port, $running;
+	private $app, $host, $port, $running;
 
 	public function __construct($host = '0.0.0.0', $port = 9393, $app)
 	{
@@ -27,13 +27,20 @@ class Server
 	{
 		if($socket === false) return;
 
-		stream_set_blocking($socket, 1);
-		$buffer = stream_socket_recvfrom($socket, 4096);
+		$buffer = '';
+
+		stream_set_blocking($socket, 0);
+		while(true)
+		{
+			$chunk = stream_socket_recvfrom($socket, 4096);
+			$buffer .= $chunk;
+			if(strlen($buffer) > 0 && $chunk == '') break;
+		}
 
 		if($buffer == '' || $buffer === false) return;
 
-		$c_name = stream_socket_get_name($socket, true);
-		$res = $this->reload? $this->process_from_cli($buffer, $c_name) : $this->process($buffer, $c_name);
+		$client = stream_socket_get_name($socket, true);
+		$res = $this->reload? $this->process_from_cli($buffer, $client) : $this->process($buffer, $client);
 
 		fwrite($socket, $res);
 	}
@@ -78,27 +85,15 @@ class Server
 		$write = array();
 		$except = null;
 
-		if(stream_select($read, $write, $except, 0) > 0)
+		if(@stream_select($read, $write, $except, 0, 200000) > 0)
 		{
 			$client = stream_socket_accept($this->master);
-			if(function_exists('pcntl_fork'))
-			{
-				$pid = pcntl_fork();
-
-				if($pid == -1)
-					die('could not fork');
-				else if ($pid)
-					return $pid; // parent process
-
-				$this->is_fork = true;
-			}
 			$this->handle_client($client);
 			if(is_resource($client))
 			{
 				stream_socket_shutdown($client, STREAM_SHUT_RDWR);
 				fclose($client);
 			}
-			if(function_exists('pcntl_fork')) exit;
 		}
 
 		return $this->running;
@@ -107,9 +102,8 @@ class Server
 	public function stop()
 	{
 		$this->running = false;
-		if(function_exists('pcntl_fork')) $this->child_handler();
 		fclose($this->master);
-		if(!$this->is_fork) echo ">> Stopping...\n";
+		echo ">> Stopping...\n";
 		exit(0);
 	}
 
