@@ -42,7 +42,14 @@ class Server
 		$client = stream_socket_get_name($socket, false);
 		$res = $this->reload? $this->process_from_cli($buffer, $client) : $this->process($buffer, $client);
 
-		fwrite($socket, $res);
+		$length = strlen($res);
+		$written = 0;
+		while($written < $length)
+		{
+			$bytes = @fwrite($socket, substr($res, $written));
+			if($bytes === false) break;
+			$written += $bytes;
+		}
 	}
 
 	public function process($buffer, $client)
