@@ -59,7 +59,9 @@ class Request
 
 	public function form_data()
 	{
-		return ($this->env["REQUEST_METHOD"] == "POST");
+		$available_methods = array("POST", "PUT", "PATCH");
+		$method = $this->env["REQUEST_METHOD"];
+		return in_array($method, $available_methods);
 	}
 
 	public function fullpath()
