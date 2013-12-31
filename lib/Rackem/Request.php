@@ -168,12 +168,12 @@ class Request
 			$this->env["rack.request.form_input"] = $this->env["rack.input"];
 			$form_vars = str_replace("\0\z","",stream_get_contents($this->env["rack.input"]));
 			$this->env["rack.request.form_vars"] = $form_vars;
-			if($this->parseable_data())
-			{
-				$this->env["rack.request.form_hash"] = $this->parse_multipart($form_vars);
-			}else if($this->content_type() == "application/json")
+			if($this->content_type() == "application/json")
 			{
 				$this->env["rack.request.form_hash"] = json_decode($form_vars, true);
+			}else
+			{
+				$this->env["rack.request.form_hash"] = $this->parse_multipart($form_vars);
 			}
 		}else
 			$this->env["rack.request.form_hash"] = array();
