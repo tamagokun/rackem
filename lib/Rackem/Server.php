@@ -131,6 +131,7 @@ class Server
     if($conn->is_response_complete())
     {
       // request_done($conn)
+      // or log here?
       if($conn->header['Connection'] === 'close' || $conn->version !== 'HTTP/1.1')
       {
         $this->close_in($conn);

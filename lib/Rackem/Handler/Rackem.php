@@ -21,7 +21,7 @@ class Rackem
     $headers['Status'] = $status;
     $phrase = Utils::status_code($status);
 
-    $head = array("{$env['SERVER_PROTOCOL']} $status $phrase\r\n");
+    $head = array("{$env['SERVER_PROTOCOL']} $status $phrase");
     foreach($headers as $key=>$values)
       foreach(explode("\n",$values) as $value) $head[] = "$key: $value";
     echo implode("\r\n", $head);
