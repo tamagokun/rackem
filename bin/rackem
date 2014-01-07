@@ -43,10 +43,8 @@ while(list($k,$arg) = each($argv))
 
 $app = count($argv) > 0? $argv[0] : 'config.php';
 
-if(isset($opts['basic']))
-{
-	$app = "\\Rackem\\BasicWebServer";
-}else if(!file_exists($app))
+if(isset($opts['basic'])) $app = dirname(__DIR__)."/basic_web.php";
+if(!file_exists($app))
 {
 	echo "configuration {$app} not found\n";
 	exit(1);
@@ -54,10 +52,6 @@ if(isset($opts['basic']))
 
 $host = isset($opts['host'])? $opts['host'] : '0.0.0.0';
 $port = isset($opts['port'])? $opts['port'] : '9393';
-$client = isset($opts['client'])? $opts['client'] : false;
 
 $server = new \Rackem\Server($host, $port, $app);
-if(isset($opts['process']) && $opts['process'])
-	echo $server->process(stream_get_contents(fopen("php://stdin","r")), $client);
-else
-	$server->start();
+$server->start();
