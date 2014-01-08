@@ -49,11 +49,8 @@ class Server
         else $read[] = $conn->stream;
       }
     }
-    error_log("r/w " . count($read) . ", " . count($write));
-    error_log("i/o " . count($this->in) . ", " . count($this->out));
     $read[] = $this->master;
 
-    // @stream_select($read, $write, $except, 0, 200000)
     if(@stream_select($read, $write, $except, null) < 1) return $this->running;
 
     if(in_array($this->master, $read))
@@ -72,12 +69,6 @@ class Server
     }
 
     foreach($write as $client) $this->write($client);
-
-    /*   if(is_resource($client)) */
-    /*   { */
-    /*     stream_socket_shutdown($client, STREAM_SHUT_RDWR); */
-    /*     fclose($client); */
-    /*   } */
 
     return $this->running;
   }
@@ -118,7 +109,6 @@ class Server
       $this->close_connection($conn);
     }else
     {
-      error_log("reuse connection");
       $conn->cleanup();
       $this->close_response($conn);
       $this->in[(int)$socket] = new Connection($socket);
@@ -179,13 +169,13 @@ class Server
     }
   }
 
-	protected function log_request($conn)
-	{
-		$date = @date("d/M/Y H:i:s");
-		$time = sprintf('%.4f', microtime(true) - $conn->start_time);
+  protected function log_request($conn)
+  {
+    $date = @date("d/M/Y H:i:s");
+    $time = sprintf('%.4f', microtime(true) - $conn->start_time);
 
     // TODO: Parse response status
-		return "{$conn->client} - - [{$date}] \"{$conn->request}\" status - {$time}\n";
-	}
+    return "{$conn->client} - - [{$date}] \"{$conn->request}\" status - {$time}\n";
+  }
 
 }
