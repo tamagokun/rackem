@@ -30,6 +30,29 @@ class Rackem
   public function env()
   {
     $url_scheme = $_SERVER['rack_url_scheme'];
+    $accepted = array(
+      "CONTENT_LENGTH",
+      "CONTENT_TYPE",
+      "REQUEST_METHOD",
+      "SCRIPT_NAME",
+      "PATH_INFO",
+      "SERVER_NAME",
+      "SERVER_PORT",
+      "SERVER_PROTOCOL",
+      "QUERY_STRING",
+      "rack.version",
+      "rack.url_scheme",
+      "rack.input",
+      "rack.errors",
+      "rack.multithread",
+      "rack.multiprocess",
+      "rack.run_once",
+      "rack.hijack?",
+      "rack.hijack",
+      "rack.hijack_io",
+      "rack.session",
+      "rack.logger"
+    );
 
     $env = array_merge($_SERVER, array(
       "rack.input" => fopen('php://input', 'r'),
@@ -39,12 +62,8 @@ class Rackem
       "rack.version" => \Rackem::version(),
       "rack.url_scheme" => $url_scheme
     ));
-    unset($env['rack_url_scheme']);
-    unset($env['rackem_handler']);
-    unset($env['PWD']);
-    unset($env['SHLVL']);
-    unset($env['_']);
-    unset($env['__CF_USER_TEXT_ENCODING']);
+
+    foreach($env as $k=>$v) if(!in_array($k, $accepted) && substr($k,0,5) !== "HTTP_)") unset($env[$k]);
     return new \ArrayObject($env);
   }
 }
