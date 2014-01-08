@@ -21,10 +21,10 @@ class Connection
   protected $is_chunked = false;
 
   // processing responses
-  public $buffer;
-  public $bytes_written;
-  public $proc;
-  public $stream;
+  public $buffer = '';
+  public $bytes_written = 0;
+  public $proc = null;
+  public $stream = null;
 
   const READ_CHUNK_HEADER = 0;
   const READ_CHUNK_DATA = 1;
@@ -39,7 +39,7 @@ class Connection
     $this->socket = $client;
     $this->body = fopen("data://text/plain,", "r+b");
 
-    //stream_set_blocking($this->socket, 0);
+    stream_set_blocking($this->socket, 0);
     $this->client = stream_socket_get_name($this->socket, false);
   }
 
@@ -56,7 +56,8 @@ class Connection
 
   public function is_response_complete()
   {
-    return !$this->stream || feof($this->stream);
+    $status = proc_get_status($this->proc);
+    return $status['running'] ? false : true;
   }
 
   public function get_header($key)
@@ -111,16 +112,13 @@ class Connection
   /*
    * Read data from Rack'em response
    */
-  public function read($stream)
+  public function read()
   {
-    $data = @fread($stream, 30000);
+    $data = @fread($this->stream, 30000);
 
     if($data === false) return;
 
-    if(isset($this->buffer[0]))
-      $this->buffer .= $data;
-    else
-      $this->buffer = $data;
+    $this->buffer .= $data;
   }
 
   /*
@@ -147,6 +145,7 @@ class Connection
     if(!is_resource($this->proc)) return false;
 
     fclose($pipes[0]);
+    stream_set_blocking($pipes[1], 0);
 
     return $this->stream = $pipes[1];
   }

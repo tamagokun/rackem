@@ -68,9 +68,12 @@ class Server
       }else
       {
         if(strlen($conn->buffer)) $write[] = $conn->socket;
-        if(!$conn->is_response_complete()) $read[] = $conn->stream;
+        if($conn->is_response_complete()) $this->complete_response($conn);
+        else $read[] = $conn->stream;
       }
     }
+    error_log("r/w " . count($read) . ", " . count($write));
+    error_log("i/o " . count($this->in) . ", " . count($this->out));
     $read[] = $this->master;
 
     // @stream_select($read, $write, $except, 0, 200000)
@@ -87,7 +90,7 @@ class Server
 
     foreach($read as $stream)
     {
-      if(isset($this->out[(int)$stream])) $this->out[(int)$stream]->read($stream);
+      if(isset($this->out[(int)$stream])) $this->out[(int)$stream]->read();
       else $this->read_request($stream);
     }
 
@@ -128,40 +131,43 @@ class Server
     $conn->bytes_written += $bytes;
     $conn->buffer = substr($conn->buffer, $bytes);
 
-    if($conn->is_response_complete())
+    if($conn->is_response_complete()) $this->complete_response($conn);
+  }
+
+  public function complete_response($conn)
+  {
+    if($conn->get_header('Connection') === 'close' || $conn->version !== 'HTTP/1.1')
     {
-      // request_done($conn)
-      // or log here?
-      if($conn->header['Connection'] === 'close' || $conn->version !== 'HTTP/1.1')
-      {
-        $this->close_in($conn);
-      }else
-      {
-        $conn->cleanup();
-        $this->close_out($conn);
-        $this->in[(int)$socket] = new Connection($socket);
-      }
+      $this->close_connection($conn);
+    }else
+    {
+      error_log("reuse connection");
+      $conn->cleanup();
+      $this->close_response($conn);
+      $this->in[(int)$socket] = new Connection($socket);
     }
   }
 
-  public function close_in($connection)
+  public function close_connection($conn)
   {
-    $connection->cleanup();
-    @fclose($connection->socket);
-    unset($this->in[(int)$connection->socket]);
-    $connection->socket = null;
+    $conn->cleanup();
+    @fclose($conn->socket);
+    unset($this->in[(int)$conn->socket]);
+    $conn->socket = null;
+
+    $this->close_response($conn);
   }
 
-  public function close_out($connection)
+  public function close_response($conn)
   {
-    if(!$connection->stream) return;
-    @fclose($connection->stream);
-    unset($this->out[(int)$connection->stream]);
-    $connection->stream = null;
-    if($connection->proc)
+    if(!$conn->stream) return;
+    @fclose($conn->stream);
+    unset($this->out[(int)$conn->stream]);
+    $conn->stream = null;
+    if($conn->proc)
     {
-      proc_close($connection->proc);
-      $connection->proc = null;
+      proc_close($conn->proc);
+      $conn->proc = null;
     }
   }
 
