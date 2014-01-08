@@ -130,7 +130,7 @@ class Connection
   {
     $res = "";
     $spec = array(
-      0 => array("pipe", "rb"),
+      0 => $this->body,
       1 => array("pipe", "wb"),
       2 => STDERR
     );
@@ -151,7 +151,6 @@ class Connection
     $this->proc = proc_open("$php $app", $spec, $pipes, null, $env);
     if(!is_resource($this->proc)) return false;
 
-    fclose($pipes[0]);
     stream_set_blocking($pipes[1], 0);
 
     return $this->stream = $pipes[1];
