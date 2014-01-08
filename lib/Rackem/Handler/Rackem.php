@@ -31,9 +31,9 @@ class Rackem
 
   public function env()
   {
-    $url_scheme = $_ENV['rack_url_scheme'];
+    $url_scheme = $_SERVER['rack_url_scheme'];
 
-    $env = array_merge($_ENV, array(
+    $env = array_merge($_SERVER, array(
       "rack.input" => fopen('php://input', 'r'),
       "rack.errors" => fopen('php://stderr', 'wb'),
       "rack.sessions" => array(),

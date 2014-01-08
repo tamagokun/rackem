@@ -16,9 +16,12 @@ class Rackem
 		self::ensure_builder();
 		self::$builder->run($app);
 
-    if(!isset($_ENV['rackem_handler'])) self::$handler = new \Rackem\Handler\Sapi();
-    if($_ENV['rackem_handler'] == "ruby") self::$handler = new \Rackem\Handler\Ruby();
-    if($_ENV['rackem_handler'] == "rackem") self::$handler = new \Rackem\Handler\Rackem();
+    if(!isset($_SERVER['rackem_handler'])) self::$handler = new \Rackem\Handler\Sapi();
+    else
+    {
+      if($_SERVER['rackem_handler'] == "ruby") self::$handler = new \Rackem\Handler\Ruby();
+      if($_SERVER['rackem_handler'] == "rackem") self::$handler = new \Rackem\Handler\Rackem();
+    }
 
 		return self::$handler->run(self::$builder);
 	}
