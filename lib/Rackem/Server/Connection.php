@@ -143,7 +143,7 @@ class Connection
 
     $php = defined("PHP_BINARY") ? PHP_BINARY : PHP_BINDIR."/php";
     $app = realpath($app);
-    $this->proc = proc_open("$php $app", $spec, $pipes, null, $env);
+    $this->proc = proc_open("$php $app", $spec, $pipes, null, array_merge($_SERVER, $env));
     if(!is_resource($this->proc)) return false;
 
     fclose($pipes[0]);

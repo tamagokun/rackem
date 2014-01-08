@@ -15,15 +15,7 @@ class Rackem
 	{
 		self::ensure_builder();
 		self::$builder->run($app);
-
-    if(!isset($_SERVER['rackem_handler'])) self::$handler = new \Rackem\Handler\Sapi();
-    else
-    {
-      if($_SERVER['rackem_handler'] == "ruby") self::$handler = new \Rackem\Handler\Ruby();
-      if($_SERVER['rackem_handler'] == "rackem") self::$handler = new \Rackem\Handler\Rackem();
-    }
-
-		return self::$handler->run(self::$builder);
+		return self::handler()->run(self::$builder);
 	}
 
 	public static function use_middleware($middleware, $options = array())
@@ -42,4 +34,13 @@ class Rackem
 	{
 		if(!self::$builder) self::$builder = new Rackem\Builder();
 	}
+
+  protected static function handler()
+  {
+    $name = $_SERVER['rackem_handler'];
+    if($name == "ruby") return self::$handler = new \Rackem\Handler\Ruby();
+    if($name == "rackem") return self::$handler = new \Rackem\Handler\Rackem();
+    // fallback to sapi since they won't be reporting which handler to use.
+    return self::$handler = new \Rackem\Handler\Sapi();
+  }
 }
