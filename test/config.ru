@@ -2,18 +2,19 @@ require 'rubygems'
 require 'json'
 
 class RubyBridge
-	def call(env)
-		response = []
-		req = Rack::Request.new(env)
-		req.params()
-		data = JSON.dump(env)
-		IO.popen("php ./config.php --ruby", 'r+') do |io|
-			io.write data
-			io.close_write
-			response = io.readlines
-		end
-		[response.shift,JSON.load(response.shift),response]
-	end
+  def call(env)
+    response = []
+    req = Rack::Request.new(env)
+    req.params()
+    data = JSON.dump(env)
+    ENV['rackem_handler'] = "ruby"
+    IO.popen("php ./config.php", 'r+') do |io|
+      io.write data
+      io.close_write
+      response = io.readlines
+    end
+    [response.shift,JSON.load(response.shift),response]
+  end
 end
 
 use Rack::Reloader
