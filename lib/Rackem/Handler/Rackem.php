@@ -55,7 +55,7 @@ class Rackem
     );
 
     $env = array_merge($_SERVER, array(
-      "rack.input" => fopen('php://input', 'r'),
+      "rack.input" => fopen('php://stdin', 'r'),
       "rack.errors" => fopen('php://stderr', 'wb'),
       "rack.sessions" => array(),
       "rack.logger" => "",

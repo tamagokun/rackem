@@ -128,7 +128,6 @@ class Connection
    */
   public function process($app)
   {
-    $res = "";
     $spec = array(
       0 => $this->body,
       1 => array("pipe", "wb"),
