@@ -133,7 +133,10 @@ class Connection
       2 => STDERR
     );
 
-    $env = $this->env;
+    $env = array();
+    // bring over standard $_SERVER array
+    foreach($_SERVER as $k=>$v) if(is_numeric($v) || is_string($v)) $env[$k] = $v;
+    $env = array_merge($env, $this->env);
     foreach($this->header as $k=>$v)
     {
       $env_name = str_replace("-", "_", strtoupper($k));
@@ -143,7 +146,7 @@ class Connection
 
     $php = defined("PHP_BINARY") ? PHP_BINARY : PHP_BINDIR."/php";
     $app = realpath($app);
-    $this->proc = proc_open("$php $app", $spec, $pipes, null, array_merge($_SERVER, $env));
+    $this->proc = proc_open("$php $app", $spec, $pipes, null, $env);
     if(!is_resource($this->proc)) return false;
 
     fclose($pipes[0]);

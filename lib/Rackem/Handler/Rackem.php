@@ -63,7 +63,7 @@ class Rackem
       "rack.url_scheme" => $url_scheme
     ));
 
-    foreach($env as $k=>$v) if(!in_array($k, $accepted) && substr($k,0,5) !== "HTTP_)") unset($env[$k]);
+    foreach($env as $k=>$v) if(!in_array($k, $accepted) && substr($k,0,5) !== "HTTP_") unset($env[$k]);
     return new \ArrayObject($env);
   }
 }

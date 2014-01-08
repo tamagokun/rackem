@@ -110,12 +110,11 @@ class Server
     $conn = $this->in[(int)$socket];
     $data = @fread($socket, 30000);
 
-    if($data === false || $data == '') return $this->close_in($conn);
+    if($data === false || $data == '') return $this->close_connection($conn);
 
     $conn->data($data);
     if($conn->is_request_complete())
     {
-      // Log request
       $stream = $conn->process($this->app);
       $this->out[(int)$stream] = $conn;
     }
@@ -126,7 +125,7 @@ class Server
     $conn = $this->in[(int)$socket];
 
     $bytes = @fwrite($socket, $conn->buffer);
-    if($bytes === false) return $this->close_in($conn);
+    if($bytes === false) return $this->close_connection($conn);
 
     $conn->bytes_written += $bytes;
     $conn->buffer = substr($conn->buffer, $bytes);
@@ -136,6 +135,7 @@ class Server
 
   public function complete_response($conn)
   {
+    /* fwrite(STDERR, $this->log_request($conn)); */
     if($conn->get_header('Connection') === 'close' || $conn->version !== 'HTTP/1.1')
     {
       $this->close_connection($conn);
@@ -202,13 +202,13 @@ class Server
     }
   }
 
-	protected function log_request($req, $res, $client, $time)
+	protected function log_request($conn)
 	{
 		$date = @date("D M d H:i:s Y");
-		$time = sprintf('%.4f', $time);
-		$request = $req['method'].' '.$req['request_url']['path'].' '.$req['protocol'].'/'.$req['version'];
+		$time = sprintf('%.4f', microtime(true) - $conn->start_time);
 
-		return "{$client} - - [{$date}] \"{$request}\" {$res->status} - {$time}\n";
+    // TODO: Parse response status
+		return "{$conn->client} - - [{$date}] \"{$conn->request}\" status - {$time}\n";
 	}
 
 }
