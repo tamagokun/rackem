@@ -181,7 +181,7 @@ class Server
 
 	protected function log_request($conn)
 	{
-		$date = @date("D M d H:i:s Y");
+		$date = @date("d/M/Y H:i:s");
 		$time = sprintf('%.4f', microtime(true) - $conn->start_time);
 
     // TODO: Parse response status

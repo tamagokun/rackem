@@ -40,7 +40,9 @@ class Connection
     $this->body = fopen("data://text/plain,", "r+b");
 
     stream_set_blocking($this->socket, 0);
-    $this->client = stream_socket_get_name($this->socket, false);
+    $client = stream_socket_get_name($this->socket, false);
+    if(strpos($client, ':') !== false) list($client, $port) = explode(':', $client, 2);
+    $this->client = $client;
   }
 
   public function cleanup()
