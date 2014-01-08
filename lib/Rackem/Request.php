@@ -59,7 +59,9 @@ class Request
 
 	public function form_data()
 	{
-		return ($this->env["REQUEST_METHOD"] == "POST");
+		$available_methods = array("POST", "PUT", "PATCH");
+		$method = $this->env["REQUEST_METHOD"];
+		return in_array($method, $available_methods);
 	}
 
 	public function fullpath()
@@ -168,7 +170,13 @@ class Request
 			$this->env["rack.request.form_input"] = $this->env["rack.input"];
 			$form_vars = str_replace("\0\z","",stream_get_contents($this->env["rack.input"]));
 			$this->env["rack.request.form_vars"] = $form_vars;
-			$this->env["rack.request.form_hash"] = $this->parse_multipart($form_vars);
+			if($this->content_type() == "application/json")
+			{
+				$this->env["rack.request.form_hash"] = json_decode($form_vars, true);
+			}else
+			{
+				$this->env["rack.request.form_hash"] = $this->parse_multipart($form_vars);
+			}
 		}else
 			$this->env["rack.request.form_hash"] = array();
 		return $this->env["rack.request.form_hash"];
