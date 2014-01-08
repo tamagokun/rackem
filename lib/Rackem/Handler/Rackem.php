@@ -24,9 +24,7 @@ class Rackem
     $head = array("{$env['SERVER_PROTOCOL']} $status $phrase");
     foreach($headers as $key=>$values)
       foreach(explode("\n",$values) as $value) $head[] = "$key: $value";
-    echo implode("\r\n", $head);
-    echo "\r\n\r\n";
-    echo implode("", $body);
+    echo implode("\r\n", $head) . "\r\n\r\n" . implode("", $body);
   }
 
   public function env()
