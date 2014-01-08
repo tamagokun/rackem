@@ -20,29 +20,6 @@ class Server
     \Rackem::$handler = new \Rackem\Handler\Rackem();
   }
 
-	/* public function process($buffer) */
-	/* { */
-	/* 	$start = microtime(true); */
-	/* 	ob_start(); */
-	/* 	$req = $this->parse_request($buffer); */
-	/* 	$env = $this->env($req); */
-
-	/* 	$app = $this->app(); */
-	/* 	$res = new Response($app->call($env)); */
-	/* 	$output = ob_get_clean(); */
-	/* 	fwrite($env['rack.errors'], $output); */
-	/* 	// fwrite($env['rack.errors'], $this->log_request($req, $res)); */
-	/* 	if($env['rack.logger']) */
-	/* 	{ */
-	/* 		$time = microtime(true) - $start; */
-	/* 		fwrite($env['rack.logger']->stream, $this->log_request($req, $res, $client, $time)); */
-	/* 		$env['rack.logger']->close(); */
-	/* 	} */
-	/* 	fclose($env['rack.input']); */
-	/* 	if(is_resource($env['rack.errors'])) fclose($env['rack.errors']); */
-	/* 	return $this->write_response($req, $res); */
-	/* } */
-
   public function start()
   {
     $this->init();
@@ -135,7 +112,7 @@ class Server
 
   public function complete_response($conn)
   {
-    /* fwrite(STDERR, $this->log_request($conn)); */
+    fwrite(STDERR, $this->log_request($conn));
     if($conn->get_header('Connection') === 'close' || $conn->version !== 'HTTP/1.1')
     {
       $this->close_connection($conn);
