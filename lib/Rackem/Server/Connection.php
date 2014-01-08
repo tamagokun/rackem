@@ -177,7 +177,7 @@ class Connection
     $port = 80;
     if(strpos($host, ':') !== false)
     {
-      list($hostname, $port) = explode(':', $host);
+      list($host, $port) = explode(':', $host);
       $port = (int)trim($port);
       if($port == 443) $scheme = 'https';
     }
