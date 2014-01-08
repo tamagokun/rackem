@@ -8,7 +8,7 @@ class Server
   public $app, $reload = true;
   private $host, $port, $running, $in, $out;
 
-  public function __construct($host = '0.0.0.0', $port = 9393, $app)
+  public function __construct($host = '0.0.0.0', $port = 9393, $app = 'config.php')
   {
     declare(ticks=1);
     $this->host = $host;
@@ -144,6 +144,23 @@ class Server
     fclose($this->master);
     echo ">> Stopping...\n";
     exit(0);
+  }
+
+  public function help()
+  {
+    echo "Usage:\n";
+    echo "rackem [options] [config]\n\n";
+    echo "Options:\n";
+    echo "        --basic        run a basic HTTP server\n";
+    echo "        --host HOST    listen on HOST (default: 127.0.0.1)\n";
+    echo "        --port PORT    use PORT (default: 9393)\n";
+    echo "    -h                 show this message\n";
+    echo "    -v, --version      show version.\n";
+  }
+
+  public function version()
+  {
+    echo explode(".", \Rackem::version()) ."\n";
   }
 
 /* private */

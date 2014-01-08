@@ -17,7 +17,7 @@ if(function_exists("date_default_timezone_set"))
 $argv = $GLOBALS['argv'];
 array_shift($argv);
 
-$flags = array('h','process','ruby','basic');
+$flags = array('h','basic','v','version');
 $args = array();
 $opts = array();
 while(list($k,$arg) = each($argv))
@@ -41,9 +41,22 @@ while(list($k,$arg) = each($argv))
 	each($argv);
 }
 
+if(isset($opts['h']))
+{
+  $server = new \Rackem\Server();
+  $server->help();
+  exit(0);
+}
+
+if(isset($opts['v']) || isset($opts['version']))
+{
+  echo "Rack'em version ".implode(".", \Rackem::version())."\n";
+  exit(0);
+}
+
 $app = count($argv) > 0? $argv[0] : 'config.php';
 
-if(isset($opts['basic'])) $app = dirname(__DIR__)."/basic_web.php";
+if(isset($opts['basic'])) $app = dirname(__DIR__)."/script/basic.php";
 if(!file_exists($app))
 {
 	echo "configuration {$app} not found\n";
