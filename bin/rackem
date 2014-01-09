@@ -56,7 +56,8 @@ if(isset($opts['v']) || isset($opts['version']))
 
 $app = count($argv) > 0? $argv[0] : 'config.php';
 
-if(isset($opts['basic'])) $app = dirname(__DIR__)."/script/basic.php";
+if(isset($opts['basic'])) $app = dirname(__DIR__).'/script/basic.php';
+
 if(!file_exists($app))
 {
 	echo "configuration {$app} not found\n";
