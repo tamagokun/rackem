@@ -191,8 +191,7 @@ class Server
     $date = @date("d/M/Y H:i:s");
     $time = sprintf('%.4f', microtime(true) - $conn->start_time);
 
-    // TODO: Parse response status
-    return "{$conn->client} - - [{$date}] \"{$conn->request}\" status - {$time}\n";
+    return "{$conn->client} - - [{$date}] \"{$conn->request}\" {$conn->status} - {$time}\n";
   }
 
 }

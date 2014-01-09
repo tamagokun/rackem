@@ -25,6 +25,7 @@ class Connection
   public $bytes_written = 0;
   public $proc = null;
   public $stream = null;
+  public $status = null;
 
   const READ_CHUNK_HEADER = 0;
   const READ_CHUNK_DATA = 1;
@@ -121,6 +122,12 @@ class Connection
     if($data === false) return;
 
     $this->buffer .= $data;
+
+    if(!is_null($this->status)) return;
+    $end = strpos($this->buffer, "\r\n");
+    if($end === false) return;
+    list($version, $status, $phrase) = explode(' ', substr($this->buffer, 0, $end), 3);
+    $this->status = $status;
   }
 
   /*
