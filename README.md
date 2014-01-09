@@ -191,8 +191,8 @@ Things that are in need:
 * web server test bed
 * benchmarking
 
-## Credits
+## Thank You
 
-Everyone who has worked on the Rack project. A lot of the code is ported directly from Rack.
-
-[creationx](https://github.com/creationix/rack-php) for a Rack script that will serve a PHP-based Rack-compliant application.
+* chneukirchen and [everyone who has worked on Rack](https://github.com/rack/rack/graphs/contributors). A lot of code is ported directly from the Rack project.
+* [creationx](https://github.com/creationix) for a rackup configuration to run PHP scripts.
+* [youngj](https://github.com/youngj) for helping me to understand sockets and streams.
