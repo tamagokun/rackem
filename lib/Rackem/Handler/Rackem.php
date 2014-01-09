@@ -60,7 +60,9 @@ class Rackem
       "rack.sessions" => array(),
       "rack.logger" => "",
       "rack.version" => \Rackem::version(),
-      "rack.url_scheme" => $url_scheme
+      "rack.url_scheme" => $url_scheme,
+      "SCRIPT_NAME" => "",
+      "QUERY_STRING" => isset($_SERVER['QUERY_STRING'])? $_SERVER['QUERY_STRING'] : ""
     ));
 
     foreach($env as $k=>$v) if(!in_array($k, $accepted) && substr($k,0,5) !== "HTTP_") unset($env[$k]);
