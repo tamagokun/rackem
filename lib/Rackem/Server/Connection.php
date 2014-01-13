@@ -152,8 +152,15 @@ class Connection
         $env["HTTP_$env_name"] = is_array($v) ? implode("\n", $v) : $v;
     }
 
+    $dir = dirname(dirname(dirname(__DIR__))).'/rackem.php';
+    $code = <<<EOT
+if (!class_exists("\Rackem\Server")) require_once "$dir";
+if(function_exists("date_default_timezone_set")) date_default_timezone_set("UTC");
+require "$app";
+EOT;
+
     $php = defined("PHP_BINARY") ? PHP_BINARY : PHP_BINDIR."/php";
-    $this->proc = proc_open("$php $app", $spec, $pipes, null, $env);
+    $this->proc = proc_open("$php -r '$code'", $spec, $pipes, null, $env);
     if(!is_resource($this->proc)) return false;
 
     stream_set_blocking($pipes[1], 0);
