@@ -57,11 +57,12 @@ class Connection
     return $this->state == Connection::READ_COMPLETE;
   }
 
-  public function is_response_complete()
-  {
-    $status = proc_get_status($this->proc);
-    return $status['running'] ? false : true;
-  }
+    public function is_response_complete()
+    {
+        if( is_null($this->proc) ) return false;
+        $status = proc_get_status($this->proc);
+        return $status['running'] ? false : true;
+    }
 
   public function get_header($key)
   {
@@ -99,7 +100,6 @@ class Connection
       if($this->is_chunked)
       {
         // TODO: Handle chunked data
-
       }else
       {
         fwrite($this->body, $data);

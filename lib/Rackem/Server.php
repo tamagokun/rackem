@@ -44,8 +44,7 @@ class Server
         $read[] = $conn->socket;
       }else
       {
-        if(strlen($conn->buffer)) $write[] = $conn->socket;
-        if($conn->is_response_complete()) $this->complete_response($conn);
+        if(strlen($conn->buffer) || $conn->is_response_complete()) $write[] = $conn->socket;
         else $read[] = $conn->stream;
       }
     }
@@ -111,7 +110,7 @@ class Server
     {
       $conn->cleanup();
       $this->close_response($conn);
-      $this->in[(int)$socket] = new Connection($socket);
+      $this->in[(int)$conn->socket] = new Connection($conn->socket);
     }
   }
 
