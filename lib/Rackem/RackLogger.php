@@ -1,22 +1,11 @@
 <?php
 namespace Rackem;
 
-class RackLogger
+class RackLogger extends Middleware
 {
-	protected $app,$level;
-
-	public function __construct($app, $level = \Rackem\Logger::INFO)
-	{
-		$this->app = $app;
-		$this->level = empty($level)? \Rackem\Logger::INFO : $level;
-	}
-
-	public function call($env)
-	{
-		$logger = new \Rackem\Logger($env['rack.errors']);
-		$logger->level = $this->level;
-
-		$env['rack.logger'] = $logger;
-		return $this->app->call($env);
-	}
+    public function call($env)
+    {
+        $env['rack.logger'] = new \Rackem\Logger($env['rack.errors']);
+        return $this->app->call($env);
+    }
 }
