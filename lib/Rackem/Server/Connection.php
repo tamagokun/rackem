@@ -128,7 +128,7 @@ class Connection
         list($request, $headers) = $this->parse_header(substr($this->buffer, 0, $end));
         list($version, $status, $phrase) = explode(' ', $request, 3);
         $this->status = $status;
-        $this->response_length = (int)$headers['Content-Length'][0];
+        $this->response_length = isset($headers['Content-Length'])? (int)$headers['Content-Length'][0] : 0;
     }
 
     /*
