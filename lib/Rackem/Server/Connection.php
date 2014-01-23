@@ -152,11 +152,12 @@ class Connection
                 $env["HTTP_$env_name"] = is_array($v) ? implode("\n", $v) : $v;
         }
 
+        $app = file_exists($app)? 'require "'.$app.'";' : 'return '.$app.';';
         $dir = dirname(dirname(dirname(__DIR__))).'/rackem.php';
         $code = <<<EOT
 if (!class_exists("\Rackem\Server")) require_once "$dir";
 if(function_exists("date_default_timezone_set")) date_default_timezone_set("UTC");
-require "$app";
+$app
 EOT;
 
         $php = defined("PHP_BINARY") ? PHP_BINARY : PHP_BINDIR."/php";

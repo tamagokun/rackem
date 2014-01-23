@@ -3,16 +3,15 @@
 
 if(!class_exists("\\Rackem\Server"))
 {
-	try {
-		require_once dirname(__DIR__).'/rackem.php';
-	}catch(Exception $e)
-	{
-		echo "Failed to load Rack'em library. Is rackem installed in the proper location?\n";
-	}
+    try {
+        require_once dirname(__DIR__).'/rackem.php';
+    } catch(Exception $e) {
+        echo "Failed to load Rack'em library. Is rackem installed in the proper location?\n";
+    }
 }
 
 if(function_exists("date_default_timezone_set"))
-	date_default_timezone_set('UTC');
+    date_default_timezone_set('UTC');
 
 $argv = $GLOBALS['argv'];
 array_shift($argv);
@@ -20,48 +19,43 @@ array_shift($argv);
 $flags = array('h','basic','v','version');
 $args = array();
 $opts = array();
-while(list($k,$arg) = each($argv))
-{
-	$opt_regex = '/-{1,2}(\w*)(=.*)?/';
-	if(preg_match($opt_regex,$arg,$m) !== 1)
-	{
-		$args[] = $arg;
-		continue;
-	}
-	$opts[$m[1]] = true;
-	if(!empty($m[2]))
-	{
-		$opts[$m[1]] = ltrim($m[2],'=');
-		continue;
-	}
-	if(in_array($m[1],$flags)) continue;
-	if(($next = current($argv)) === false) continue;
-	if(preg_match($opt_regex,$next) === 1) continue;
-	$opts[$m[1]] = $next;
-	each($argv);
+while( list($k,$arg) = each($argv) ) {
+    $opt_regex = '/-{1,2}(\w*)(=.*)?/';
+    if(preg_match($opt_regex,$arg,$m) !== 1) {
+        $args[] = $arg;
+        continue;
+    }
+    $opts[$m[1]] = true;
+    if(!empty($m[2])) {
+        $opts[$m[1]] = ltrim($m[2],'=');
+        continue;
+    }
+    if(in_array($m[1],$flags)) continue;
+    if(($next = current($argv)) === false) continue;
+    if(preg_match($opt_regex,$next) === 1) continue;
+    $opts[$m[1]] = $next;
+    each($argv);
 }
 
-if(isset($opts['h']))
-{
-  $server = new \Rackem\Server();
-  $server->help();
-  exit(0);
+
+if(isset($opts['h'])) {
+    $server = new \Rackem\Server();
+    $server->help();
+    exit(0);
 }
 
-if(isset($opts['v']) || isset($opts['version']))
-{
-  echo "Rack'em version ".implode(".", \Rackem::version())."\n";
-  exit(0);
+if(isset($opts['v']) || isset($opts['version'])) {
+    echo "Rack'em version ".implode(".", \Rackem::version())."\n";
+    exit(0);
 }
 
 $app = count($argv) > 0? $argv[0] : 'config.php';
 
-if(isset($opts['basic'])) $app = dirname(__DIR__).'/script/basic.php';
-
-if(!file_exists($app))
-{
-	echo "configuration {$app} not found\n";
-	exit(1);
+if(isset($opts['basic'])) {
+    $app = "\Rackem::run(\"\Rackem\BasicWebServer\")";
+}elseif(!file_exists($app)) {
+    echo "configuration {$app} not found\n";
+    exit(1);
 }
 
 $host = isset($opts['host'])? $opts['host'] : '0.0.0.0';
