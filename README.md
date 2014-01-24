@@ -3,7 +3,8 @@
 Rack'em is an attempt to provide the awesomeness that Rack has brought Ruby, to PHP. See the [documentation and more](http://ripeworks.com/rackem).
 
 ![](https://api.travis-ci.org/tamagokun/rackem.png?branch=master)
-[![Analytics](https://ga-beacon.appspot.com/UA-4214672-13/rackem/readme)](https://github.com/igrigorik/ga-beacon)
+[![Latest Stable Version](https://poser.pugx.org/rackem/rackem/v/stable.png)](https://packagist.org/packages/rackem/rackem)
+[![Latest Stable Version](https://poser.pugx.org/rackem/rackem/v/stable.png)](https://packagist.org/packages/rackem/rackem)
 
 ```php
 <?php
