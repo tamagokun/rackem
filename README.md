@@ -4,7 +4,6 @@ Rack'em is an attempt to provide the awesomeness that Rack has brought Ruby, to 
 
 ![](https://api.travis-ci.org/tamagokun/rackem.png?branch=master)
 [![Latest Stable Version](https://poser.pugx.org/rackem/rackem/v/stable.png)](https://packagist.org/packages/rackem/rackem)
-[![Latest Stable Version](https://poser.pugx.org/rackem/rackem/v/stable.png)](https://packagist.org/packages/rackem/rackem)
 
 ```php
 <?php
