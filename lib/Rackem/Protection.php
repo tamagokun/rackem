@@ -56,7 +56,7 @@ class Protection extends \Rackem\Middleware
 	{
 		if(!$this->options['logging']) return;
 		$l = isset($env['rack.logger']) && is_object($env['rack.logger'])? $env['rack.logger'] : new \Rackem\Logger($env['rack.errors']);
-		$l->warn($message);
+		$l->warning($message);
 	}
 
 	public function deny($env)
