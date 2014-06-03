@@ -37,7 +37,7 @@ class Rackem
 
   protected static function handler()
   {
-    $name = isset($_SERVER['rackem_handler']? $_SERVER['rackem_handler'] : false;
+    $name = isset($_SERVER['rackem_handler'])? $_SERVER['rackem_handler'] : false;
     if($name == "ruby") return self::$handler = new \Rackem\Handler\Ruby();
     if($name == "rackem") return self::$handler = new \Rackem\Handler\Rackem();
     // fallback to sapi since they won't be reporting which handler to use.
