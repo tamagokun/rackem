@@ -122,6 +122,7 @@ class Connection
         $this->buffer .= $data;
 
         if(!is_null($this->status)) return;
+        if(strlen($this->buffer) < 4) return;
         $end = strpos($this->buffer, "\r\n\r\n", 4);
         if($end === false) return;
 

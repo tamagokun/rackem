@@ -22,8 +22,10 @@ class Rackem
     $phrase = Utils::status_code($status);
 
     $head = array("{$env['SERVER_PROTOCOL']} $status $phrase");
-    foreach($headers as $key=>$values)
-      foreach(explode("\n",$values) as $value) $head[] = "$key: $value";
+    foreach($headers as $key=>$values) {
+        if (!is_array($values)) $values = explode("\n", $values);
+        foreach($values as $value) $head[] = "$key: $value";
+    }
     echo implode("\r\n", $head) . "\r\n\r\n" . implode("", $body);
   }
 
