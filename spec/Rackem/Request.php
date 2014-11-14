@@ -32,6 +32,51 @@ class Request extends ObjectBehavior
 		$this->params()->shouldReturn(array("foo"=>"bar", "fizz"=>"bazz"));
 	}
 
+    public function it_should_parse_multipart_data()
+    {
+        $request = new \Rackem\MockRequest(null);
+        $this->env = $request->env_for("/", array(
+            "method" => "POST",
+            "content_type" => "multipart/form-data; boundary=----WebKitFormBoundarytest",
+            "params" => <<<EOT
+------WebKitFormBoundarytest
+Content-Disposition: form-data; name="name"
+
+Mike
+------WebKitFormBoundarytest
+Content-Disposition: form-data; name="color"
+
+Brown
+------WebKitFormBoundarytest
+Content-Disposition: form-data; name="products[1][description]"
+
+TEST
+------WebKitFormBoundarytest
+Content-Disposition: form-data; name="products[1][quantity]"
+
+1
+------WebKitFormBoundarytest
+Content-Disposition: form-data; name="products[1][image]"
+
+data
+------WebKitFormBoundarytest--
+EOT
+            )
+        );
+
+        $this->params()->shouldReturn(array(
+            "name" => "Mike",
+            "color" => "Brown",
+            "products" => array(
+                "1" => array(
+                    "description" => "TEST",
+                    "quantity" => "1",
+                    "image" => "data"
+                )
+            )
+        ));
+    }
+
 	public function it_should_parse_requests_properly()
 	{
 		$request = new \Rackem\MockRequest(null);

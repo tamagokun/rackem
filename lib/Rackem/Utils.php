@@ -5,108 +5,102 @@ class Utils
 {
 	const DEFAULT_SEP = "/[&;] */";
 
-	public static function parse_form_data($body, $content_type)
-	{
-		$data = array();
-		preg_match('/boundary=(.*)$/', $content_type, $m);
-		// handle as standard POST body
-		if(!count($m)) return self::parse_nested_query($body);
+    public static function parse_form_data($body, $content_type)
+    {
+        $data = array();
+        preg_match('/boundary=(.*)$/', $content_type, $m);
+        // handle as standard POST body
+        if(!count($m)) return self::parse_nested_query($body);
 
-		$boundary = $m[1];
-		$chunks = preg_split("/-+$boundary/", $body);
+        $boundary = $m[1];
+        $chunks = preg_split("/-+$boundary/", $body);
 
-		foreach($chunks as $id => $chunk)
-		{
-			if(empty($chunk)) continue;
-			if(strpos($chunk, 'Content-Type') !== false)
-			{
-				preg_match('/name="([^"]*)"; filename="([^"]*)".*Content-Type: (.*?)[\n|\r]+([^\n\r].*)?$/s', $chunk, $m);
-				$file_name = tempnam(sys_get_temp_dir(), 'RackemMultipart');
-				$file = fopen($file_name, 'w+');
-				fwrite($file, $m[4]);
-				rewind($file);
-				$fields = self::parse_nested_query("{$m[1]}[name]={$m[2]}&{$m[1]}[type]={$m[3]}&{$m[1]}[tmp_name]={$file_name}");
-				$data = self::array_merge_recursive($data, $fields);
-			}else
-			{
-				preg_match('/name=\"([^\"]*)\"[\n|\r]+([^\n\r].*)?\r$/s', $chunk, $m);
-				if(empty($m)) continue;
-				$fields = self::parse_nested_query(isset($m[2])? "{$m[1]}={$m[2]}" : "{$m[1]}=");
-				$data = self::array_merge_recursive($data, $fields);
-			}
-		}
-		return $data;
-	}
+        foreach($chunks as $id => $chunk) {
+            if (empty($chunk)) continue;
+            if (strpos($chunk, 'Content-Type') !== false) {
+                preg_match('/name="([^"]*)"; filename="([^"]*)".*Content-Type: (.*?)[\n|\r]+([^\n\r].*)?$/s', $chunk, $m);
+                $file_name = tempnam(sys_get_temp_dir(), 'RackemMultipart');
+                $file = fopen($file_name, 'w+');
+                fwrite($file, $m[4]);
+                rewind($file);
+                $fields = self::parse_nested_query("{$m[1]}[name]={$m[2]}&{$m[1]}[type]={$m[3]}&{$m[1]}[tmp_name]={$file_name}");
+                $data = self::array_merge_recursive($data, $fields);
+            } else {
+                preg_match('/name=\"([^\"]*)\".*?[\n|\r]+([^\n\r].*)?$/m', $chunk, $m);
+                if (empty($m)) continue;
+                $fields = self::parse_nested_query(isset($m[2])? "{$m[1]}={$m[2]}" : "{$m[1]}=");
+                $data = self::array_merge_recursive($data, $fields);
+            }
+        }
+        return $data;
+    }
 
-	public static function parse_query($qs, $d=null)
-	{
-		$params = array();
-		array_map(function($p) use(&$params) {
-			if(empty($p)) return;
-			list($k,$v) = array_merge(explode("=",$p,2), array(""));
-			if(isset($params[$k]))
-			{
-				if(!is_array($params[$k])) $params[$k] = array($params[$k]);
-				$params[$k][] = $v;
-			}else
-				$params[$k] = $v;
-		},preg_split(!is_null($d)? "/[$d] */" : self::DEFAULT_SEP,$qs));
-		return $params;
-	}
+    public static function parse_query($qs, $d=null)
+    {
+        $params = array();
+        array_map(function($p) use(&$params) {
+            if (empty($p)) return;
+            list($k,$v) = array_merge(explode("=",$p,2), array(""));
+            if (isset($params[$k])) {
+                if (!is_array($params[$k])) $params[$k] = array($params[$k]);
+                $params[$k][] = $v;
+            } else {
+                $params[$k] = $v;
+            }
+        }, preg_split(!is_null($d)? "/[$d] */" : self::DEFAULT_SEP,$qs));
+        return $params;
+    }
 
-	public static function parse_nested_query($qs, $d=null)
-	{
-		$params = array();
-		array_map(function($p) use(&$params) {
-			if(empty($p)) return;
-			list($k,$v) = array_merge(explode("=",$p,2), array(""));
-			$k = urldecode($k);
-			$v = urldecode($v);
-			if(preg_match('/^([^\[]*)(\[.*\])$/', $k, $m))
-			{
-				$params = \Rackem\Utils::normalize_params($params, $k, $v);
-			}else
-			{
-				if(isset($params[$k]))
-				{
-					if(!is_array($params[$k])) $params[$k] = array($params[$k]);
-					$params[$k][] = $v;
-				}else $params[$k] = $v;
-			}
-		},preg_split(!is_null($d)? "/[$d] */" : self::DEFAULT_SEP,$qs));
+    public static function parse_nested_query($qs, $d=null)
+    {
+        $params = array();
+        array_map(function($p) use(&$params) {
+            if (empty($p)) return;
+            list($k,$v) = array_merge(explode("=",$p,2), array(""));
+            $k = urldecode($k);
+            $v = urldecode($v);
+            if (preg_match('/^([^\[]*)(\[.*\])$/', $k, $m)) {
+                $params = \Rackem\Utils::normalize_params($params, $k, $v);
+            } else {
+                if (isset($params[$k])) {
+                    if (!is_array($params[$k])) $params[$k] = array($params[$k]);
+                    $params[$k][] = $v;
+                } else {
+                    $params[$k] = $v;
+                }
+            }
+        }, preg_split(!is_null($d)? "/[$d] */" : self::DEFAULT_SEP,$qs));
 
-		return $params;
-	}
+        return $params;
+    }
 
-	public static function normalize_params($params, $name, $v)
-	{
-		preg_match_all('/(\[?(.[^\[\]]*)\]?)/', $name, $m);
-		if(!count($m)) return $params;
-		$keys = $m[0];
-		$names = $m[2];
+    public static function normalize_params($params, $name, $v)
+    {
+        preg_match_all('/(\[?(.[^\[\]]*)\]?)/', $name, $m);
+        if(!count($m)) return $params;
+        $keys = $m[0];
+        $names = $m[2];
 
-		$k = array_shift($names);
-		array_shift($keys);
+        $k = array_shift($names);
+        array_shift($keys);
 
-		if(empty($keys))
-		{
-			if(isset($params[$k]))
-			{
-				if(!is_array($params[$k])) $params[$k] = array($params[$k]);
-				$params[$k][] = $v;
-			}else $params[$k] = $v;
-		}else if($k == "[]")
-		{
-			if(!isset($params[$k])) $params[$k] = array();
-			$params[$k][] = $v;
-		}else
-		{
-			if(!isset($params[$k])) $params[$k] = array();
-			$params[$k] = self::normalize_params($params[$k], implode("", $keys), $v);
-		}
+        if (empty($keys)) {
+            if (isset($params[$k])) {
+                if (!is_array($params[$k])) $params[$k] = array($params[$k]);
+                $params[$k][] = $v;
+            } else {
+                $params[$k] = $v;
+            }
+        } else if ($k == "[]") {
+            if (!isset($params[$k])) $params[$k] = array();
+            $params[$k][] = $v;
+        } else {
+            if (!isset($params[$k])) $params[$k] = array();
+            $params[$k] = self::normalize_params($params[$k], implode("", $keys), $v);
+        }
 
-		return $params;
-	}
+        return $params;
+    }
 
 	public static function set_cookie_header($header,$key,$value)
 	{

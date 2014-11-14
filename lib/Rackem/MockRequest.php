@@ -43,10 +43,12 @@ class MockRequest
 		$env["rack.url_scheme"] = isset($uri["scheme"])? $uri["scheme"] : "http";
 		$env["HTTPS"] = $env["rack.url_scheme"] == "https"? "on" : "off";
 		$env["SCRIPT_NAME"] = isset($opts["script_name"])? $opts["script_name"] : "";
+        $env["CONTENT_TYPE"] = isset($opts["content_type"])? $opts["content_type"] : "";
 
 		if(isset($opts["params"]))
 		{
-			fwrite($env["rack.input"], http_build_query($opts["params"]));
+            $params = is_string($opts["params"])? $opts["params"] : http_build_query($opts["params"]);
+			fwrite($env["rack.input"], $params);
 			rewind($env["rack.input"]);
 		}
 

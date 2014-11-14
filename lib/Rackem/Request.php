@@ -184,7 +184,7 @@ class Request
 
 	public function query_string()
 	{
-		return $this->env["QUERY_STRING"];
+		return isset($this->env["QUERY_STRING"])? $this->env["QUERY_STRING"] : null;
 	}
 
 	public function referer()
