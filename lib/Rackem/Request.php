@@ -229,9 +229,9 @@ class Request
 		return $data;
 	}
 
-	private function parse_multipart($d)
-	{
-		if(!empty($_POST) || !empty($_FILES)) return array_merge($_POST, $_FILES);
-		return Utils::parse_form_data($d, $this->content_type());
-	}
+    private function parse_multipart($d)
+    {
+        if (!empty($_POST) || !empty($_FILES)) return Utils::array_merge_recursive($_POST, $_FILES);
+        return Utils::parse_form_data($d, $this->content_type());
+    }
 }

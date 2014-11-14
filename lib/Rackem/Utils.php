@@ -24,6 +24,8 @@ class Utils
                 fwrite($file, $m[4]);
                 rewind($file);
                 $fields = self::parse_nested_query("{$m[1]}[name]={$m[2]}&{$m[1]}[type]={$m[3]}&{$m[1]}[tmp_name]={$file_name}");
+                error_log("FIELDS FROM FILE MATCH");
+                error_log(print_r($fields, true));
                 $data = self::array_merge_recursive($data, $fields);
             } else {
                 preg_match('/name=\"([^\"]*)\".*?[\n|\r]+([^\n\r].*)?$/m', $chunk, $m);
@@ -208,28 +210,26 @@ class Utils
 		return self::$http_status_codes[$status];
 	}
 
+    public static function array_merge_recursive()
+    {
+        $arrays = func_get_args();
+        $base = array_shift($arrays);
+
+        foreach ($arrays as $array) {
+            reset($base);
+            while (list($key, $value) = @each($array)) {
+                if(is_array($value) && isset($base[$key]) && is_array($base[$key]))
+                    $base[$key] = self::array_merge_recursive($base[$key], $value);
+                elseif(isset($base[$key]))
+                    $base[] = $value;
+                else
+                    $base[$key] = $value;
+            }
+        }
+        return $base;
+    }
+
 //private
-	private static function array_merge_recursive()
-	{
-		$arrays = func_get_args();
-		$base = array_shift($arrays);
-
-		foreach ($arrays as $array)
-		{
-			reset($base);
-			while (list($key, $value) = @each($array))
-			{
-				if(is_array($value) && isset($base[$key]) && is_array($base[$key]))
-					$base[$key] = self::array_merge_recursive($base[$key], $value);
-				elseif(isset($base[$key]))
-					$base[] = $value;
-				else
-					$base[$key] = $value;
-			}
-		}
-		return $base;
-	}
-
 	private static $http_status_codes = array(
 		100  => 'Continue',
 		101  => 'Switching Protocols',
