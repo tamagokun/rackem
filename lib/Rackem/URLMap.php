@@ -22,8 +22,9 @@ class URLMap
 		{
 			list($host, $route, $match, $app) = $info;
 
-			if(!($host === $http_host || $host === $server_name || (!$host && ($http_host == $server_name || $http_host == "{$server_name}:{$port}"))))
-				continue;
+			// This causes more issues than anything. Not worth it right now.
+			//if(!($host === $http_host || $host === $server_name || (!$host && ($http_host == $server_name || $http_host == "{$server_name}:{$port}"))))
+			//	continue;
 
 			$m = array();
 			if(!preg_match($match, $path, $m)) continue;
