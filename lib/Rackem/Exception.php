@@ -3,9 +3,9 @@ namespace Rackem;
 
 class Exception extends \ErrorException
 {
-	protected $status,$header,$body;
+	public $status, $header, $body;
 
-	public function __construct($status,$header,$body)
+	public function __construct($status, $header, $body)
 	{
 		$this->status = $status;
 		$this->header = $header;
