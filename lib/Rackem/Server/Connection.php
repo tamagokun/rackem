@@ -69,6 +69,7 @@ class Connection
 
     public function get_header($key)
     {
+        $key = strtolower($key);
         return isset($this->header[$key]) ? $this->header[$key][0] : "";
     }
 
@@ -179,6 +180,7 @@ EOT;
 
         foreach($lines as $line) {
             list($k, $v) = explode(": ", $line, 2);
+            $k = strtolower($k);
             if(!isset($headers[$k]))
                 $headers[$k] = array($v);
             else
