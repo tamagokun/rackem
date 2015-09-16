@@ -38,34 +38,33 @@ class Request extends ObjectBehavior
         $this->env = $request->env_for("/", array(
             "method" => "POST",
             "content_type" => "multipart/form-data; boundary=----WebKitFormBoundarytest",
-            "params" => <<<EOT
-------WebKitFormBoundarytest
-Content-Disposition: form-data; name="name"
-
-Mike
-------WebKitFormBoundarytest
-Content-Disposition: form-data; name="color"
-
-Brown
-------WebKitFormBoundarytest
-Content-Disposition: form-data; name="products[1][description]"
-
-TEST
-------WebKitFormBoundarytest
-Content-Disposition: form-data; name="products[1][quantity]"
-
-1
-------WebKitFormBoundarytest
-Content-Disposition: form-data; name="products[1][image]"
-
-data
-------WebKitFormBoundarytest--
-EOT
+            "params" => "".
+                "------WebKitFormBoundarytest\r\n".
+                "Content-Disposition: form-data; name=\"name\"\r\n".
+                "\r\n".
+                "Mike\r\nalmost tricked you!\r\n".
+                "------WebKitFormBoundarytest\r\n".
+                "Content-Disposition: form-data; name=\"color\"\r\n".
+                "\r\n".
+                "Brown\r\n".
+                "------WebKitFormBoundarytest\r\n".
+                "Content-Disposition: form-data; name=\"products[1][description]\"\r\n".
+                "\r\n".
+                "TEST\r\n".
+                "------WebKitFormBoundarytest\r\n".
+                "Content-Disposition: form-data; name=\"products[1][quantity]\"\r\n".
+                "\r\n".
+                "1\r\n".
+                "------WebKitFormBoundarytest\r\n".
+                "Content-Disposition: form-data; name=\"products[1][image]\"\r\n".
+                "\r\n".
+                "data\r\n".
+                "------WebKitFormBoundarytest--\r\n"
             )
         );
 
         $this->params()->shouldReturn(array(
-            "name" => "Mike",
+            "name" => "Mike\r\nalmost tricked you!",
             "color" => "Brown",
             "products" => array(
                 "1" => array(

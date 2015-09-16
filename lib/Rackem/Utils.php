@@ -13,24 +13,24 @@ class Utils
         if (!count($m)) return self::parse_nested_query($body);
 
         $boundary = $m[1];
-        $chunks = preg_split("/-+$boundary/", $body);
+        $chunks = preg_split("/\r\n--$boundary/", $body);
 
-        foreach($chunks as $id => $chunk) {
+        foreach($chunks as $i => $chunk) {
             if (empty($chunk)) continue;
+            $m = preg_split('/\r\n\r\n/', $chunk, 2);
             if (strpos($chunk, 'Content-Type') !== false) {
-                preg_match('/name="([^"]*)"; filename="([^"]*)".*Content-Type: (.*?)[\n|\r]+([^\n\r].*)?$/s', $chunk, $m);
+                preg_match('/name="(.*)"; filename="(.*)"/', $m[0], $names);
+                preg_match('/Content-Type: (.*)/', $m[0], $types);
                 $file_name = tempnam(sys_get_temp_dir(), 'RackemMultipart');
                 $file = fopen($file_name, 'w+');
-                fwrite($file, $m[4]);
+                fwrite($file, $m[1]);
                 rewind($file);
-                $fields = self::parse_nested_query("{$m[1]}[name]={$m[2]}&{$m[1]}[type]={$m[3]}&{$m[1]}[tmp_name]={$file_name}");
-                error_log("FIELDS FROM FILE MATCH");
-                error_log(print_r($fields, true));
+                $fields = self::parse_nested_query("{$names[1]}[name]={$names[2]}&{$names[1]}[type]={$types[1]}&{$names[1]}[tmp_name]={$file_name}");
                 $data = self::array_merge_recursive($data, $fields);
             } else {
-                preg_match('/name=\"([^\"]*)\".*?[\n|\r]+([^\n\r].*)?$/m', $chunk, $m);
-                if (empty($m)) continue;
-                $fields = self::parse_nested_query(isset($m[2])? "{$m[1]}={$m[2]}" : "{$m[1]}=");
+                preg_match('/name="(.*)"/', $m[0], $names);
+                if (empty($names)) continue;
+                $fields = self::parse_nested_query(isset($m[1])? "{$names[1]}={$m[1]}" : "{$names[1]}=");
                 $data = self::array_merge_recursive($data, $fields);
             }
         }
