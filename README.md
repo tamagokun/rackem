@@ -1,6 +1,6 @@
 # Rack for PHP
 
-Rack'em is an attempt to provide the awesomeness that Rack has brought Ruby, to PHP. See the [documentation and more](http://ripeworks.com/rackem).
+Rack'em is an attempt to provide the awesomeness that Rack has brought Ruby, to PHP. See the [documentation and more](http://tamagokun.github.io/rackem/).
 
 ![](https://api.travis-ci.org/tamagokun/rackem.png?branch=master)
 [![Latest Stable Version](https://poser.pugx.org/rackem/rackem/v/stable.png)](https://packagist.org/packages/rackem/rackem)
